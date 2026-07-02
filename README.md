@@ -69,10 +69,8 @@ internet. To set it up for a given server IP:
 DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,.localhost,<ip>,.<ip>.nip.io
 TENANT_BASE_DOMAIN=<ip>.nip.io
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://<ip>:3000
-
-# frontend .env.local - point at whichever tenant you're testing
-NEXT_PUBLIC_API_BASE_URL=http://nairobi.<ip>.nip.io:8000
-NEXT_PUBLIC_PUBLIC_API_BASE_URL=http://<ip>.nip.io:8000
+# CORS_ALLOWED_ORIGIN_REGEXES is derived from TENANT_BASE_DOMAIN
+# automatically in settings.py - no per-tenant CORS config needed.
 ```
 
 New sign-ups (`/signup-sacco`) automatically get a `*.<ip>.nip.io` domain
@@ -88,12 +86,26 @@ This is a bridge for testing/demoing before a real domain exists - swap
 `TENANT_BASE_DOMAIN` for a real wildcard-DNS domain before any actual
 production/customer traffic.
 
-One important limitation this doesn't fix: the frontend's
-`NEXT_PUBLIC_API_BASE_URL` is a single value baked in at dev-server start,
-so one running frontend instance only ever talks to *one* tenant's API.
-Serving many tenants correctly from one frontend deployment (e.g. deriving
-the API host from `window.location.hostname` at runtime instead of a
-static env var) is a real architecture task for later, not yet built.
+**The frontend needs no per-tenant configuration at all.** `lib/api.ts`
+derives the API origin from whatever hostname the browser is actually on
+(`window.location.hostname`, same port pattern, `:8000`) rather than a
+static `NEXT_PUBLIC_API_BASE_URL` - so `dar.<ip>.nip.io:3000` automatically
+talks to `dar.<ip>.nip.io:8000`, `nairobi.*` talks to `nairobi.*`, and any
+future tenant's subdomain just works the moment it's provisioned. Two
+things had to be true for this to actually work when visiting a non-default
+hostname, both now handled in `next.config.ts` / `config/settings.py`:
+
+- **Next.js's dev-server DNS-rebinding protection** blocks cross-origin
+  requests to dev-only assets (HMR, font proxying, ...) by default -
+  visiting anything other than `localhost` 403s on those without
+  `allowedDevOrigins` listing the tenant domain patterns.
+- **CORS** must allow the *specific* origin the browser is on. A fixed
+  `CORS_ALLOWED_ORIGINS` list can't keep up with dynamically-created tenant
+  subdomains, so `CORS_ALLOWED_ORIGIN_REGEXES` matches any subdomain of
+  `TENANT_BASE_DOMAIN` instead.
+
+`NEXT_PUBLIC_API_BASE_URL` still works as an explicit override (pins every
+request to one fixed tenant regardless of hostname) if you ever need it.
 
 ## Self-service SACCO sign-up (30-day free trial)
 

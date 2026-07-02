@@ -1,17 +1,31 @@
 /**
- * Thin fetch wrapper for the Django API. In this multi-tenant setup, each
- * SACCO is routed by domain (django-tenants), so NEXT_PUBLIC_API_BASE_URL
- * should point at the tenant-specific API origin (e.g.
- * http://nairobi.localhost:8000 in dev). See ../../../README.md.
+ * Thin fetch wrapper for the Django API. Each SACCO is routed by domain
+ * (django-tenants), and this frontend can be reached at several different
+ * hostnames for the same tenant (nairobi.localhost, nairobi.<ip>.nip.io,
+ * a future real domain, ...). Rather than pin the API target to one tenant
+ * via a static env var, the API base is derived from whatever hostname the
+ * browser is actually on right now - so visiting the "dar" subdomain talks
+ * to the "dar" backend automatically, with no per-tenant env var to update.
+ * NEXT_PUBLIC_API_BASE_URL still works as an explicit override if set.
  */
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+function resolveApiBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+  if (typeof window !== "undefined") {
+    const port = process.env.NEXT_PUBLIC_API_PORT ?? "8000";
+    return `${window.location.protocol}//${window.location.hostname}:${port}`;
+  }
+  return "http://localhost:8000";
+}
 
 // Hits a host that matches no tenant Domain, so django-tenants falls back
 // to the public schema (see PUBLIC_SCHEMA_URLCONF in backend/config/settings.py).
 // Used only for SACCO sign-up, which can't be tenant-scoped by definition -
-// the tenant doesn't exist yet.
+// the tenant doesn't exist yet. Unlike the tenant API base, this can't be
+// derived from the current hostname (that hostname might itself BE a
+// tenant's domain), so it stays an explicit env var.
 const PUBLIC_API_BASE_URL =
   process.env.NEXT_PUBLIC_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -72,7 +86,7 @@ export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  return baseFetch<T>(API_BASE_URL, path, options, true);
+  return baseFetch<T>(resolveApiBaseUrl(), path, options, true);
 }
 
 /** For endpoints that must resolve to the public schema (e.g. SACCO sign-up). */

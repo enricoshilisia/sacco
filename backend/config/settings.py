@@ -5,6 +5,7 @@ Multi-tenant (schema-per-tenant via django-tenants). See CLAUDE.md at the
 repo root for the non-negotiable rules this project is built against.
 """
 
+import re
 from datetime import timedelta
 from pathlib import Path
 
@@ -204,6 +205,14 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS", default=["http://localhost:3000"]
 )
+# Tenant subdomains are created dynamically (self-service SACCO sign-up
+# - see subscriptions.views.SaccoSignupView), so a fixed origin list can't
+# keep up with them. Allow any subdomain of TENANT_BASE_DOMAIN, on any
+# port, instead - e.g. http://dar.20.56.34.194.nip.io:3000 alongside
+# http://nairobi.20.56.34.194.nip.io:3000, with no per-tenant config.
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    rf"^https?://([a-z0-9-]+\.)?{re.escape(TENANT_BASE_DOMAIN)}(:\d+)?$",
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # ---------------------------------------------------------------------------
