@@ -40,7 +40,10 @@ header, and Django will 400/404 requests for hosts not in that list.
 ## Running
 
 ```bash
-# backend
+# backend - served over ASGI via Daphne, not the WSGI dev server.
+# `daphne` is listed first in INSTALLED_APPS, so `runserver` itself is
+# Daphne-backed (its access log format - "HTTP GET /path 200 [...]" -
+# confirms this). To run Daphne directly instead: daphne -b 0.0.0.0 -p 8000 config.asgi:application
 cd backend && source venv/bin/activate
 python manage.py runserver 0.0.0.0:8000
 

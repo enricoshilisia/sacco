@@ -24,6 +24,7 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.
 # ---------------------------------------------------------------------------
 
 SHARED_APPS = [
+    "daphne",  # must be first: makes `runserver` itself ASGI/Daphne-backed
     "django_tenants",
     "tenants",  # Tenant + Domain models must live in a SHARED_APPS app
     "identity",  # custom User is shared: a person can belong to many SACCOs
