@@ -28,6 +28,17 @@ class TenantConfig(models.Model):
         default=list, help_text="e.g. ['NATIONAL_ID', 'HUDUMA'] for a Kenyan tenant"
     )
 
+    # Member number style - each SACCO defines its own (e.g. "SHK-" + 5
+    # digits, or "M" + 4 digits); member creation reuses this automatically.
+    # next_sequence is incremented atomically under a row lock at creation
+    # time (see members/services.py) so numbers never collide or reuse a
+    # deleted member's number.
+    member_number_prefix = models.CharField(max_length=20, default="M-")
+    member_number_padding = models.PositiveSmallIntegerField(
+        default=5, help_text="Digits to zero-pad the sequence to, e.g. 5 -> 00001"
+    )
+    member_number_next_sequence = models.PositiveIntegerField(default=1)
+
     # Loan multiplier default (e.g. 3.0 == borrow up to 3x deposits).
     # Actual loan products can override this per-product in Phase 4.
     default_loan_multiplier = models.DecimalField(max_digits=6, decimal_places=2, default=3)
@@ -53,3 +64,11 @@ class TenantConfig(models.Model):
 
     def __str__(self):
         return "Tenant configuration"
+
+    @classmethod
+    def get_solo(cls):
+        """Get this tenant's singleton config row, creating it with defaults if missing."""
+        obj = cls.objects.first()
+        if obj is None:
+            obj = cls.objects.create()
+        return obj

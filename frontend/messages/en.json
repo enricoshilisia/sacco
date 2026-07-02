@@ -45,6 +45,7 @@
     "home": "Home",
     "dashboard": "Dashboard",
     "members": "Members",
+    "settings": "Settings",
     "language": "Language",
     "logout": "Log out"
   },
@@ -122,5 +123,23 @@
     "idHuduma": "Huduma Namba",
     "idNida": "NIDA",
     "idPassport": "Passport"
+  },
+  "Settings": {
+    "title": "Settings",
+    "forbidden": "You don't have permission to view settings.",
+    "memberNumbering": "Member numbering",
+    "memberNumberingHelp": "Set how new member numbers are generated for your SACCO. Existing member numbers are never changed.",
+    "prefix": "Prefix",
+    "padding": "Digits",
+    "nextNumberPreview": "Next member number will be",
+    "allowedIdTypes": "Accepted ID types",
+    "allowedIdTypesHelp": "Which ID types staff can select when registering a member. Leave all unchecked to accept any.",
+    "idType_NATIONAL_ID": "National ID",
+    "idType_HUDUMA": "Huduma Namba",
+    "idType_NIDA": "NIDA",
+    "idType_PASSPORT": "Passport",
+    "save": "Save changes",
+    "saved": "Saved",
+    "error": "Couldn't save settings. Try again."
   }
 }

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Check, Plus, X } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/api";
+
+const ALL_ID_TYPES = ["NATIONAL_ID", "HUDUMA", "NIDA", "PASSPORT"] as const;
 
 const inputClass =
   "w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500";
@@ -48,8 +50,19 @@ export default function NewMemberPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(initialForm);
+  const [allowedIdTypes, setAllowedIdTypes] = useState<string[]>([...ALL_ID_TYPES]);
   const [relations, setRelations] = useState<Relation[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+
+  useEffect(() => {
+    apiFetch<{ allowed_id_types: string[] }>("/api/settings/")
+      .then(({ allowed_id_types }) => {
+        const types = allowed_id_types.length > 0 ? allowed_id_types : [...ALL_ID_TYPES];
+        setAllowedIdTypes(types);
+        setForm((f) => (types.includes(f.id_type) ? f : { ...f, id_type: types[0] }));
+      })
+      .catch(() => {});
+  }, []);
 
   function field(name: keyof typeof initialForm) {
     return {
@@ -177,10 +190,16 @@ export default function NewMemberPage() {
                   onChange={(e) => setForm({ ...form, id_type: e.target.value })}
                   className={inputClass}
                 >
-                  <option value="NATIONAL_ID">{t("idNational")}</option>
-                  <option value="HUDUMA">{t("idHuduma")}</option>
-                  <option value="NIDA">{t("idNida")}</option>
-                  <option value="PASSPORT">{t("idPassport")}</option>
+                  {allowedIdTypes.includes("NATIONAL_ID") && (
+                    <option value="NATIONAL_ID">{t("idNational")}</option>
+                  )}
+                  {allowedIdTypes.includes("HUDUMA") && (
+                    <option value="HUDUMA">{t("idHuduma")}</option>
+                  )}
+                  {allowedIdTypes.includes("NIDA") && <option value="NIDA">{t("idNida")}</option>}
+                  {allowedIdTypes.includes("PASSPORT") && (
+                    <option value="PASSPORT">{t("idPassport")}</option>
+                  )}
                 </select>
               </label>
               <label className="block">

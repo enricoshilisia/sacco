@@ -252,8 +252,11 @@ by design (see Identity section above).
 - **`Member`**: the membership record, deliberately separate from
   `identity.User` - a member is commonly registered by branch staff before
   they have (or want) a login account, so `user` is an optional link, not
-  a requirement. Auto-generated `member_number` (`M-00001`, ...). ID type
-  reuses `configuration.IdType` (National ID/Huduma for KE, NIDA for TZ).
+  a requirement. `member_number` is auto-generated in **each SACCO's own
+  configured style** (prefix + zero-padded sequence, e.g. `M-00001` by
+  default) - see Settings below. ID type reuses `configuration.IdType`
+  (National ID/Huduma for KE, NIDA for TZ), restricted to whichever types
+  a SACCO has chosen to accept.
 - **`MemberRelation`**: next-of-kin, nominees, and beneficiaries as one
   table with a `kind` discriminator, not three separate ones - they share
   a shape, and a real person is often more than one at once (e.g. a spouse
@@ -288,6 +291,37 @@ asserts on rendered content + zero console errors:
 cd frontend
 npm run e2e   # requires both dev servers running + nairobi_demo seeded
 ```
+
+## Authenticated app UI (sidebar shell + Settings)
+
+Every authenticated page (`/dashboard`, `/members*`, `/settings`) shares one
+layout: `frontend/src/app/[locale]/(app)/layout.tsx` wraps them in
+`TenantProfileProvider` (fetches `/api/tenant/me/` once, shared via
+context) and `AppShell` (`src/components/AppShell.tsx`) - a fixed sidebar
+on desktop, a slide-out drawer on mobile. Route groups like `(app)` don't
+affect the URL, so this was a pure refactor, not a route change.
+
+**`configuration` app now has a real Settings surface**, not just
+Django-admin-only fields:
+
+- `GET`/`PATCH /api/settings/` (RBAC-gated: `configuration.view` /
+  `configuration.edit`) - currently exposes `default_language`,
+  `allowed_id_types`, and the member-number style
+  (`member_number_prefix` + `member_number_padding`).
+- `members.generate_member_number()` (`members/services.py`) claims the
+  next number atomically - `select_for_update()` locks the tenant's
+  `TenantConfig` row for the transaction, so concurrent member creation
+  can never hand out the same number, and numbers are never reused even
+  if a member is later deleted.
+- Frontend: `/settings`, linked from the sidebar. Live preview of the next
+  member number as you type the prefix/padding. The add-member form's ID
+  type dropdown reads `allowed_id_types` and only offers what the SACCO
+  has chosen to accept.
+
+`TenantConfig` is a singleton per tenant schema (`TenantConfig.get_solo()`
+creates it with defaults on first access) - it didn't previously
+auto-create on tenant provisioning, so older tenants get one lazily the
+first time anything touches settings.
 
 ## Next steps
 

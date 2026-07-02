@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import GuarantorConsent, Member, MemberRelation
+from .services import generate_member_number
 
 
 class MemberRelationSerializer(serializers.ModelSerializer):
@@ -34,17 +35,9 @@ class MemberSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "member_number", "is_kyc_verified", "kyc_verified_at", "date_joined", "created_at"]
 
-    def _generate_member_number(self):
-        count = Member.objects.count() + 1
-        candidate = f"M-{count:05d}"
-        while Member.objects.filter(member_number=candidate).exists():
-            count += 1
-            candidate = f"M-{count:05d}"
-        return candidate
-
     def create(self, validated_data):
         relations_data = validated_data.pop("relations", [])
-        validated_data["member_number"] = self._generate_member_number()
+        validated_data["member_number"] = generate_member_number()
         request = self.context.get("request")
         if request is not None:
             validated_data["created_by"] = request.user

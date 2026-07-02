@@ -45,6 +45,7 @@
     "home": "Nyumbani",
     "dashboard": "Dashibodi",
     "members": "Wanachama",
+    "settings": "Mipangilio",
     "language": "Lugha",
     "logout": "Toka"
   },
@@ -122,5 +123,23 @@
     "idHuduma": "Huduma Namba",
     "idNida": "NIDA",
     "idPassport": "Pasipoti"
+  },
+  "Settings": {
+    "title": "Mipangilio",
+    "forbidden": "Huna ruhusa ya kuona mipangilio.",
+    "memberNumbering": "Unamba wa wanachama",
+    "memberNumberingHelp": "Weka jinsi namba mpya za wanachama zinavyotengenezwa kwa SACCO yako. Namba za wanachama waliopo hazibadiliki.",
+    "prefix": "Kiambishi mwanzo",
+    "padding": "Tarakimu",
+    "nextNumberPreview": "Namba ya mwanachama ijayo itakuwa",
+    "allowedIdTypes": "Aina za vitambulisho zinazokubalika",
+    "allowedIdTypesHelp": "Aina za vitambulisho ambazo wafanyakazi wanaweza kuchagua wakati wa kusajili mwanachama. Acha zote bila kuchagua ili kukubali yoyote.",
+    "idType_NATIONAL_ID": "Kitambulisho cha Taifa",
+    "idType_HUDUMA": "Huduma Namba",
+    "idType_NIDA": "NIDA",
+    "idType_PASSPORT": "Pasipoti",
+    "save": "Hifadhi mabadiliko",
+    "saved": "Imehifadhiwa",
+    "error": "Imeshindikana kuhifadhi mipangilio. Jaribu tena."
   }
 }
