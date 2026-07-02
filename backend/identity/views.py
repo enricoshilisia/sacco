@@ -36,6 +36,26 @@ def _assert_tenant_access(user):
         raise ValueError("This account does not have access to this SACCO.")
 
 
+def _grant_default_tenant_membership(user):
+    """
+    /register only resolves inside a tenant's own urlconf (never the public
+    one - see config/urls_public.py), so connection.schema_name here is
+    always a real SACCO, never the public schema. Without this, a
+    self-registered user gets a User row with no tie to any tenant and can
+    never log back in (TenantScopedTokenObtainPairSerializer would reject
+    every subsequent login).
+    """
+    from django.db import connection
+
+    from accesscontrol.models import Membership, Role
+    from tenants.models import Tenant
+
+    tenant = Tenant.objects.get(schema_name=connection.schema_name)
+    TenantAccess.objects.get_or_create(user=user, tenant=tenant)
+    member_role = Role.objects.get(name="Member")
+    Membership.objects.get_or_create(user=user, role=member_role)
+
+
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
@@ -43,6 +63,7 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        _grant_default_tenant_membership(user)
         return Response(
             {"user": UserSerializer(user).data, **_tokens_for(user)},
             status=status.HTTP_201_CREATED,
