@@ -59,7 +59,7 @@ export default function RegisterPage() {
                 type={field === "phone_number" ? "tel" : "text"}
                 value={form[field]}
                 onChange={(e) => setForm({ ...form, [field]: e.target.value })}
-                className="w-full rounded-lg border border-primary-200 px-4 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </label>
           ))}
@@ -75,7 +75,7 @@ export default function RegisterPage() {
               autoComplete="new-password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 px-4 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </label>
 

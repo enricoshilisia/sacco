@@ -103,7 +103,7 @@ export default function SaccoSignupPage() {
               required
               value={form.sacco_name}
               onChange={(e) => setForm({ ...form, sacco_name: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 px-4 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </label>
 
@@ -114,7 +114,7 @@ export default function SaccoSignupPage() {
             <select
               value={form.country}
               onChange={(e) => setForm({ ...form, country: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             >
               <option value="KE">{t("kenya")}</option>
               <option value="TZ">{t("tanzania")}</option>
@@ -132,7 +132,7 @@ export default function SaccoSignupPage() {
                 required
                 value={form.first_name}
                 onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-                className="w-full rounded-lg border border-primary-200 px-3 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-lg border border-primary-200 bg-white px-3 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </label>
             <label className="block">
@@ -143,7 +143,7 @@ export default function SaccoSignupPage() {
                 required
                 value={form.last_name}
                 onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-                className="w-full rounded-lg border border-primary-200 px-3 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-lg border border-primary-200 bg-white px-3 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </label>
           </div>
@@ -159,7 +159,7 @@ export default function SaccoSignupPage() {
               placeholder="+254700000000"
               value={form.phone_number}
               onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 px-4 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </label>
 
@@ -174,7 +174,7 @@ export default function SaccoSignupPage() {
               autoComplete="new-password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 px-4 py-3 text-base focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </label>
 
