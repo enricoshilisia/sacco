@@ -33,6 +33,9 @@ class SaccoSignupView(APIView):
             schema_name=schema_name,
             domain=domain,
             country=data["country"],
+            address=data["address"],
+            contact_email=data["contact_email"],
+            contact_phone=data["contact_phone"],
         )
 
         default_plan = Plan.objects.filter(is_default=True, is_active=True).first()
@@ -48,13 +51,14 @@ class SaccoSignupView(APIView):
             password=data["password"],
             first_name=data["first_name"],
             last_name=data["last_name"],
+            email=data["email"],
             preferred_language=tenant.default_language,
         )
         TenantAccess.objects.create(user=owner, tenant=tenant)
 
         with schema_context(tenant.schema_name):
             super_admin_role = Role.objects.get(name="SuperAdmin")
-            Membership.objects.create(user=owner, role=super_admin_role)
+            Membership.objects.create(user=owner, role=super_admin_role, job_title=data["job_title"])
 
         return Response(
             {

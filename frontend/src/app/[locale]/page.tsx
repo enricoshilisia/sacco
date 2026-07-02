@@ -1,9 +1,14 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useIsLoggedIn } from "@/lib/useIsLoggedIn";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function Home() {
   const t = useTranslations("Home");
+  const tNav = useTranslations("Nav");
+  const loggedIn = useIsLoggedIn();
 
   return (
     <div className="flex min-h-full flex-col bg-primary-50">
@@ -21,24 +26,35 @@ export default function Home() {
           <p className="mt-2 text-sm leading-6 text-primary-700">{t("tagline")}</p>
 
           <div className="mt-6 flex flex-col gap-3">
-            <Link
-              href="/signup-sacco"
-              className="w-full rounded-full bg-primary-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 active:bg-primary-800"
-            >
-              {t("startSacco")}
-            </Link>
-            <Link
-              href="/login"
-              className="w-full rounded-full border border-primary-200 bg-white px-5 py-3 text-center text-sm font-semibold text-primary-800 transition-colors hover:bg-primary-50"
-            >
-              {t("login")}
-            </Link>
-            <Link
-              href="/register"
-              className="text-center text-sm font-medium text-primary-700 underline-offset-2 hover:underline"
-            >
-              {t("register")}
-            </Link>
+            {loggedIn ? (
+              <Link
+                href="/dashboard"
+                className="w-full rounded-full bg-primary-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 active:bg-primary-800"
+              >
+                {tNav("dashboard")}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/signup-sacco"
+                  className="w-full rounded-full bg-primary-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 active:bg-primary-800"
+                >
+                  {t("startSacco")}
+                </Link>
+                <Link
+                  href="/login"
+                  className="w-full rounded-full border border-primary-200 bg-white px-5 py-3 text-center text-sm font-semibold text-primary-800 transition-colors hover:bg-primary-50"
+                >
+                  {t("login")}
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-center text-sm font-medium text-primary-700 underline-offset-2 hover:underline"
+                >
+                  {t("register")}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </main>

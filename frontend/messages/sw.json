@@ -19,14 +19,21 @@
   "SaccoSignup": {
     "title": "Anzisha jaribio la bure la SACCO yako",
     "subtitle": "Siku 30 bila malipo, hakuna kadi inayohitajika. Sanidi SACCO yako na ualike timu yako.",
+    "saccoSection": "Kuhusu SACCO yako",
     "saccoName": "Jina la SACCO",
     "country": "Nchi",
     "kenya": "Kenya",
     "tanzania": "Tanzania",
+    "address": "Anwani ya makazi / posta",
+    "contactEmail": "Barua pepe ya mawasiliano ya SACCO",
+    "contactPhone": "Nambari ya simu ya mawasiliano ya SACCO",
     "ownerSection": "Akaunti yako (msimamizi wa SACCO)",
     "firstName": "Jina la kwanza",
     "lastName": "Jina la mwisho",
-    "phoneNumber": "Nambari ya simu",
+    "jobTitle": "Cheo",
+    "jobTitlePlaceholder": "mfano: Meneja Mkuu, Mweka Hazina",
+    "phoneNumber": "Nambari yako ya simu",
+    "email": "Barua pepe yako",
     "password": "Nenosiri",
     "submit": "Anza jaribio la bure",
     "error": "Imeshindikana kuunda SACCO yako. Angalia taarifa zako na ujaribu tena.",
@@ -37,6 +44,26 @@
   "Nav": {
     "home": "Nyumbani",
     "dashboard": "Dashibodi",
-    "language": "Lugha"
+    "language": "Lugha",
+    "logout": "Toka"
+  },
+  "Dashboard": {
+    "welcome": "Karibu, {name}",
+    "saccoProfile": "Wasifu wa SACCO",
+    "yourProfile": "Wasifu wako",
+    "country": "Nchi",
+    "currency": "Sarafu",
+    "address": "Anwani",
+    "contactEmail": "Barua pepe ya mawasiliano",
+    "contactPhone": "Simu ya mawasiliano",
+    "notProvided": "Haijatolewa",
+    "phoneNumber": "Nambari ya simu",
+    "email": "Barua pepe",
+    "role": "Jukumu",
+    "jobTitle": "Cheo",
+    "memberSince": "Mwanachama tangu",
+    "loading": "Inapakia dashibodi yako...",
+    "sessionExpired": "Muda wako wa kuingia umeisha. Tafadhali ingia tena.",
+    "backToLogin": "Rudi kuingia"
   }
 }

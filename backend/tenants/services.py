@@ -36,7 +36,16 @@ def unique_schema_and_domain(name: str) -> tuple[str, str]:
     return schema_name, domain
 
 
-def provision_tenant(*, name: str, schema_name: str, domain: str, country: str) -> Tenant:
+def provision_tenant(
+    *,
+    name: str,
+    schema_name: str,
+    domain: str,
+    country: str,
+    address: str = "",
+    contact_email: str = "",
+    contact_phone: str = "",
+) -> Tenant:
     """
     Core tenant-creation logic shared by the `provision_tenant` management
     command and the public SACCO signup endpoint. Creating the Tenant row
@@ -54,6 +63,9 @@ def provision_tenant(*, name: str, schema_name: str, domain: str, country: str) 
         country=country,
         currency=defaults["currency"],
         default_language=defaults["language"],
+        address=address,
+        contact_email=contact_email,
+        contact_phone=contact_phone,
     )
     Domain.objects.create(domain=domain, tenant=tenant, is_primary=True)
     return tenant

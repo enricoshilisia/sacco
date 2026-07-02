@@ -71,6 +71,10 @@ class Membership(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="memberships")
     role = models.ForeignKey(Role, on_delete=models.PROTECT, related_name="memberships")
 
+    # Free-text display title (e.g. "General Manager", "Treasurer") -
+    # distinct from `role`, which drives RBAC permissions.
+    job_title = models.CharField(max_length=100, blank=True)
+
     is_active = models.BooleanField(default=True)
     assigned_at = models.DateTimeField(auto_now_add=True)
     assigned_by = models.ForeignKey(

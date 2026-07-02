@@ -20,7 +20,7 @@ export default function LoginPage() {
   async function afterLogin() {
     // Best-effort: don't block navigation if the browser denies/unsupports push.
     enablePushNotifications().catch(() => {});
-    router.push("/");
+    router.push("/dashboard");
   }
 
   async function handlePasswordLogin(e: React.FormEvent) {

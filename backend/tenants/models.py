@@ -28,6 +28,12 @@ class Tenant(TenantMixin):
     currency = models.CharField(max_length=3, choices=Currency.choices)
     default_language = models.CharField(max_length=5, default="en")
 
+    # Official SACCO contact details - distinct from any individual
+    # member/admin's personal phone or email.
+    address = models.TextField(blank=True)
+    contact_email = models.EmailField(blank=True)
+    contact_phone = models.CharField(max_length=20, blank=True)
+
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -19,14 +19,21 @@
   "SaccoSignup": {
     "title": "Start your SACCO's free trial",
     "subtitle": "30 days free, no card required. Set up your SACCO and invite your team.",
+    "saccoSection": "About your SACCO",
     "saccoName": "SACCO name",
     "country": "Country",
     "kenya": "Kenya",
     "tanzania": "Tanzania",
+    "address": "Physical / postal address",
+    "contactEmail": "SACCO contact email",
+    "contactPhone": "SACCO contact phone",
     "ownerSection": "Your account (SACCO administrator)",
     "firstName": "First name",
     "lastName": "Last name",
-    "phoneNumber": "Phone number",
+    "jobTitle": "Job title",
+    "jobTitlePlaceholder": "e.g. General Manager, Treasurer",
+    "phoneNumber": "Your phone number",
+    "email": "Your email address",
     "password": "Password",
     "submit": "Start free trial",
     "error": "Couldn't create your SACCO. Check your details and try again.",
@@ -37,6 +44,26 @@
   "Nav": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "language": "Language"
+    "language": "Language",
+    "logout": "Log out"
+  },
+  "Dashboard": {
+    "welcome": "Welcome, {name}",
+    "saccoProfile": "SACCO profile",
+    "yourProfile": "Your profile",
+    "country": "Country",
+    "currency": "Currency",
+    "address": "Address",
+    "contactEmail": "Contact email",
+    "contactPhone": "Contact phone",
+    "notProvided": "Not provided",
+    "phoneNumber": "Phone number",
+    "email": "Email",
+    "role": "Role",
+    "jobTitle": "Job title",
+    "memberSince": "Member since",
+    "loading": "Loading your dashboard...",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "backToLogin": "Back to login"
   }
 }

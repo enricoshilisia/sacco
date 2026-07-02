@@ -13,12 +13,20 @@ type SignupResult = {
   status: string;
 };
 
+const inputClass =
+  "w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500";
+
 const initialForm = {
   sacco_name: "",
   country: "KE",
+  address: "",
+  contact_email: "",
+  contact_phone: "",
   first_name: "",
   last_name: "",
   phone_number: "",
+  email: "",
+  job_title: "",
   password: "",
 };
 
@@ -28,6 +36,14 @@ export default function SaccoSignupPage() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [result, setResult] = useState<SignupResult | null>(null);
+
+  function field(name: keyof typeof initialForm) {
+    return {
+      value: form[name],
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        setForm({ ...form, [name]: e.target.value }),
+    };
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,31 +111,50 @@ export default function SaccoSignupPage() {
           <h1 className="text-xl font-semibold text-primary-900">{t("title")}</h1>
           <p className="mt-1 mb-6 text-sm text-primary-600">{t("subtitle")}</p>
 
+          <p className="mb-3 text-sm font-medium text-primary-800">{t("saccoSection")}</p>
+
           <label className="mb-4 block">
             <span className="mb-1 block text-sm font-medium text-primary-800">
               {t("saccoName")}
             </span>
-            <input
-              required
-              value={form.sacco_name}
-              onChange={(e) => setForm({ ...form, sacco_name: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            />
+            <input required className={inputClass} {...field("sacco_name")} />
           </label>
 
-          <label className="mb-6 block">
+          <label className="mb-4 block">
             <span className="mb-1 block text-sm font-medium text-primary-800">
               {t("country")}
             </span>
             <select
               value={form.country}
               onChange={(e) => setForm({ ...form, country: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className={inputClass}
             >
               <option value="KE">{t("kenya")}</option>
               <option value="TZ">{t("tanzania")}</option>
             </select>
           </label>
+
+          <label className="mb-4 block">
+            <span className="mb-1 block text-sm font-medium text-primary-800">
+              {t("address")}
+            </span>
+            <input className={inputClass} {...field("address")} />
+          </label>
+
+          <div className="mb-6 grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-primary-800">
+                {t("contactEmail")}
+              </span>
+              <input type="email" className={inputClass} {...field("contact_email")} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-primary-800">
+                {t("contactPhone")}
+              </span>
+              <input type="tel" inputMode="tel" className={inputClass} {...field("contact_phone")} />
+            </label>
+          </div>
 
           <p className="mb-3 text-sm font-medium text-primary-800">{t("ownerSection")}</p>
 
@@ -128,25 +163,22 @@ export default function SaccoSignupPage() {
               <span className="mb-1 block text-sm font-medium text-primary-800">
                 {t("firstName")}
               </span>
-              <input
-                required
-                value={form.first_name}
-                onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-                className="w-full rounded-lg border border-primary-200 bg-white px-3 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              />
+              <input required className={inputClass} {...field("first_name")} />
             </label>
             <label className="block">
               <span className="mb-1 block text-sm font-medium text-primary-800">
                 {t("lastName")}
               </span>
-              <input
-                required
-                value={form.last_name}
-                onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-                className="w-full rounded-lg border border-primary-200 bg-white px-3 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              />
+              <input required className={inputClass} {...field("last_name")} />
             </label>
           </div>
+
+          <label className="mb-4 block">
+            <span className="mb-1 block text-sm font-medium text-primary-800">
+              {t("jobTitle")}
+            </span>
+            <input placeholder={t("jobTitlePlaceholder")} className={inputClass} {...field("job_title")} />
+          </label>
 
           <label className="mb-4 block">
             <span className="mb-1 block text-sm font-medium text-primary-800">
@@ -157,10 +189,16 @@ export default function SaccoSignupPage() {
               required
               inputMode="tel"
               placeholder="+254700000000"
-              value={form.phone_number}
-              onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className={inputClass}
+              {...field("phone_number")}
             />
+          </label>
+
+          <label className="mb-4 block">
+            <span className="mb-1 block text-sm font-medium text-primary-800">
+              {t("email")}
+            </span>
+            <input type="email" required className={inputClass} {...field("email")} />
           </label>
 
           <label className="mb-2 block">
@@ -172,9 +210,8 @@ export default function SaccoSignupPage() {
               required
               minLength={8}
               autoComplete="new-password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className={inputClass}
+              {...field("password")}
             />
           </label>
 
