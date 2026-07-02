@@ -3,7 +3,8 @@
 Multi-tenant SACCO management platform for Kenya and Tanzania. See
 [`CLAUDE.md`](CLAUDE.md) for the non-negotiable domain/correctness rules and
 [`BUILD_PLAN.md`](BUILD_PLAN.md) for the phased build plan. This README
-covers how to actually run what's been built so far (Phase 0: Foundation).
+covers how to actually run what's been built so far (Phase 0: Foundation,
+plus Phase 1: Members).
 
 ## Stack
 
@@ -243,8 +244,53 @@ provider-adapter exercise, not a re-architecture.
 Both are SuperAdmin in their own SACCO only - cross-tenant login is rejected
 by design (see Identity section above).
 
+## Phase 1: Members
+
+`members` app (tenant-schema). Full membership lifecycle per
+`BUILD_PLAN.md`:
+
+- **`Member`**: the membership record, deliberately separate from
+  `identity.User` - a member is commonly registered by branch staff before
+  they have (or want) a login account, so `user` is an optional link, not
+  a requirement. Auto-generated `member_number` (`M-00001`, ...). ID type
+  reuses `configuration.IdType` (National ID/Huduma for KE, NIDA for TZ).
+- **`MemberRelation`**: next-of-kin, nominees, and beneficiaries as one
+  table with a `kind` discriminator, not three separate ones - they share
+  a shape, and a real person is often more than one at once (e.g. a spouse
+  who's both next-of-kin and beneficiary). Created/replaced together with
+  the member in one API call.
+- **`GuarantorConsent`**: the guarantor relationship graph, structure only
+  (who's agreed to guarantee whom, and whether they've consented). Does
+  **not** lock deposits or compute borrowing limits - that's real pledge
+  accounting and belongs to `loans` (Phase 4), once a loan exists to
+  pledge against.
+- **`MemberDocument`**: KYC documents, stored via the tenant's configured
+  MinIO/S3 backend (`STORAGES` in `config/settings.py`).
+
+**RBAC is now enforced on real business data**, not just authentication -
+`accesscontrol/permissions.py:require_permission(code)` is a DRF
+permission-class factory checked against the seeded permission catalog
+(`members.view`, `members.create`, `members.edit`, `members.kyc_verify`,
+`members.manage_guarantors`, ...). Every future app's views should use the
+same factory rather than inventing per-app permission checks.
+
+Frontend: `/members` (list), `/members/new` (create, with dynamic
+next-of-kin/nominee/beneficiary rows), `/members/[id]` (detail + KYC
+verification), all linked from `/dashboard`.
+
+### End-to-end testing
+
+`frontend/e2e/members-flow.js` is a real (kept, not throwaway) Playwright
+script - logs in, creates a member with a next-of-kin, verifies KYC, and
+asserts on rendered content + zero console errors:
+
+```bash
+cd frontend
+npm run e2e   # requires both dev servers running + nairobi_demo seeded
+```
+
 ## Next steps
 
-Per `BUILD_PLAN.md`: Phase 1 (`members`), then Phase 2
-(`accounting` + `savings` together - "the make-or-break slice"). Don't skip
-ahead to payments/loans before the ledger is proven.
+Per `BUILD_PLAN.md`: Phase 2 (`accounting` + `savings` together - "the
+make-or-break slice"). Don't skip ahead to payments/loans before the
+ledger is proven.

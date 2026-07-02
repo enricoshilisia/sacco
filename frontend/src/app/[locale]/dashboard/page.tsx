@@ -102,6 +102,13 @@ export default function DashboardPage() {
           {t("welcome", { name: fullName || user.phone_number })}
         </p>
 
+        <Link
+          href="/members"
+          className="mb-6 inline-block rounded-full bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700"
+        >
+          {t("viewMembers")}
+        </Link>
+
         <div className="grid gap-4 sm:grid-cols-2">
           <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-primary-100">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-primary-500">

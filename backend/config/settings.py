@@ -51,6 +51,7 @@ TENANT_APPS = [
     "core",
     "configuration",
     "accesscontrol",
+    "members",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
@@ -211,6 +212,11 @@ CORS_ALLOWED_ORIGINS = env.list(
 # port, instead - e.g. http://dar.20.56.34.194.nip.io:3000 alongside
 # http://nairobi.20.56.34.194.nip.io:3000, with no per-tenant config.
 CORS_ALLOWED_ORIGIN_REGEXES = [
+    # .localhost always allowed for local dev, regardless of what
+    # TENANT_BASE_DOMAIN is set to for actually provisioning new tenants -
+    # demo tenants commonly carry both a .localhost Domain (local dev) and
+    # a TENANT_BASE_DOMAIN one (e.g. nip.io, for remote/cloud access).
+    r"^https?://([a-z0-9-]+\.)?localhost(:\d+)?$",
     rf"^https?://([a-z0-9-]+\.)?{re.escape(TENANT_BASE_DOMAIN)}(:\d+)?$",
 ]
 CORS_ALLOW_CREDENTIALS = True
