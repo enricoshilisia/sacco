@@ -306,22 +306,53 @@ Django-admin-only fields:
 
 - `GET`/`PATCH /api/settings/` (RBAC-gated: `configuration.view` /
   `configuration.edit`) - currently exposes `default_language`,
-  `allowed_id_types`, and the member-number style
-  (`member_number_prefix` + `member_number_padding`).
+  `allowed_id_types`, and the member-number style (prefix **and** suffix,
+  both optional/blank-able - a plain zero-padded sequence with neither is
+  a valid style - plus zero-pad width).
 - `members.generate_member_number()` (`members/services.py`) claims the
   next number atomically - `select_for_update()` locks the tenant's
   `TenantConfig` row for the transaction, so concurrent member creation
   can never hand out the same number, and numbers are never reused even
   if a member is later deleted.
-- Frontend: `/settings`, linked from the sidebar. Live preview of the next
-  member number as you type the prefix/padding. The add-member form's ID
-  type dropdown reads `allowed_id_types` and only offers what the SACCO
-  has chosen to accept.
+- `PATCH /api/tenant/profile/` (RBAC-gated: `admin.manage_tenant`) - edit
+  a SACCO's name/address/contact details and logo *after* creation.
+  Deliberately excludes country/currency (set once at sign-up; changing
+  them later has real regulatory implications, not just a display update).
+- `POST /api/members/<id>/photo/` (RBAC-gated: `members.edit`) - upload a
+  member's profile photo as a separate step from creating/editing the rest
+  of the record, same pattern as the SACCO logo. Both are deliberately
+  update-only, not part of the creation flow, to avoid mixing multipart
+  file uploads into the JSON-only creation wizards.
+- Frontend: `/settings` is tabbed (SACCO details / Member numbering), not
+  one long scrolling page - each tab is its own component, easy to add
+  more tabs as later phases add settings. Live preview of the next member
+  number as you type prefix/suffix/padding. The add-member form's ID type
+  dropdown reads `allowed_id_types` and only offers what the SACCO has
+  chosen to accept. Logo/photo uploads use `apiFetch` with a `FormData`
+  body - `lib/api.ts` skips the JSON `Content-Type` header for `FormData`
+  so the browser can set its own multipart boundary.
 
 `TenantConfig` is a singleton per tenant schema (`TenantConfig.get_solo()`
 creates it with defaults on first access) - it didn't previously
 auto-create on tenant provisioning, so older tenants get one lazily the
 first time anything touches settings.
+
+### Object storage: internal vs. public URLs
+
+Django talks to MinIO over `MINIO_ENDPOINT_URL` (`http://localhost:9000` -
+fast, same-host, no NAT issues). A browser on someone else's machine can't
+reach that. `core/storage.py:PublicUrlS3Storage` generates the signed URL
+normally (against the internal endpoint), then rewrites just the
+scheme/host/port to `MINIO_PUBLIC_ENDPOINT_URL` before returning it -
+MinIO's SigV2 query-string auth signs the method, expiry, and resource
+path, never the Host header, so this rewrite doesn't invalidate the
+signature. (This is why `AWS_S3_CUSTOM_DOMAIN` wasn't used instead - it
+switches django-storages to *unsigned*, permanently-public URLs, which is
+wrong for member photos.) The MinIO **API** port (9000) is exposed
+publicly in `docker-compose.yml` for this reason; the admin **console**
+port (9001) has no such need and stays on `127.0.0.1` only. Leave
+`MINIO_PUBLIC_ENDPOINT_URL` blank for pure-local dev (both endpoints are
+the same host, no rewrite needed).
 
 ## Next steps
 

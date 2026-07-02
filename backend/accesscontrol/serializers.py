@@ -18,8 +18,22 @@ class TenantProfileSerializer(serializers.ModelSerializer):
             "address",
             "contact_email",
             "contact_phone",
+            "logo",
             "created_at",
         ]
+
+
+class TenantUpdateSerializer(serializers.ModelSerializer):
+    """
+    Editing a SACCO's own profile after creation - name, contact details,
+    and logo. Deliberately excludes country/currency: those are set once at
+    sign-up and changing them afterwards has real regulatory/accounting
+    implications, not just a display update.
+    """
+
+    class Meta:
+        model = Tenant
+        fields = ["name", "address", "contact_email", "contact_phone", "logo"]
 
 
 class MembershipSerializer(serializers.ModelSerializer):

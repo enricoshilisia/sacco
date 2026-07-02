@@ -18,4 +18,8 @@ def generate_member_number() -> str:
         config.member_number_next_sequence = sequence + 1
         config.save(update_fields=["member_number_next_sequence"])
 
-    return f"{config.member_number_prefix}{sequence:0{config.member_number_padding}d}"
+    return (
+        f"{config.member_number_prefix}"
+        f"{sequence:0{config.member_number_padding}d}"
+        f"{config.member_number_suffix}"
+    )

@@ -26,6 +26,10 @@ class Gender(models.TextChoices):
     OTHER = "OTHER", "Other"
 
 
+def member_photo_path(instance, filename):
+    return f"members/{instance.id}/photo/{filename}"
+
+
 class Member(AuditMixin, models.Model):
     """
     The membership record itself - distinct from identity.User. A member is
@@ -60,6 +64,7 @@ class Member(AuditMixin, models.Model):
     phone_number = models.CharField(max_length=20)
     email = models.EmailField(blank=True)
     physical_address = models.TextField(blank=True)
+    photo = models.ImageField(upload_to=member_photo_path, blank=True, null=True)
 
     is_kyc_verified = models.BooleanField(default=False)
     kyc_verified_at = models.DateTimeField(null=True, blank=True)

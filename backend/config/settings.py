@@ -165,7 +165,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": "core.storage.PublicUrlS3Storage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
@@ -175,7 +175,11 @@ STORAGES = {
 AWS_ACCESS_KEY_ID = env("MINIO_ROOT_USER", default="sacco_minio")
 AWS_SECRET_ACCESS_KEY = env("MINIO_ROOT_PASSWORD", default="change-me-locally")
 AWS_STORAGE_BUCKET_NAME = env("MINIO_BUCKET", default="sacco-documents")
+# Internal - what Django itself uses to talk to MinIO (fast, same-host).
 AWS_S3_ENDPOINT_URL = env("MINIO_ENDPOINT_URL", default="http://localhost:9000")
+# External - what gets substituted into URLs returned to the browser.
+# Blank in pure-local dev (both are the same host, no rewrite needed).
+AWS_S3_PUBLIC_ENDPOINT_URL = env("MINIO_PUBLIC_ENDPOINT_URL", default="")
 AWS_S3_ADDRESSING_STYLE = "path"
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = True

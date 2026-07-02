@@ -33,6 +33,7 @@ class Tenant(TenantMixin):
     address = models.TextField(blank=True)
     contact_email = models.EmailField(blank=True)
     contact_phone = models.CharField(max_length=20, blank=True)
+    logo = models.ImageField(upload_to="tenant-logos/", blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -37,8 +37,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const sidebarContent = (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 px-5 py-5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-600 text-white">
-          <Building2 size={18} />
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary-600 text-white">
+          {profile?.tenant.logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={profile.tenant.logo} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <Building2 size={18} />
+          )}
         </div>
         <span className="truncate text-sm font-semibold text-primary-900">{saccoName}</span>
       </div>

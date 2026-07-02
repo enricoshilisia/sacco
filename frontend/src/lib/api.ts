@@ -65,7 +65,11 @@ async function baseFetch<T>(
   authenticated: boolean,
 ): Promise<T> {
   const headers = new Headers(options.headers);
-  headers.set("Content-Type", "application/json");
+  // Leave Content-Type unset for FormData bodies - the browser needs to add
+  // its own multipart boundary, which a hardcoded header would clobber.
+  if (!(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
   if (authenticated) {
     const token = getAccessToken();
     if (token) headers.set("Authorization", `Bearer ${token}`);

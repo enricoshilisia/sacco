@@ -14,6 +14,7 @@ type MemberListItem = {
   status: string;
   phone_number: string;
   is_kyc_verified: boolean;
+  photo: string | null;
 };
 
 type PageState = "loading" | "ready" | "forbidden" | "expired";
@@ -89,6 +90,7 @@ export default function MembersListPage() {
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="border-b border-primary-100 bg-primary-50/50 text-xs font-medium uppercase tracking-wide text-primary-500">
+                  <th className="w-10 px-5 py-3"></th>
                   <th className="px-5 py-3">{t("memberNumber")}</th>
                   <th className="px-5 py-3">{t("name")}</th>
                   <th className="px-5 py-3">{t("category")}</th>
@@ -103,6 +105,21 @@ export default function MembersListPage() {
                     onClick={() => router.push(`/members/${m.id}`)}
                     className="cursor-pointer border-b border-primary-50 transition-colors last:border-0 hover:bg-primary-50/40"
                   >
+                    <td className="px-5 py-3.5">
+                      <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-xs font-semibold text-primary-700">
+                        {m.photo ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={m.photo} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          m.full_name
+                            .split(" ")
+                            .map((p) => p[0])
+                            .join("")
+                            .slice(0, 2)
+                            .toUpperCase()
+                        )}
+                      </div>
+                    </td>
                     <td className="px-5 py-3.5 font-mono text-primary-800">{m.member_number}</td>
                     <td className="px-5 py-3.5 font-medium text-primary-900">{m.full_name}</td>
                     <td className="px-5 py-3.5 text-primary-700">

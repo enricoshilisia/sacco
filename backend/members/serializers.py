@@ -18,7 +18,7 @@ class MemberListSerializer(serializers.ModelSerializer):
         model = Member
         fields = [
             "id", "member_number", "full_name", "category", "status",
-            "phone_number", "id_type", "id_number", "is_kyc_verified", "date_joined",
+            "phone_number", "id_type", "id_number", "is_kyc_verified", "date_joined", "photo",
         ]
 
 
@@ -30,10 +30,13 @@ class MemberSerializer(serializers.ModelSerializer):
         fields = [
             "id", "member_number", "user", "category", "status",
             "first_name", "last_name", "other_names", "date_of_birth", "gender",
-            "id_type", "id_number", "phone_number", "email", "physical_address",
+            "id_type", "id_number", "phone_number", "email", "physical_address", "photo",
             "is_kyc_verified", "kyc_verified_at", "date_joined", "created_at", "relations",
         ]
-        read_only_fields = ["id", "member_number", "is_kyc_verified", "kyc_verified_at", "date_joined", "created_at"]
+        read_only_fields = [
+            "id", "member_number", "photo", "is_kyc_verified", "kyc_verified_at",
+            "date_joined", "created_at",
+        ]
 
     def create(self, validated_data):
         relations_data = validated_data.pop("relations", [])
@@ -59,6 +62,12 @@ class MemberSerializer(serializers.ModelSerializer):
             for relation in relations_data:
                 MemberRelation.objects.create(member=instance, **relation)
         return instance
+
+
+class MemberPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = ["photo"]
 
 
 class GuarantorConsentSerializer(serializers.ModelSerializer):

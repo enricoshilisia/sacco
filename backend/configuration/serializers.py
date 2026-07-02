@@ -10,6 +10,7 @@ class TenantConfigSerializer(serializers.ModelSerializer):
             "default_language",
             "allowed_id_types",
             "member_number_prefix",
+            "member_number_suffix",
             "member_number_padding",
             "member_number_next_sequence",
         ]
@@ -25,4 +26,9 @@ class TenantConfigSerializer(serializers.ModelSerializer):
     def validate_member_number_prefix(self, value):
         if len(value) > 20:
             raise serializers.ValidationError("Prefix must be 20 characters or fewer.")
+        return value
+
+    def validate_member_number_suffix(self, value):
+        if len(value) > 20:
+            raise serializers.ValidationError("Suffix must be 20 characters or fewer.")
         return value

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, CheckCircle2, Clock, Users } from "lucide-react";
+import { ArrowLeft, Camera, CheckCircle2, Clock, Users } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError, getAccessToken } from "@/lib/api";
 
@@ -22,6 +22,7 @@ type MemberDetail = {
   phone_number: string;
   email: string;
   physical_address: string;
+  photo: string | null;
   is_kyc_verified: boolean;
   relations: {
     id: string;
@@ -37,9 +38,11 @@ export default function MemberDetailPage() {
   const t = useTranslations("Members");
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [member, setMember] = useState<MemberDetail | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [verifying, setVerifying] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   useEffect(() => {
     if (!getAccessToken()) {
@@ -67,6 +70,23 @@ export default function MemberDetailPage() {
       setMember(updated);
     } finally {
       setVerifying(false);
+    }
+  }
+
+  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !member) return;
+    setUploadingPhoto(true);
+    try {
+      const form = new FormData();
+      form.append("photo", file);
+      const updated = await apiFetch<MemberDetail>(`/api/members/${member.id}/photo/`, {
+        method: "POST",
+        body: form,
+      });
+      setMember(updated);
+    } finally {
+      setUploadingPhoto(false);
     }
   }
 
@@ -118,9 +138,29 @@ export default function MemberDetailPage() {
       </Link>
 
       <div className="mb-5 flex items-center gap-4">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-100 text-lg font-semibold text-primary-700">
-          {initials}
-        </div>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingPhoto}
+          className="group relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-lg font-semibold text-primary-700"
+        >
+          {member.photo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={member.photo} alt="" className="h-full w-full object-cover" />
+          ) : (
+            initials
+          )}
+          <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <Camera size={16} className="text-white" />
+          </span>
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handlePhotoChange}
+        />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-xl font-semibold text-primary-900">{fullName}</h1>
           <p className="font-mono text-sm text-primary-500">{member.member_number}</p>

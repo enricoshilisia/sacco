@@ -33,7 +33,10 @@ class TenantConfig(models.Model):
     # next_sequence is incremented atomically under a row lock at creation
     # time (see members/services.py) so numbers never collide or reuse a
     # deleted member's number.
-    member_number_prefix = models.CharField(max_length=20, default="M-")
+    # Both blank-able - a SACCO isn't required to use a prefix or suffix at
+    # all, a plain zero-padded sequence is a valid style too.
+    member_number_prefix = models.CharField(max_length=20, default="M-", blank=True)
+    member_number_suffix = models.CharField(max_length=20, default="", blank=True)
     member_number_padding = models.PositiveSmallIntegerField(
         default=5, help_text="Digits to zero-pad the sequence to, e.g. 5 -> 00001"
     )

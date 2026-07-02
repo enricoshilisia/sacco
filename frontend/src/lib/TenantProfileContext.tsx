@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { apiFetch, clearTokens, getAccessToken } from "./api";
 
@@ -13,6 +13,7 @@ export type TenantProfile = {
     address: string;
     contact_email: string;
     contact_phone: string;
+    logo: string | null;
     created_at: string;
   };
   user: {
@@ -33,6 +34,7 @@ type ContextValue = {
   profile: TenantProfile | null;
   status: "loading" | "ready" | "expired";
   logout: () => void;
+  refresh: () => void;
 };
 
 const TenantProfileContext = createContext<ContextValue | null>(null);
@@ -42,18 +44,22 @@ export function TenantProfileProvider({ children }: { children: React.ReactNode 
   const [profile, setProfile] = useState<TenantProfile | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "expired">("loading");
 
-  useEffect(() => {
-    if (!getAccessToken()) {
-      router.replace("/login");
-      return;
-    }
+  const load = useCallback(() => {
     apiFetch<TenantProfile>("/api/tenant/me/")
       .then((data) => {
         setProfile(data);
         setStatus("ready");
       })
       .catch(() => setStatus("expired"));
-  }, [router]);
+  }, []);
+
+  useEffect(() => {
+    if (!getAccessToken()) {
+      router.replace("/login");
+      return;
+    }
+    load();
+  }, [router, load]);
 
   function logout() {
     clearTokens();
@@ -61,7 +67,7 @@ export function TenantProfileProvider({ children }: { children: React.ReactNode 
   }
 
   return (
-    <TenantProfileContext.Provider value={{ profile, status, logout }}>
+    <TenantProfileContext.Provider value={{ profile, status, logout, refresh: load }}>
       {children}
     </TenantProfileContext.Provider>
   );

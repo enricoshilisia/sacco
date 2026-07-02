@@ -37,7 +37,11 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-sacco_minio}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-locally}
     ports:
-      - "127.0.0.1:${MINIO_API_PORT:-9000}:9000"
+      # API port (9000) needs to be reachable by browsers, not just this
+      # server, so uploaded logos/photos actually load - see
+      # AWS_S3_PUBLIC_ENDPOINT_URL / core/storage.py. The admin console
+      # (9001) has no such need and stays internal-only.
+      - "${MINIO_API_PORT:-9000}:9000"
       - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio_data:/data

@@ -1,5 +1,6 @@
 from django.utils import timezone
 from rest_framework import generics, status
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,7 +8,12 @@ from rest_framework.views import APIView
 from accesscontrol.permissions import require_permission
 
 from .models import GuarantorConsent, GuarantorConsentStatus, Member
-from .serializers import GuarantorConsentSerializer, MemberListSerializer, MemberSerializer
+from .serializers import (
+    GuarantorConsentSerializer,
+    MemberListSerializer,
+    MemberPhotoSerializer,
+    MemberSerializer,
+)
 
 
 class MemberListCreateView(generics.ListCreateAPIView):
@@ -39,6 +45,21 @@ class MemberKycVerifyView(APIView):
         member.kyc_verified_at = timezone.now()
         member.kyc_verified_by = request.user
         member.save(update_fields=["is_kyc_verified", "kyc_verified_at", "kyc_verified_by"])
+        return Response(MemberSerializer(member).data)
+
+
+class MemberPhotoUploadView(APIView):
+    """Upload/replace a member's profile photo - a separate step from
+    creating or editing the rest of the record."""
+
+    permission_classes = [IsAuthenticated, require_permission("members.edit")]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, pk):
+        member = generics.get_object_or_404(Member, pk=pk)
+        serializer = MemberPhotoSerializer(member, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(updated_by=request.user)
         return Response(MemberSerializer(member).data)
 
 
