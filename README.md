@@ -39,6 +39,62 @@ matters for self-service sign-up (below), where there's no one available to
 edit settings by hand. In production, set the wildcard to your real domain
 (e.g. `.saccoplatform.com`) via `TENANT_BASE_DOMAIN`.
 
+## Accessing this from outside the server (cloud/remote)
+
+Django (`:8000`) and Next.js (`:3000`) both bind `0.0.0.0`, so nothing at
+the OS level blocks remote access - but reachability from the internet
+also depends on this VM's cloud firewall (Azure Network Security Group),
+which isn't configured from inside the box. Open inbound TCP 3000 and 8000
+there if you need real remote/browser access.
+
+Postgres/Redis/MinIO are deliberately bound to `127.0.0.1` only in
+`docker-compose.yml` - they should never be reachable from outside this
+host, regardless of NSG rules, since they hold live data behind
+demo-grade local credentials.
+
+**Multi-tenant domain routing does not work over a raw IP.** Two reasons:
+`.localhost` domains (used for local dev) are hardcoded by every browser to
+resolve to loopback, so they can never work remotely no matter the DNS; and
+hitting the bare IP sends a `Host` header that matches no tenant, so
+`django-tenants` falls back to the public schema (admin + sign-up only, not
+any SACCO's login/data).
+
+The fix used here without owning a domain yet: **nip.io**, a free wildcard
+DNS-over-IP service - `anything.<your-ip>.nip.io` publicly resolves to
+`<your-ip>`. That keeps real per-tenant domain routing working over the
+internet. To set it up for a given server IP:
+
+```bash
+# backend .env
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,.localhost,<ip>,.<ip>.nip.io
+TENANT_BASE_DOMAIN=<ip>.nip.io
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://<ip>:3000
+
+# frontend .env.local - point at whichever tenant you're testing
+NEXT_PUBLIC_API_BASE_URL=http://nairobi.<ip>.nip.io:8000
+NEXT_PUBLIC_PUBLIC_API_BASE_URL=http://<ip>.nip.io:8000
+```
+
+New sign-ups (`/signup-sacco`) automatically get a `*.<ip>.nip.io` domain
+once `TENANT_BASE_DOMAIN` is set this way. For existing tenants, add a
+second (non-primary) `Domain` row rather than replacing the `.localhost`
+one - both keep working:
+
+```python
+Domain.objects.create(domain="nairobi.<ip>.nip.io", tenant=tenant, is_primary=False)
+```
+
+This is a bridge for testing/demoing before a real domain exists - swap
+`TENANT_BASE_DOMAIN` for a real wildcard-DNS domain before any actual
+production/customer traffic.
+
+One important limitation this doesn't fix: the frontend's
+`NEXT_PUBLIC_API_BASE_URL` is a single value baked in at dev-server start,
+so one running frontend instance only ever talks to *one* tenant's API.
+Serving many tenants correctly from one frontend deployment (e.g. deriving
+the API host from `window.location.hostname` at runtime instead of a
+static env var) is a real architecture task for later, not yet built.
+
 ## Self-service SACCO sign-up (30-day free trial)
 
 A public, unauthenticated endpoint provisions a brand new SACCO - its own
