@@ -22,14 +22,20 @@ export default function Home() {
 
           <div className="mt-6 flex flex-col gap-3">
             <Link
-              href="/login"
+              href="/signup-sacco"
               className="w-full rounded-full bg-primary-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 active:bg-primary-800"
+            >
+              {t("startSacco")}
+            </Link>
+            <Link
+              href="/login"
+              className="w-full rounded-full border border-primary-200 bg-white px-5 py-3 text-center text-sm font-semibold text-primary-800 transition-colors hover:bg-primary-50"
             >
               {t("login")}
             </Link>
             <Link
               href="/register"
-              className="w-full rounded-full border border-primary-200 bg-white px-5 py-3 text-center text-sm font-semibold text-primary-800 transition-colors hover:bg-primary-50"
+              className="text-center text-sm font-medium text-primary-700 underline-offset-2 hover:underline"
             >
               {t("register")}
             </Link>

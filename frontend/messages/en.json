@@ -3,7 +3,8 @@
     "title": "SACCO Platform",
     "tagline": "Manage your savings, shares and loans - anywhere, anytime.",
     "login": "Log in",
-    "register": "Create account"
+    "register": "Create account",
+    "startSacco": "Start your SACCO's free trial"
   },
   "Login": {
     "title": "Log in",
@@ -14,6 +15,24 @@
     "biometricLogin": "Log in with fingerprint / Face ID",
     "error": "Login failed. Check your details and try again.",
     "success": "Logged in successfully."
+  },
+  "SaccoSignup": {
+    "title": "Start your SACCO's free trial",
+    "subtitle": "30 days free, no card required. Set up your SACCO and invite your team.",
+    "saccoName": "SACCO name",
+    "country": "Country",
+    "kenya": "Kenya",
+    "tanzania": "Tanzania",
+    "ownerSection": "Your account (SACCO administrator)",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phoneNumber": "Phone number",
+    "password": "Password",
+    "submit": "Start free trial",
+    "error": "Couldn't create your SACCO. Check your details and try again.",
+    "successTitle": "Your SACCO is ready",
+    "successBody": "Your 30-day free trial ends on {date}. Sign in as the SACCO administrator at:",
+    "successCta": "Go to sign in"
   },
   "Nav": {
     "home": "Home",

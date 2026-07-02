@@ -52,6 +52,8 @@ class TenantScopedTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
 
     def validate(self, attrs):
+        from subscriptions.models import Subscription
+
         data = super().validate(attrs)
         if connection.schema_name != get_public_schema_name():
             has_access = TenantAccess.objects.filter(
@@ -62,5 +64,14 @@ class TenantScopedTokenObtainPairSerializer(TokenObtainPairSerializer):
             if not has_access:
                 raise serializers.ValidationError(
                     "This account does not have access to this SACCO."
+                )
+
+            subscription = Subscription.objects.filter(
+                tenant__schema_name=connection.schema_name
+            ).first()
+            if subscription is not None and not subscription.is_usable:
+                raise serializers.ValidationError(
+                    "This SACCO's free trial has ended. Contact the platform "
+                    "operator to activate a paid plan."
                 )
         return data

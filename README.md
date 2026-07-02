@@ -33,9 +33,44 @@ python manage.py provision_tenant --name "Nairobi Demo SACCO" \
 migrations inside it, and seeds the default RBAC role/permission catalog
 (see `accesscontrol/migrations/0003_seed_default_permissions_and_roles.py`).
 
-For local dev, add every tenant domain you create to `DJANGO_ALLOWED_HOSTS`
-in `.env` (comma-separated) - `django-tenants` routes by the request's Host
-header, and Django will 400/404 requests for hosts not in that list.
+`DJANGO_ALLOWED_HOSTS` includes a leading-dot wildcard (`.localhost`), so
+new tenant domains work immediately without editing `.env` per SACCO - this
+matters for self-service sign-up (below), where there's no one available to
+edit settings by hand. In production, set the wildcard to your real domain
+(e.g. `.saccoplatform.com`) via `TENANT_BASE_DOMAIN`.
+
+## Self-service SACCO sign-up (30-day free trial)
+
+A public, unauthenticated endpoint provisions a brand new SACCO - its own
+schema, RBAC roles, and a SuperAdmin owner account - with a 30-day trial,
+no payment step:
+
+```
+POST /api/onboarding/signup/
+{"sacco_name": "...", "country": "KE"|"TZ",
+ "first_name": "...", "last_name": "...",
+ "phone_number": "+254...", "password": "..."}
+```
+
+Frontend: `/signup-sacco` (linked from the home page as the primary CTA).
+
+This only works because the request resolves to the **public schema**, not
+a tenant - django-tenants falls back to `config.urls_public` (see
+`PUBLIC_SCHEMA_URLCONF` / `SHOW_PUBLIC_IF_NO_TENANT_FOUND` in
+`config/settings.py`) for any hostname that doesn't match an existing
+tenant's domain. The frontend calls it via a separate env var,
+`NEXT_PUBLIC_PUBLIC_API_BASE_URL` (plain `http://localhost:8000` in dev),
+distinct from the per-tenant `NEXT_PUBLIC_API_BASE_URL` used everywhere
+else.
+
+`subscriptions.Subscription.status` starts at `trialing` with
+`trial_ends_at = now + 30 days`. Nothing currently upgrades it to `active`
+automatically - real billing collection needs Phase 3 (`payments`) +
+Phase 7 (`subscriptions`) first, so for now that's a manual flip in Django
+admin once payment is arranged out of band. Login **is** enforced against
+trial expiry, though (`TenantScopedTokenObtainPairSerializer` in
+`identity/serializers.py`): once `trial_ends_at` passes with no active
+subscription, that SACCO's users can no longer obtain a token.
 
 ## Running
 
@@ -101,6 +136,8 @@ matches automatically.
   `/en/...`, `/sw/...`).
 - **PWA:** installable manifest (`app/manifest.ts`), mobile-first Tailwind
   UI, hand-written offline-shell + push service worker at `/sw.js`.
+- **Subscriptions:** `subscriptions` app (public-schema) - self-service
+  SACCO sign-up with a 30-day free trial. See dedicated section below.
 
 ### Note on the PWA service worker
 

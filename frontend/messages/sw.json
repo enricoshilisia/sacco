@@ -3,7 +3,8 @@
     "title": "Jukwaa la SACCO",
     "tagline": "Simamia akiba, hisa na mikopo yako - popote, wakati wowote.",
     "login": "Ingia",
-    "register": "Fungua akaunti"
+    "register": "Fungua akaunti",
+    "startSacco": "Anzisha jaribio la bure la SACCO yako"
   },
   "Login": {
     "title": "Ingia",
@@ -14,6 +15,24 @@
     "biometricLogin": "Ingia kwa alama ya kidole / Face ID",
     "error": "Kuingia kumeshindwa. Angalia taarifa zako na ujaribu tena.",
     "success": "Umeingia kwa mafanikio."
+  },
+  "SaccoSignup": {
+    "title": "Anzisha jaribio la bure la SACCO yako",
+    "subtitle": "Siku 30 bila malipo, hakuna kadi inayohitajika. Sanidi SACCO yako na ualike timu yako.",
+    "saccoName": "Jina la SACCO",
+    "country": "Nchi",
+    "kenya": "Kenya",
+    "tanzania": "Tanzania",
+    "ownerSection": "Akaunti yako (msimamizi wa SACCO)",
+    "firstName": "Jina la kwanza",
+    "lastName": "Jina la mwisho",
+    "phoneNumber": "Nambari ya simu",
+    "password": "Nenosiri",
+    "submit": "Anza jaribio la bure",
+    "error": "Imeshindikana kuunda SACCO yako. Angalia taarifa zako na ujaribu tena.",
+    "successTitle": "SACCO yako iko tayari",
+    "successBody": "Jaribio lako la bure la siku 30 linaisha tarehe {date}. Ingia kama msimamizi wa SACCO kupitia:",
+    "successCta": "Nenda kuingia"
   },
   "Nav": {
     "home": "Nyumbani",

@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from tenants.models import COUNTRY_DEFAULTS, Country, Domain, Tenant
+from tenants.models import Country
+from tenants.services import provision_tenant
 
 
 class Command(BaseCommand):
@@ -13,24 +14,19 @@ class Command(BaseCommand):
         parser.add_argument("--country", required=True, choices=[c.value for c in Country])
 
     def handle(self, *args, **options):
-        country = options["country"]
-        defaults = COUNTRY_DEFAULTS[country]
-
-        if Tenant.objects.filter(schema_name=options["schema"]).exists():
-            raise CommandError(f"Tenant with schema '{options['schema']}' already exists")
-
-        tenant = Tenant.objects.create(
-            schema_name=options["schema"],
-            name=options["name"],
-            country=country,
-            currency=defaults["currency"],
-            default_language=defaults["language"],
-        )
-        Domain.objects.create(domain=options["domain"], tenant=tenant, is_primary=True)
+        try:
+            tenant = provision_tenant(
+                name=options["name"],
+                schema_name=options["schema"],
+                domain=options["domain"],
+                country=options["country"],
+            )
+        except ValueError as exc:
+            raise CommandError(str(exc)) from exc
 
         self.stdout.write(
             self.style.SUCCESS(
                 f"Created tenant '{tenant.name}' (schema={tenant.schema_name}, "
-                f"domain={options['domain']}, country={country}, currency={defaults['currency']})"
+                f"domain={options['domain']}, country={tenant.country}, currency={tenant.currency})"
             )
         )

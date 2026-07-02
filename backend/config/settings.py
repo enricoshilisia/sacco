@@ -28,6 +28,7 @@ SHARED_APPS = [
     "django_tenants",
     "tenants",  # Tenant + Domain models must live in a SHARED_APPS app
     "identity",  # custom User is shared: a person can belong to many SACCOs
+    "subscriptions",  # tenant billing/trial status is public-schema too
 
     "django.contrib.contenttypes",
     "django.contrib.auth",
@@ -72,6 +73,17 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
+
+# A hostname that doesn't match any tenant's Domain (e.g. a bare
+# "localhost" in dev, or a future marketing domain in production) falls
+# back to the public schema and this urlconf, rather than a 404 - that's
+# what makes the public SACCO sign-up endpoint reachable at all.
+PUBLIC_SCHEMA_URLCONF = "config.urls_public"
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
+
+# Base domain new tenants are provisioned under, e.g. "<slug>.<this>".
+# In production this should be the platform's real domain.
+TENANT_BASE_DOMAIN = env("TENANT_BASE_DOMAIN", default="localhost")
 
 TEMPLATES = [
     {
