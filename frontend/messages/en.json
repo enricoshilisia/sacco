@@ -1,0 +1,23 @@
+{
+  "Home": {
+    "title": "SACCO Platform",
+    "tagline": "Manage your savings, shares and loans - anywhere, anytime.",
+    "login": "Log in",
+    "register": "Create account"
+  },
+  "Login": {
+    "title": "Log in",
+    "phoneNumber": "Phone number",
+    "password": "Password",
+    "submit": "Log in",
+    "orBiometric": "or use biometrics",
+    "biometricLogin": "Log in with fingerprint / Face ID",
+    "error": "Login failed. Check your details and try again.",
+    "success": "Logged in successfully."
+  },
+  "Nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "language": "Language"
+  }
+}

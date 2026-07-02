@@ -133,3 +133,23 @@ class WebAuthnChallenge(models.Model):
 
     def is_expired(self):
         return timezone.now() >= self.expires_at
+
+
+class PushDeviceToken(models.Model):
+    """A Firebase Cloud Messaging registration token for one of a user's devices."""
+
+    WEB = "web"
+    ANDROID = "android"
+    IOS = "ios"
+    PLATFORM_CHOICES = [(WEB, "Web"), (ANDROID, "Android"), (IOS, "iOS")]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="push_tokens")
+    token = models.TextField(unique=True)
+    platform = models.CharField(max_length=10, choices=PLATFORM_CHOICES, default=WEB)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.platform} token for {self.user}"

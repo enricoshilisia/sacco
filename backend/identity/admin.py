@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import TenantAccess, User, WebAuthnCredential
+from .models import PushDeviceToken, TenantAccess, User, WebAuthnCredential
 
 
 @admin.register(User)
@@ -18,3 +18,9 @@ class TenantAccessAdmin(admin.ModelAdmin):
 @admin.register(WebAuthnCredential)
 class WebAuthnCredentialAdmin(admin.ModelAdmin):
     list_display = ("user", "device_name", "sign_count", "created_at", "last_used_at")
+
+
+@admin.register(PushDeviceToken)
+class PushDeviceTokenAdmin(admin.ModelAdmin):
+    list_display = ("user", "platform", "is_active", "updated_at")
+    list_filter = ("platform", "is_active")

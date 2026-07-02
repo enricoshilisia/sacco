@@ -1,0 +1,23 @@
+{
+  "Home": {
+    "title": "Jukwaa la SACCO",
+    "tagline": "Simamia akiba, hisa na mikopo yako - popote, wakati wowote.",
+    "login": "Ingia",
+    "register": "Fungua akaunti"
+  },
+  "Login": {
+    "title": "Ingia",
+    "phoneNumber": "Nambari ya simu",
+    "password": "Nenosiri",
+    "submit": "Ingia",
+    "orBiometric": "au tumia alama za kibiolojia",
+    "biometricLogin": "Ingia kwa alama ya kidole / Face ID",
+    "error": "Kuingia kumeshindwa. Angalia taarifa zako na ujaribu tena.",
+    "success": "Umeingia kwa mafanikio."
+  },
+  "Nav": {
+    "home": "Nyumbani",
+    "dashboard": "Dashibodi",
+    "language": "Lugha"
+  }
+}
