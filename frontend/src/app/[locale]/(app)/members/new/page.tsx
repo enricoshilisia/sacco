@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { ArrowLeft, ArrowRight, Check, Plus, X } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/api";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const inputClass =
   "w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500";
@@ -41,9 +41,12 @@ const emptyRelation: Relation = {
   benefit_percentage: "",
 };
 
+const STEP_KEYS = ["stepPersonal", "stepIdContact", "stepRelations"] as const;
+
 export default function NewMemberPage() {
   const t = useTranslations("Members");
   const router = useRouter();
+  const [step, setStep] = useState(0);
   const [form, setForm] = useState(initialForm);
   const [relations, setRelations] = useState<Relation[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -60,8 +63,21 @@ export default function NewMemberPage() {
     setRelations(relations.map((r, i) => (i === index ? { ...r, ...patch } : r)));
   }
 
+  const isLastStep = step === STEP_KEYS.length - 1;
+
+  function goNext() {
+    setStep((s) => Math.min(s + 1, STEP_KEYS.length - 1));
+  }
+  function goBack() {
+    setStep((s) => Math.max(s - 1, 0));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isLastStep) {
+      goNext();
+      return;
+    }
     setStatus("loading");
     try {
       const payload = {
@@ -83,19 +99,22 @@ export default function NewMemberPage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-primary-50">
-      <header className="flex items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/members" className="text-sm text-primary-600 hover:underline">
-          &larr; {t("title")}
-        </Link>
-        <LanguageSwitcher />
-      </header>
+    <div className="mx-auto max-w-2xl">
+      <Link
+        href="/members"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-800"
+      >
+        <ArrowLeft size={16} />
+        {t("title")}
+      </Link>
 
-      <main className="flex-1 px-4 py-6 sm:px-6">
-        <form onSubmit={handleSubmit} className="mx-auto max-w-2xl">
-          <h1 className="mb-6 text-lg font-semibold text-primary-900">{t("newTitle")}</h1>
+      <h1 className="mb-6 text-xl font-semibold text-primary-900">{t("newTitle")}</h1>
 
-          <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-primary-100">
+      <StepIndicator step={step} labels={STEP_KEYS.map((key) => t(key))} />
+
+      <form onSubmit={handleSubmit}>
+        {step === 0 && (
+          <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
             <div className="mb-4 grid grid-cols-2 gap-3">
               <label className="block">
                 <span className="mb-1 block text-sm font-medium text-primary-800">{t("firstName")}</span>
@@ -132,7 +151,7 @@ export default function NewMemberPage() {
               </label>
             </div>
 
-            <label className="mb-4 block">
+            <label className="block">
               <span className="mb-1 block text-sm font-medium text-primary-800">{t("category")}</span>
               <select
                 value={form.category}
@@ -145,7 +164,11 @@ export default function NewMemberPage() {
                 <option value="CORPORATE">{t("categoryCorporate")}</option>
               </select>
             </label>
+          </div>
+        )}
 
+        {step === 1 && (
+          <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
             <div className="mb-4 grid grid-cols-2 gap-3">
               <label className="block">
                 <span className="mb-1 block text-sm font-medium text-primary-800">{t("idType")}</span>
@@ -181,12 +204,14 @@ export default function NewMemberPage() {
               <input className={inputClass} {...field("physical_address")} />
             </label>
           </div>
+        )}
 
-          <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-primary-100">
+        {step === 2 && (
+          <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
             <h2 className="mb-4 text-sm font-semibold text-primary-800">{t("relationsSection")}</h2>
 
             {relations.map((relation, index) => (
-              <div key={index} className="mb-4 rounded-lg border border-primary-100 p-3">
+              <div key={index} className="mb-4 rounded-lg border border-primary-100 p-4">
                 <div className="mb-3 grid grid-cols-2 gap-3">
                   <select
                     value={relation.kind}
@@ -232,8 +257,9 @@ export default function NewMemberPage() {
                 <button
                   type="button"
                   onClick={() => setRelations(relations.filter((_, i) => i !== index))}
-                  className="mt-3 text-sm text-red-600 hover:underline"
+                  className="mt-3 inline-flex items-center gap-1 text-sm text-red-600 hover:underline"
                 >
+                  <X size={14} />
                   {t("removeRelation")}
                 </button>
               </div>
@@ -242,23 +268,78 @@ export default function NewMemberPage() {
             <button
               type="button"
               onClick={() => setRelations([...relations, { ...emptyRelation }])}
-              className="rounded-full border border-primary-300 bg-white px-4 py-2 text-sm font-medium text-primary-800 hover:bg-primary-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary-300 bg-white px-4 py-2 text-sm font-medium text-primary-800 hover:bg-primary-50"
             >
-              + {t("addRelation")}
+              <Plus size={16} />
+              {t("addRelation")}
             </button>
           </div>
+        )}
 
-          {status === "error" && <p className="mb-4 text-sm text-red-600">{t("error")}</p>}
+        {status === "error" && <p className="mb-4 text-sm text-red-600">{t("error")}</p>}
+
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={goBack}
+            disabled={step === 0}
+            className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-white px-5 py-2.5 text-sm font-semibold text-primary-800 transition-colors hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-0"
+          >
+            <ArrowLeft size={16} />
+            {t("stepBack")}
+          </button>
 
           <button
             type="submit"
             disabled={status === "loading"}
-            className="w-full rounded-full bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
           >
-            {t("submit")}
+            {isLastStep ? t("submit") : t("stepNext")}
+            {isLastStep ? null : <ArrowRight size={16} />}
           </button>
-        </form>
-      </main>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function StepIndicator({ step, labels }: { step: number; labels: string[] }) {
+  return (
+    <div className="mb-6 flex items-center">
+      {labels.map((label, index) => (
+        <div key={label} className="flex flex-1 items-center last:flex-none">
+          <div className="flex flex-col items-center gap-1.5">
+            <div
+              className={
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors " +
+                (index < step
+                  ? "bg-primary-600 text-white"
+                  : index === step
+                    ? "bg-primary-600 text-white ring-4 ring-primary-100"
+                    : "bg-primary-100 text-primary-400")
+              }
+            >
+              {index < step ? <Check size={16} /> : index + 1}
+            </div>
+            <span
+              className={
+                "hidden text-xs font-medium sm:block " +
+                (index <= step ? "text-primary-700" : "text-primary-400")
+              }
+            >
+              {label}
+            </span>
+          </div>
+          {index < labels.length - 1 && (
+            <div
+              className={
+                "mx-2 h-0.5 flex-1 rounded transition-colors " +
+                (index < step ? "bg-primary-600" : "bg-primary-100")
+              }
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

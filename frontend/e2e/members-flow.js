@@ -34,18 +34,25 @@ async function run() {
   await page.waitForURL((u) => u.pathname === '/en/members/new', { timeout: 10000 });
 
   const idNumber = String(Date.now()).slice(-8); // unique per run
+
+  // Step 1: personal details
   await page.getByLabel('First name').fill('E2E');
   await page.getByLabel('Last name').fill('Smoke');
+  await page.click('button:has-text("Next")');
+
+  // Step 2: ID & contact
   await page.getByLabel('ID number').fill(idNumber);
   await page.getByLabel('Phone').fill('+254700000999');
   await page.getByLabel('Email').fill('e2e-smoke@example.com');
   await page.getByLabel('Physical address').fill('Test Address');
+  await page.click('button:has-text("Next")');
 
-  await page.click('text=+ Add person');
+  // Step 3: next of kin, then submit
+  await page.click('text=Add person');
   await page.getByPlaceholder('Full name').fill('E2E Kin');
   await page.getByPlaceholder('Relationship').fill('sibling');
 
-  await page.click('button[type="submit"]');
+  await page.click('button:has-text("Save member")');
   await page.waitForURL((u) => /\/en\/members\/[0-9a-f-]+$/.test(u.pathname), { timeout: 10000 });
   await page.waitForSelector('text=Verify KYC', { timeout: 10000 });
 
