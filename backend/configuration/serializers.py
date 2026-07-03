@@ -13,6 +13,8 @@ class TenantConfigSerializer(serializers.ModelSerializer):
             "member_number_suffix",
             "member_number_padding",
             "member_number_next_sequence",
+            "active_sms_provider",
+            "active_payment_provider",
         ]
         read_only_fields = ["member_number_next_sequence"]
 
@@ -21,6 +23,20 @@ class TenantConfigSerializer(serializers.ModelSerializer):
         invalid = set(value) - valid
         if invalid:
             raise serializers.ValidationError(f"Unknown ID type(s): {', '.join(sorted(invalid))}")
+        return value
+
+    def validate_active_sms_provider(self, value):
+        from notifications.providers.registry import SMS_PROVIDERS
+
+        if value and value not in SMS_PROVIDERS:
+            raise serializers.ValidationError(f"Unknown SMS provider '{value}'.")
+        return value
+
+    def validate_active_payment_provider(self, value):
+        from payments.providers.registry import PAYMENT_PROVIDERS
+
+        if value and value not in PAYMENT_PROVIDERS:
+            raise serializers.ValidationError(f"Unknown payment provider '{value}'.")
         return value
 
     def validate_member_number_prefix(self, value):

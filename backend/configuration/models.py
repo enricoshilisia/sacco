@@ -53,9 +53,12 @@ class TenantConfig(models.Model):
     wht_rates_confirmed_by_tax_adviser = models.BooleanField(default=False)
 
     # Provider selection - "config, never a code branch" (CLAUDE.md rule 6).
-    active_sms_provider = models.CharField(max_length=30, default="")
-    sms_provider_backup = models.CharField(max_length=30, default="africastalking")
-    active_payment_provider = models.CharField(max_length=30, default="")
+    # Blank is a valid, intentional value: it means "use the mock provider"
+    # (see notifications/payments providers/registry.py) - every tenant's
+    # default until an admin picks a real one in Settings.
+    active_sms_provider = models.CharField(max_length=30, default="", blank=True)
+    sms_provider_backup = models.CharField(max_length=30, default="africastalking", blank=True)
+    active_payment_provider = models.CharField(max_length=30, default="", blank=True)
 
     feature_flags = models.JSONField(default=dict, blank=True)
 

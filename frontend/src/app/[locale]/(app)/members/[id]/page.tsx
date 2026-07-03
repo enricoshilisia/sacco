@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Camera, CheckCircle2, Clock, PiggyBank, Users, Wallet } from "lucide-react";
+import { ArrowLeft, Camera, CheckCircle2, Clock, PiggyBank, Smartphone, Users, Wallet } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError, getAccessToken } from "@/lib/api";
 
@@ -37,6 +37,16 @@ type MemberStatement = {
     contributions: { id: string; amount: string; transaction_date: string }[];
   };
   savings_accounts: SavingsAccountData[];
+};
+
+type PaymentCollectionData = {
+  id: string;
+  status: "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED";
+  amount: string;
+  provider: string;
+  provider_receipt: string;
+  provider_reference: string;
+  failure_reason: string;
 };
 
 function todayIso() {
@@ -81,6 +91,7 @@ type MemberDetail = {
 export default function MemberDetailPage() {
   const t = useTranslations("Members");
   const ts = useTranslations("Savings");
+  const tc = useTranslations("CollectPayment");
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -105,6 +116,20 @@ export default function MemberDetailPage() {
   const [newAmount, setNewAmount] = useState("");
   const [opening, setOpening] = useState(false);
   const [openError, setOpenError] = useState("");
+
+  const [collectProductId, setCollectProductId] = useState("");
+  const [collectPhone, setCollectPhone] = useState("");
+  const [collectAmount, setCollectAmount] = useState("");
+  const [collecting, setCollecting] = useState(false);
+  const [collectError, setCollectError] = useState("");
+  const [collection, setCollection] = useState<PaymentCollectionData | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
 
   function loadStatement(memberId: string) {
     apiFetch<MemberStatement>(`/api/savings/members/${memberId}/statement/`)
@@ -206,6 +231,45 @@ export default function MemberDetailPage() {
       setOpenError(errorDetail(err, ts("error")));
     } finally {
       setOpening(false);
+    }
+  }
+
+  function pollCollection(id: string, memberId: string) {
+    if (pollRef.current) clearInterval(pollRef.current);
+    pollRef.current = setInterval(async () => {
+      try {
+        const updated = await apiFetch<PaymentCollectionData>(`/api/payments/collections/${id}/`);
+        setCollection(updated);
+        if (updated.status !== "PENDING") {
+          if (pollRef.current) clearInterval(pollRef.current);
+          if (updated.status === "SUCCESS") loadStatement(memberId);
+        }
+      } catch {
+        if (pollRef.current) clearInterval(pollRef.current);
+      }
+    }, 1500);
+  }
+
+  async function handleCollect() {
+    if (!member || !collectProductId || !collectAmount) return;
+    setCollecting(true);
+    setCollectError("");
+    setCollection(null);
+    try {
+      const created = await apiFetch<PaymentCollectionData>(`/api/payments/members/${member.id}/collect/`, {
+        method: "POST",
+        body: JSON.stringify({
+          product: collectProductId,
+          amount: collectAmount,
+          phone_number: collectPhone,
+        }),
+      });
+      setCollection(created);
+      if (created.status === "PENDING") pollCollection(created.id, member.id);
+    } catch (err) {
+      setCollectError(errorDetail(err, tc("error")));
+    } finally {
+      setCollecting(false);
     }
   }
 
@@ -484,6 +548,70 @@ export default function MemberDetailPage() {
               </button>
             </div>
             {openError && <p className="mt-2 text-xs text-red-600">{openError}</p>}
+          </div>
+        )}
+      </div>
+
+      <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+        <div className="mb-4 flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+            <Smartphone size={16} strokeWidth={2} />
+          </div>
+          <h2 className="text-sm font-semibold text-primary-900">{tc("title")}</h2>
+        </div>
+
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <select
+            value={collectProductId}
+            onChange={(e) => setCollectProductId(e.target.value)}
+            className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          >
+            <option value="">{tc("selectProduct")}</option>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="tel"
+            value={collectPhone}
+            onChange={(e) => setCollectPhone(e.target.value)}
+            placeholder={member.phone_number || tc("phoneNumber")}
+            className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          />
+          <input
+            type="number"
+            min="0.01"
+            step="0.01"
+            value={collectAmount}
+            onChange={(e) => setCollectAmount(e.target.value)}
+            placeholder={tc("amount")}
+            className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          />
+          <button
+            onClick={handleCollect}
+            disabled={collecting || !collectProductId || !collectAmount || collection?.status === "PENDING"}
+            className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+          >
+            {tc("submit")}
+          </button>
+        </div>
+
+        {collectError && <p className="mt-2 text-xs text-red-600">{collectError}</p>}
+
+        {collection && (
+          <div data-testid="collect-payment-status" className="mt-3 rounded-lg bg-primary-50 px-4 py-3 text-sm">
+            {collection.status === "PENDING" && (
+              <span className="flex items-center gap-2 text-primary-700">
+                <span className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-primary-300 border-t-primary-600" />
+                {tc("pending")}
+              </span>
+            )}
+            {collection.status === "SUCCESS" && <span className="text-primary-700">{tc("success")}</span>}
+            {collection.status === "FAILED" && (
+              <span className="text-red-600">{tc("failed", { reason: collection.failure_reason })}</span>
+            )}
           </div>
         )}
       </div>

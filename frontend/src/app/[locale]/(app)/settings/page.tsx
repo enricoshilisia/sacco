@@ -9,6 +9,7 @@ import {
   Hash,
   ImagePlus,
   Save,
+  Smartphone,
   UserPlus,
   Users,
   XCircle,
@@ -23,6 +24,8 @@ type TenantConfig = {
   member_number_suffix: string;
   member_number_padding: number;
   member_number_next_sequence: number;
+  active_sms_provider: string;
+  active_payment_provider: string;
 };
 
 type TenantProfile = {
@@ -41,6 +44,7 @@ const inputClass =
 const TABS = [
   { key: "sacco", icon: Building2 },
   { key: "numbering", icon: Hash },
+  { key: "providers", icon: Smartphone },
   { key: "staff", icon: Users },
 ] as const;
 
@@ -75,6 +79,7 @@ export default function SettingsPage() {
 
       {tab === "sacco" && <SaccoDetailsSection />}
       {tab === "numbering" && <MemberNumberingSection />}
+      {tab === "providers" && <ProvidersSection />}
       {tab === "staff" && <StaffSection />}
     </div>
   );
@@ -384,6 +389,115 @@ function MemberNumberingSection() {
               {t(`idType_${idType}`)}
             </label>
           ))}
+        </div>
+      </div>
+
+      {saveState === "error" && <p className="mb-4 text-sm text-red-600">{t("error")}</p>}
+
+      <button
+        type="submit"
+        disabled={saveState === "saving"}
+        className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
+      >
+        <Save size={16} />
+        {saveState === "saved" ? t("saved") : t("save")}
+      </button>
+    </form>
+  );
+}
+
+const SMS_PROVIDER_OPTIONS = ["", "africastalking", "beem"] as const;
+const PAYMENT_PROVIDER_OPTIONS = ["", "daraja", "selcom"] as const;
+
+function ProvidersSection() {
+  const t = useTranslations("Settings");
+  const [config, setConfig] = useState<TenantConfig | null>(null);
+  const [state, setState] = useState<"loading" | "ready" | "forbidden">("loading");
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  useEffect(() => {
+    apiFetch<TenantConfig>("/api/settings/")
+      .then((data) => {
+        setConfig(data);
+        setState("ready");
+      })
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 403) setState("forbidden");
+        else setState("forbidden");
+      });
+  }, []);
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!config) return;
+    setSaveState("saving");
+    try {
+      const updated = await apiFetch<TenantConfig>("/api/settings/", {
+        method: "PATCH",
+        body: JSON.stringify({
+          active_sms_provider: config.active_sms_provider,
+          active_payment_provider: config.active_payment_provider,
+        }),
+      });
+      setConfig(updated);
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 2000);
+    } catch {
+      setSaveState("error");
+    }
+  }
+
+  if (state === "loading") {
+    return (
+      <div className="mb-6 flex justify-center rounded-2xl bg-white py-12 shadow-sm ring-1 ring-primary-100/80">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-300 border-t-primary-600" />
+      </div>
+    );
+  }
+
+  if (state === "forbidden" || !config) {
+    return (
+      <div className="mb-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-primary-100/80">
+        <p className="text-sm text-red-600">{t("forbidden")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSave}>
+      <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+        <h2 className="mb-1 text-sm font-semibold text-primary-900">{t("providers")}</h2>
+        <p className="mb-4 text-sm text-primary-500">{t("providersHelp")}</p>
+
+        <div className="grid grid-cols-2 gap-3">
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-primary-800">{t("smsProvider")}</span>
+            <select
+              value={config.active_sms_provider}
+              onChange={(e) => setConfig({ ...config, active_sms_provider: e.target.value })}
+              className={inputClass}
+            >
+              {SMS_PROVIDER_OPTIONS.map((code) => (
+                <option key={code} value={code}>
+                  {code === "" ? t("providerMock") : t(`smsProvider_${code}`)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-primary-800">{t("paymentProvider")}</span>
+            <select
+              value={config.active_payment_provider}
+              onChange={(e) => setConfig({ ...config, active_payment_provider: e.target.value })}
+              className={inputClass}
+            >
+              {PAYMENT_PROVIDER_OPTIONS.map((code) => (
+                <option key={code} value={code}>
+                  {code === "" ? t("providerMock") : t(`paymentProvider_${code}`)}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </div>
 

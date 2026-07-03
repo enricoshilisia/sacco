@@ -54,6 +54,8 @@ TENANT_APPS = [
     "members",
     "accounting",
     "savings",
+    "notifications",
+    "payments",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
@@ -238,6 +240,34 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=False)
+
+# ---------------------------------------------------------------------------
+# Notification / payment provider credentials (Phase 3)
+#
+# All default to "" - every tenant runs on the mock SMS/payment provider
+# (see notifications/providers/mock.py, payments/providers/mock.py) until
+# these are actually filled in and a tenant's TenantConfig.active_sms_
+# provider / active_payment_provider is switched to the real one. Nothing
+# in this file decides WHICH provider a tenant uses - that's per-tenant
+# config (CLAUDE.md rule 6), not an env-driven global switch.
+# ---------------------------------------------------------------------------
+
+AFRICASTALKING_USERNAME = env("AFRICASTALKING_USERNAME", default="")
+AFRICASTALKING_API_KEY = env("AFRICASTALKING_API_KEY", default="")
+
+BEEM_API_KEY = env("BEEM_API_KEY", default="")
+BEEM_SECRET_KEY = env("BEEM_SECRET_KEY", default="")
+BEEM_SOURCE_ADDR = env("BEEM_SOURCE_ADDR", default="INFO")
+
+DARAJA_ENV = env("DARAJA_ENV", default="sandbox")  # "sandbox" or "production"
+DARAJA_CONSUMER_KEY = env("DARAJA_CONSUMER_KEY", default="")
+DARAJA_CONSUMER_SECRET = env("DARAJA_CONSUMER_SECRET", default="")
+DARAJA_SHORTCODE = env("DARAJA_SHORTCODE", default="")
+DARAJA_PASSKEY = env("DARAJA_PASSKEY", default="")
+
+SELCOM_API_KEY = env("SELCOM_API_KEY", default="")
+SELCOM_API_SECRET = env("SELCOM_API_SECRET", default="")
+SELCOM_VENDOR_ID = env("SELCOM_VENDOR_ID", default="")
 
 # ---------------------------------------------------------------------------
 # WebAuthn (biometric / passkey authentication)
