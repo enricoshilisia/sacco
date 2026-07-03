@@ -11,5 +11,6 @@ urlpatterns = [
     path("api/savings/", include("savings.urls")),
     path("api/payments/", include("payments.urls")),
     path("api/notifications/", include("notifications.urls")),
+    path("api/loans/", include("loans.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
 ]

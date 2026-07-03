@@ -108,9 +108,26 @@ def withdraw_savings(*, savings_account: SavingsAccount, amount: Decimal, transa
         # operations with a race between them.
         savings_control = Account.objects.select_for_update().get(code=SAVINGS_CONTROL_ACCOUNT_CODE)
         current_balance = savings_control.balance(member=member)
-        if amount > current_balance:
+
+        # Deposits a member is guaranteeing someone else's loan with are
+        # locked and don't count as available (CLAUDE.md: a pledge "reduces
+        # what the guarantor can themselves borrow/withdraw"). Imported
+        # lazily - loans depends on savings (same direction payments already
+        # depends on savings), not the other way around, so this can't be a
+        # module-level import without a circular dependency at app-loading
+        # time.
+        from loans.services import locked_pledge_total
+
+        locked = locked_pledge_total(member)
+        available = current_balance - locked
+        if amount > available:
+            if locked > 0:
+                raise InsufficientBalance(
+                    f"Withdrawal of {amount} exceeds available balance of {available} "
+                    f"({locked} is locked as pledged guarantee security)."
+                )
             raise InsufficientBalance(
-                f"Withdrawal of {amount} exceeds available balance of {current_balance}."
+                f"Withdrawal of {amount} exceeds available balance of {available}."
             )
 
         entry = post_journal_entry(

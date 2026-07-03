@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Building2, LayoutDashboard, LogOut, Scale, Settings, Smartphone, Users, X } from "lucide-react";
+import { Building2, HandCoins, LayoutDashboard, LogOut, Scale, Settings, Smartphone, Users, X } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTenantProfile } from "@/lib/TenantProfileContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -11,7 +11,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 const SWIPE_THRESHOLD = 28;
 
 type NavItem = {
-  href: "/dashboard" | "/members" | "/accounting" | "/payments" | "/settings";
+  href: "/dashboard" | "/members" | "/accounting" | "/payments" | "/loans" | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
   /** Omit for items everyone can see (e.g. Dashboard). Otherwise the item
@@ -42,6 +42,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       label: t("payments"),
       icon: Smartphone,
       permissions: ["payments.view_transactions"],
+    },
+    {
+      href: "/loans",
+      label: t("loans"),
+      icon: HandCoins,
+      permissions: ["loans.view"],
     },
     {
       href: "/settings",

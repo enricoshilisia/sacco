@@ -42,11 +42,12 @@ async function run() {
   await page.waitForSelector('text=Recent ledger activity', { timeout: 10000 });
 
   // --- Coming-soon preview grid: present, labelled, and visually muted ---
+  // Loans and Payments used to be mock cards here too - both were removed
+  // from the preview grid once each shipped for real (Phase 3, and this
+  // phase), leaving only modules that genuinely aren't built yet.
   await page.waitForSelector('text=Coming soon', { timeout: 10000 });
   const previewBadgeCount = await page.locator('[data-testid="preview-badge"]').count();
-  assert(previewBadgeCount === 4, `expected 4 "Preview" badges, got ${previewBadgeCount}`);
-  assert(await page.isVisible('text=Loans'), 'loans preview card renders');
-  assert(await page.isVisible('text=Payments'), 'payments preview card renders');
+  assert(previewBadgeCount === 2, `expected 2 "Preview" badges, got ${previewBadgeCount}`);
   assert(await page.isVisible('text=Dividends & interest'), 'distributions preview card renders');
   assert(await page.isVisible('text=Governance'), 'governance preview card renders');
 
@@ -55,7 +56,7 @@ async function run() {
   const liveColor = await page.locator('text=Total members').locator('xpath=../..').locator('p').first().evaluate(
     (el) => getComputedStyle(el).color,
   );
-  const mockColor = await page.locator('dd:has-text("128")').first().evaluate((el) => getComputedStyle(el).color);
+  const mockColor = await page.locator('dd:has-text("87%")').first().evaluate((el) => getComputedStyle(el).color);
   assert(liveColor !== mockColor, `live stat color (${liveColor}) should differ from mock card color (${mockColor})`);
 
   await page.screenshot({ path: `${SCRATCH}/dashboard.png`, fullPage: true });

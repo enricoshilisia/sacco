@@ -6,22 +6,25 @@ import {
   ArrowRight,
   Banknote,
   Building2,
+  Check,
   Clock,
   Gavel,
   HandCoins,
+  Handshake,
   Mail,
   MapPin,
   Phone,
   PiggyBank,
   Scale,
-  Smartphone,
   User,
   Users,
   Wallet,
+  X,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useTenantProfile } from "@/lib/TenantProfileContext";
 import { apiFetch } from "@/lib/api";
+import { LoanStatusBadge } from "../loans/page";
 
 type MemberListItem = {
   id: string;
@@ -59,6 +62,21 @@ type MyStatement = {
   savings_accounts: { id: string; product_name: string; balance: string }[];
 };
 
+type MyLoan = {
+  id: string;
+  product_name: string;
+  amount_requested: string;
+  term_months: number;
+  status: string;
+};
+
+type GuaranteeRequest = {
+  id: string;
+  borrower_name: string;
+  pledged_amount: string;
+  status: "PENDING" | "CONSENTED" | "DECLINED" | "RELEASED";
+};
+
 const SHARE_CAPITAL_CODE = "3000";
 const SAVINGS_CONTROL_CODE = "2000";
 
@@ -68,6 +86,7 @@ function money(value: number, currency: string) {
 
 export default function DashboardPage() {
   const t = useTranslations("Dashboard");
+  const tl = useTranslations("MyLoans");
   const { profile } = useTenantProfile();
 
   const [memberCount, setMemberCount] = useState<number | null | undefined>(undefined);
@@ -76,6 +95,28 @@ export default function DashboardPage() {
   const [journal, setJournal] = useState<JournalEntryLite[] | null | undefined>(undefined);
   const [myMember, setMyMember] = useState<MyMemberData | null | undefined>(undefined);
   const [myStatement, setMyStatement] = useState<MyStatement | null | undefined>(undefined);
+  const [myLoans, setMyLoans] = useState<MyLoan[]>([]);
+  const [guaranteeRequests, setGuaranteeRequests] = useState<GuaranteeRequest[]>([]);
+  const [respondingId, setRespondingId] = useState<string | null>(null);
+
+  function loadGuaranteeRequests() {
+    apiFetch<{ results: GuaranteeRequest[] }>("/api/loans/me/guarantee-requests/")
+      .then((data) => setGuaranteeRequests(data.results))
+      .catch(() => {});
+  }
+
+  async function handleRespond(id: string, accept: boolean) {
+    setRespondingId(id);
+    try {
+      await apiFetch(`/api/loans/guarantors/${id}/respond/`, {
+        method: "POST",
+        body: JSON.stringify({ accept }),
+      });
+      loadGuaranteeRequests();
+    } finally {
+      setRespondingId(null);
+    }
+  }
 
   useEffect(() => {
     apiFetch<{ count: number; results: MemberListItem[] }>("/api/members/")
@@ -102,8 +143,13 @@ export default function DashboardPage() {
         apiFetch<MyStatement>("/api/savings/me/statement/")
           .then(setMyStatement)
           .catch(() => setMyStatement(null));
+        apiFetch<{ results: MyLoan[] }>("/api/loans/me/")
+          .then((loansData) => setMyLoans(loansData.results))
+          .catch(() => {});
       })
       .catch(() => setMyMember(null));
+
+    loadGuaranteeRequests();
   }, []);
 
   if (!profile) return null;
@@ -154,6 +200,77 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {myMember && (myLoans.length > 0 || guaranteeRequests.length > 0) && (
+        <div className="mb-6 grid gap-5 lg:grid-cols-2">
+          {myLoans.length > 0 && (
+            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+              <div className="mb-4 flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+                  <HandCoins size={16} strokeWidth={2} />
+                </div>
+                <h2 className="text-sm font-semibold text-primary-900">{tl("title")}</h2>
+              </div>
+              <ul className="divide-y divide-primary-50">
+                {myLoans.map((loan) => (
+                  <li key={loan.id} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+                    <Link href={`/loans/${loan.id}`} className="min-w-0 hover:underline">
+                      <p className="truncate text-sm font-medium text-primary-900">{loan.product_name}</p>
+                      <p className="font-mono text-xs text-primary-500">{loan.amount_requested}</p>
+                    </Link>
+                    <LoanStatusBadge status={loan.status} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {guaranteeRequests.length > 0 && (
+            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+              <div className="mb-4 flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+                  <Handshake size={16} strokeWidth={2} />
+                </div>
+                <h2 className="text-sm font-semibold text-primary-900">{tl("guaranteeRequestsTitle")}</h2>
+              </div>
+              <ul className="divide-y divide-primary-50">
+                {guaranteeRequests.map((req) => (
+                  <li key={req.id} className="py-2.5 first:pt-0 last:pb-0">
+                    <p className="text-sm text-primary-700">
+                      {tl("pledgeFor", { name: req.borrower_name, amount: req.pledged_amount })}
+                    </p>
+                    {req.status === "PENDING" ? (
+                      <div className="mt-2 flex gap-2">
+                        <button
+                          onClick={() => handleRespond(req.id, true)}
+                          disabled={respondingId === req.id}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+                        >
+                          <Check size={13} />
+                          {tl("accept")}
+                        </button>
+                        <button
+                          onClick={() => handleRespond(req.id, false)}
+                          disabled={respondingId === req.id}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-50 disabled:opacity-60"
+                        >
+                          <X size={13} />
+                          {tl("decline")}
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="mt-1 inline-block text-xs font-medium text-primary-500">
+                        {req.status === "CONSENTED" && "✓"}
+                        {req.status === "DECLINED" && "✗"}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
           )}
         </div>
       )}
@@ -306,23 +423,13 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Preview of not-yet-built modules - sample data only, clearly muted so it can never be mistaken for real numbers. */}
+      {/* Preview of not-yet-built modules - sample data only, clearly muted so it can never be mistaken for real numbers.
+          Loans and Payments used to be mock cards here too - removed once each shipped for real, so a genuinely-built
+          feature is never shown sitting next to obviously-fake numbers. */}
       <div>
         <h2 className="text-sm font-semibold text-primary-400">{t("comingSoon")}</h2>
         <p className="mb-4 text-xs text-primary-400">{t("comingSoonHelp")}</p>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <MockCard icon={HandCoins} title={t("loansTitle")}>
-            <MockRow label={t("loansActive")} value="128" />
-            <MockRow label={t("loansPar")} value="2.3%" />
-            <MockRow label={t("loansDisbursed")} value={`${tenant.currency} 4.2M`} />
-          </MockCard>
-
-          <MockCard icon={Smartphone} title={t("paymentsTitle")}>
-            <MockRow label={t("paymentsToday")} value={`${tenant.currency} 340,200`} />
-            <MockRow label={t("paymentsPending")} value="3" />
-            <MockRow label={t("paymentsSuccessRate")} value="98.4%" />
-          </MockCard>
-
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <MockCard icon={Banknote} title={t("distributionsTitle")}>
             <MockRow label={t("distributionsLast")} value="14 Dec 2025" />
             <MockRow label={t("distributionsTotal")} value={`${tenant.currency} 1.8M`} />

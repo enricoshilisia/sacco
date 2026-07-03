@@ -62,13 +62,20 @@ async function run() {
   assert(await memberPage.isVisible('text=Grace Wambui'), 'accept page shows the invited member name');
 
   await memberPage.fill('input[type="password"]', MEMBER_PASSWORD);
-  await memberPage.click('button:has-text("Set up account")');
+  const [acceptResponse] = await Promise.all([
+    memberPage.waitForResponse((r) => r.url().includes('/accept/') && r.request().method() === 'POST'),
+    memberPage.click('button:has-text("Set up account")'),
+  ]);
+  // Read Grace's phone from the accept response rather than hardcoding it -
+  // this demo tenant's seed data has needed a phone-number fix mid-session
+  // before (two members originally shared one number).
+  const gracePhone = (await acceptResponse.json()).user.phone_number;
   await memberPage.waitForSelector("text=You're all set", { timeout: 10000 });
   await memberPage.click('text=Go to sign in');
   await memberPage.waitForURL((u) => u.pathname === '/en/login', { timeout: 10000 });
 
   // --- Log in as Grace, confirm the self-service dashboard ---
-  await memberPage.fill('input[type="tel"]', '+254788112233');
+  await memberPage.fill('input[type="tel"]', gracePhone);
   await memberPage.fill('input[type="password"]', MEMBER_PASSWORD);
   await memberPage.click('button[type="submit"]');
   await memberPage.waitForURL((u) => u.pathname === '/en/dashboard', { timeout: 10000 });

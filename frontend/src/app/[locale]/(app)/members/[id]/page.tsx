@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Clock,
   Copy,
+  HandCoins,
   KeyRound,
   PiggyBank,
   Smartphone,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError, getAccessToken } from "@/lib/api";
+import { LoanStatusBadge } from "../../loans/page";
 import { copyToClipboard } from "@/lib/clipboard";
 import { useTenantProfile } from "@/lib/TenantProfileContext";
 
@@ -69,6 +71,16 @@ type PortalInvite = {
   invite_path: string;
 };
 
+type MemberLoanItem = {
+  id: string;
+  product_name: string;
+  amount_requested: string;
+  term_months: number;
+  status: string;
+};
+
+type LoanProductOption = { id: string; name: string };
+
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -114,6 +126,8 @@ export default function MemberDetailPage() {
   const ts = useTranslations("Savings");
   const tc = useTranslations("CollectPayment");
   const tp = useTranslations("PortalAccess");
+  const tl = useTranslations("Loans");
+  const ta = useTranslations("ApplyLoan");
   const locale = useLocale();
   const { hasPermission } = useTenantProfile();
   const router = useRouter();
@@ -154,6 +168,15 @@ export default function MemberDetailPage() {
   const [inviteError, setInviteError] = useState("");
   const [linkCopied, setLinkCopied] = useState(false);
 
+  const [loans, setLoans] = useState<MemberLoanItem[]>([]);
+  const [loanProducts, setLoanProducts] = useState<LoanProductOption[]>([]);
+  const [applyProductId, setApplyProductId] = useState("");
+  const [applyAmount, setApplyAmount] = useState("");
+  const [applyTerm, setApplyTerm] = useState("");
+  const [applyPurpose, setApplyPurpose] = useState("");
+  const [applying, setApplying] = useState(false);
+  const [applyError, setApplyError] = useState("");
+
   useEffect(() => {
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
@@ -187,7 +210,43 @@ export default function MemberDetailPage() {
     apiFetch<{ results: PortalInvite[] }>(`/api/members/portal-invites/?member=${params.id}`)
       .then((data) => setPortalInvite(data.results.find((i) => i.status === "pending") ?? null))
       .catch(() => {});
+    loadLoans(params.id);
+    apiFetch<{ results: LoanProductOption[] }>("/api/loans/products/")
+      .then((data) => setLoanProducts(data.results))
+      .catch(() => {});
   }, [params.id, router]);
+
+  function loadLoans(memberId: string) {
+    apiFetch<{ results: MemberLoanItem[] }>(`/api/loans/?member=${memberId}`)
+      .then((data) => setLoans(data.results))
+      .catch(() => {});
+  }
+
+  async function handleApplyForLoan() {
+    if (!member || !applyProductId || !applyAmount || !applyTerm) return;
+    setApplying(true);
+    setApplyError("");
+    try {
+      await apiFetch(`/api/loans/members/${member.id}/apply/`, {
+        method: "POST",
+        body: JSON.stringify({
+          product: applyProductId,
+          amount_requested: applyAmount,
+          term_months: Number(applyTerm),
+          purpose: applyPurpose,
+        }),
+      });
+      setApplyProductId("");
+      setApplyAmount("");
+      setApplyTerm("");
+      setApplyPurpose("");
+      loadLoans(member.id);
+    } catch (err) {
+      setApplyError(errorDetail(err, ta("error")));
+    } finally {
+      setApplying(false);
+    }
+  }
 
   async function handleInvitePortalAccess() {
     if (!member) return;
@@ -715,6 +774,87 @@ export default function MemberDetailPage() {
           </div>
         )}
       </div>
+
+      {hasPermission("loans.view") && (
+        <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+          <div className="mb-4 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+              <HandCoins size={16} strokeWidth={2} />
+            </div>
+            <h2 className="text-sm font-semibold text-primary-900">{tl("title")}</h2>
+          </div>
+
+          {loans.length === 0 ? (
+            <p className="mb-4 text-sm text-primary-500">{tl("noLoans")}</p>
+          ) : (
+            <ul className="mb-4 divide-y divide-primary-50">
+              {loans.map((loan) => (
+                <li key={loan.id} className="flex items-center justify-between gap-3 py-2.5 first:pt-0">
+                  <Link href={`/loans/${loan.id}`} className="min-w-0 hover:underline">
+                    <p className="truncate text-sm font-medium text-primary-900">{loan.product_name}</p>
+                    <p className="font-mono text-xs text-primary-500">{loan.amount_requested}</p>
+                  </Link>
+                  <LoanStatusBadge status={loan.status} />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {hasPermission("loans.apply_on_behalf") && (
+            <div className="border-t border-primary-50 pt-4">
+              <p className="mb-2 text-sm font-medium text-primary-900">{ta("title")}</p>
+              <div className="mb-2 flex flex-col gap-2 sm:flex-row">
+                <select
+                  value={applyProductId}
+                  onChange={(e) => setApplyProductId(e.target.value)}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                >
+                  <option value="">{ta("selectProduct")}</option>
+                  {loanProducts.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={applyAmount}
+                  onChange={(e) => setApplyAmount(e.target.value)}
+                  placeholder={ta("amount")}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+                <input
+                  type="number"
+                  min="1"
+                  value={applyTerm}
+                  onChange={(e) => setApplyTerm(e.target.value)}
+                  placeholder={ta("term")}
+                  className="w-32 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="text"
+                  value={applyPurpose}
+                  onChange={(e) => setApplyPurpose(e.target.value)}
+                  placeholder={ta("purpose")}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+                <button
+                  onClick={handleApplyForLoan}
+                  disabled={applying || !applyProductId || !applyAmount || !applyTerm}
+                  className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+                >
+                  {ta("submit")}
+                </button>
+              </div>
+              {applyError && <p className="mt-2 text-xs text-red-600">{applyError}</p>}
+            </div>
+          )}
+        </div>
+      )}
 
       {member.relations.length > 0 && (
         <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
