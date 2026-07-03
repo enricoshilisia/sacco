@@ -132,7 +132,7 @@ export default function Home() {
         {/* Feature intro */}
         <section id="features" className="px-4 pt-4 sm:px-6">
           <div className="mx-auto max-w-6xl text-center">
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary-700">
               {t("sectionEyebrow")}
             </span>
             <h2 className="mx-auto mt-3 max-w-2xl text-2xl font-semibold tracking-tight text-primary-950 sm:text-3xl">
@@ -223,7 +223,7 @@ export default function Home() {
               </div>
             </div>
             <div className="lg:order-1">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary-700">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-primary-700 shadow-sm ring-1 ring-primary-100">
                 <Smartphone size={13} strokeWidth={2.5} />
                 {t("anywhereEyebrow")}
               </span>
@@ -274,14 +274,14 @@ export default function Home() {
               sizes="100vw"
               className="object-cover object-[50%_65%]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary-950/90 via-primary-950/70 to-primary-950/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary-950/95 via-primary-950/85 to-primary-950/60" />
           </div>
 
           <div className="relative mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
             <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
               {t("ctaTitle")}
             </h2>
-            <p className="mt-4 text-base leading-7 text-primary-100">{t("ctaSubtitle")}</p>
+            <p className="mt-4 text-base leading-7 text-white/90">{t("ctaSubtitle")}</p>
             <Link
               href="/signup-sacco"
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-primary-900 shadow-sm transition-colors hover:bg-primary-50"
@@ -302,7 +302,7 @@ export default function Home() {
               </div>
               <span className="text-sm font-semibold text-primary-900">{t("title")}</span>
             </div>
-            <p className="mt-2 text-xs text-primary-500">{t("footerTagline")}</p>
+            <p className="mt-2 text-xs text-primary-700">{t("footerTagline")}</p>
           </div>
 
           <div className="flex items-center gap-5">
@@ -312,7 +312,7 @@ export default function Home() {
             <LanguageSwitcher />
           </div>
         </div>
-        <p className="border-t border-primary-50 px-4 py-4 text-center text-xs text-primary-400">
+        <p className="border-t border-primary-50 px-4 py-4 text-center text-xs text-primary-600">
           © {new Date().getFullYear()} {t("title")}. {t("footerRights")}
         </p>
       </footer>
