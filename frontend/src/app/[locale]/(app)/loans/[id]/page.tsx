@@ -56,7 +56,10 @@ export default function LoanDetailPage() {
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [members, setMembers] = useState<MemberOption[]>([]);
 
+  const [myMemberId, setMyMemberId] = useState<string | null>(null);
+
   const [guarantorId, setGuarantorId] = useState("");
+  const [guarantorMemberNumber, setGuarantorMemberNumber] = useState("");
   const [pledgedAmount, setPledgedAmount] = useState("");
   const [addingGuarantor, setAddingGuarantor] = useState(false);
   const [addGuarantorError, setAddGuarantorError] = useState("");
@@ -88,19 +91,30 @@ export default function LoanDetailPage() {
         .then((data) => setMembers(data.results))
         .catch(() => {});
     }
+    // 404s for staff with no linked member record - that's expected, not an error.
+    apiFetch<{ id: string }>("/api/members/me/")
+      .then((data) => setMyMemberId(data.id))
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   async function handleAddGuarantor() {
-    if (!guarantorId || !pledgedAmount) return;
+    const usingDropdown = hasPermission("loans.manage_guarantor_pledge");
+    if (usingDropdown ? !guarantorId : !guarantorMemberNumber) return;
+    if (!pledgedAmount) return;
     setAddingGuarantor(true);
     setAddGuarantorError("");
     try {
       await apiFetch(`/api/loans/${params.id}/guarantors/`, {
         method: "POST",
-        body: JSON.stringify({ guarantor: guarantorId, pledged_amount: pledgedAmount }),
+        body: JSON.stringify(
+          usingDropdown
+            ? { guarantor: guarantorId, pledged_amount: pledgedAmount }
+            : { guarantor_member_number: guarantorMemberNumber, pledged_amount: pledgedAmount }
+        ),
       });
       setGuarantorId("");
+      setGuarantorMemberNumber("");
       setPledgedAmount("");
       load();
     } catch (err) {
@@ -259,22 +273,33 @@ export default function LoanDetailPage() {
           </ul>
         )}
 
-        {loan.status === "PENDING_GUARANTORS" && hasPermission("loans.manage_guarantor_pledge") && (
+        {loan.status === "PENDING_GUARANTORS" &&
+          (hasPermission("loans.manage_guarantor_pledge") || myMemberId === loan.member) && (
           <div className="border-t border-primary-50 pt-4">
             <p className="mb-2 text-sm font-medium text-primary-900">{t("addGuarantor")}</p>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <select
-                value={guarantorId}
-                onChange={(e) => setGuarantorId(e.target.value)}
-                className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              >
-                <option value="">{t("selectMember")}</option>
-                {availableMembers.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.full_name} ({m.member_number})
-                  </option>
-                ))}
-              </select>
+              {hasPermission("loans.manage_guarantor_pledge") ? (
+                <select
+                  value={guarantorId}
+                  onChange={(e) => setGuarantorId(e.target.value)}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                >
+                  <option value="">{t("selectMember")}</option>
+                  {availableMembers.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.full_name} ({m.member_number})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={guarantorMemberNumber}
+                  onChange={(e) => setGuarantorMemberNumber(e.target.value)}
+                  placeholder={t("guarantorMemberNumber")}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+              )}
               <input
                 type="number"
                 min="0.01"
@@ -286,7 +311,11 @@ export default function LoanDetailPage() {
               />
               <button
                 onClick={handleAddGuarantor}
-                disabled={addingGuarantor || !guarantorId || !pledgedAmount}
+                disabled={
+                  addingGuarantor ||
+                  (hasPermission("loans.manage_guarantor_pledge") ? !guarantorId : !guarantorMemberNumber) ||
+                  !pledgedAmount
+                }
                 className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
               >
                 {t("add")}

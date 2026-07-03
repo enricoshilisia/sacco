@@ -25,7 +25,7 @@ export default function MemberPortalAcceptPage() {
   const t = useTranslations("MemberPortalAccept");
   const params = useParams<{ token: string }>();
   const [invite, setInvite] = useState<InviteDetail | null>(null);
-  const [state, setState] = useState<"loading" | "ready" | "invalid" | "done">("loading");
+  const [state, setState] = useState<"loading" | "ready" | "invalid" | "network-error" | "done">("loading");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +36,13 @@ export default function MemberPortalAcceptPage() {
         setInvite(data);
         setState("ready");
       })
-      .catch(() => setState("invalid"));
+      // A rejected response (404/410/etc, surfaced as ApiError) means the
+      // invite itself is genuinely dead. Anything else - the fetch throwing
+      // before a response ever arrived - means we couldn't reach the API at
+      // all, which says nothing about the invite and shouldn't be reported
+      // as "invalid" (that told a real user their live invite was dead when
+      // it was actually a network/connectivity problem on our end).
+      .catch((err) => setState(err instanceof ApiError ? "invalid" : "network-error"));
   }, [params.token]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -81,6 +87,13 @@ export default function MemberPortalAcceptPage() {
             <div className="text-center">
               <h1 className="text-xl font-semibold text-primary-900">{t("invalidTitle")}</h1>
               <p className="mt-2 text-sm leading-6 text-primary-600">{t("invalidBody")}</p>
+            </div>
+          )}
+
+          {state === "network-error" && (
+            <div className="text-center">
+              <h1 className="text-xl font-semibold text-primary-900">{t("networkErrorTitle")}</h1>
+              <p className="mt-2 text-sm leading-6 text-primary-600">{t("networkErrorBody")}</p>
             </div>
           )}
 

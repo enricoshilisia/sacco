@@ -57,8 +57,28 @@ class LoanApplyInputSerializer(serializers.Serializer):
 
 
 class AddGuarantorInputSerializer(serializers.Serializer):
-    guarantor = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
+    # Staff (who hold members.view) pick from the full member list via
+    # `guarantor`; a self-service borrower doesn't have members.view (that's
+    # a staff "look up any member" permission, deliberately not on the
+    # default "Member" role - see accesscontrol/migrations/0006/0007), so
+    # they instead name their guarantor by member number, which the view
+    # resolves itself. Exactly one of the two must be supplied.
+    guarantor = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all(), required=False)
+    guarantor_member_number = serializers.CharField(required=False, allow_blank=True)
     pledged_amount = serializers.DecimalField(max_digits=18, decimal_places=2, min_value=Decimal("0.01"))
+
+    def validate(self, attrs):
+        guarantor = attrs.get("guarantor")
+        member_number = attrs.get("guarantor_member_number")
+        if not guarantor and not member_number:
+            raise serializers.ValidationError("Provide either guarantor or guarantor_member_number.")
+        if not guarantor:
+            try:
+                attrs["guarantor"] = Member.objects.get(member_number=member_number)
+            except Member.DoesNotExist:
+                raise serializers.ValidationError({"guarantor_member_number": "No member with that number."})
+        attrs.pop("guarantor_member_number", None)
+        return attrs
 
 
 class RespondGuaranteeInputSerializer(serializers.Serializer):

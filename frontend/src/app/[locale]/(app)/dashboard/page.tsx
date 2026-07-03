@@ -23,8 +23,16 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useTenantProfile } from "@/lib/TenantProfileContext";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, ApiError } from "@/lib/api";
 import { LoanStatusBadge } from "../loans/page";
+
+function errorDetail(err: unknown, fallback: string) {
+  if (err instanceof ApiError && err.body && typeof err.body === "object" && "detail" in err.body) {
+    const detail = (err.body as { detail?: string }).detail;
+    if (detail) return detail;
+  }
+  return fallback;
+}
 
 type MemberListItem = {
   id: string;
@@ -77,6 +85,8 @@ type GuaranteeRequest = {
   status: "PENDING" | "CONSENTED" | "DECLINED" | "RELEASED";
 };
 
+type LoanProductOption = { id: string; name: string };
+
 const SHARE_CAPITAL_CODE = "3000";
 const SAVINGS_CONTROL_CODE = "2000";
 
@@ -87,6 +97,7 @@ function money(value: number, currency: string) {
 export default function DashboardPage() {
   const t = useTranslations("Dashboard");
   const tl = useTranslations("MyLoans");
+  const tal = useTranslations("ApplyLoan");
   const { profile } = useTenantProfile();
 
   const [memberCount, setMemberCount] = useState<number | null | undefined>(undefined);
@@ -98,10 +109,23 @@ export default function DashboardPage() {
   const [myLoans, setMyLoans] = useState<MyLoan[]>([]);
   const [guaranteeRequests, setGuaranteeRequests] = useState<GuaranteeRequest[]>([]);
   const [respondingId, setRespondingId] = useState<string | null>(null);
+  const [loanProducts, setLoanProducts] = useState<LoanProductOption[]>([]);
+  const [applyProductId, setApplyProductId] = useState("");
+  const [applyAmount, setApplyAmount] = useState("");
+  const [applyTerm, setApplyTerm] = useState("");
+  const [applyPurpose, setApplyPurpose] = useState("");
+  const [applying, setApplying] = useState(false);
+  const [applyError, setApplyError] = useState("");
 
   function loadGuaranteeRequests() {
     apiFetch<{ results: GuaranteeRequest[] }>("/api/loans/me/guarantee-requests/")
       .then((data) => setGuaranteeRequests(data.results))
+      .catch(() => {});
+  }
+
+  function loadMyLoans() {
+    apiFetch<{ results: MyLoan[] }>("/api/loans/me/")
+      .then((data) => setMyLoans(data.results))
       .catch(() => {});
   }
 
@@ -115,6 +139,32 @@ export default function DashboardPage() {
       loadGuaranteeRequests();
     } finally {
       setRespondingId(null);
+    }
+  }
+
+  async function handleApplyForLoan() {
+    if (!applyProductId || !applyAmount || !applyTerm) return;
+    setApplying(true);
+    setApplyError("");
+    try {
+      await apiFetch("/api/loans/me/apply/", {
+        method: "POST",
+        body: JSON.stringify({
+          product: applyProductId,
+          amount_requested: applyAmount,
+          term_months: Number(applyTerm),
+          purpose: applyPurpose,
+        }),
+      });
+      setApplyProductId("");
+      setApplyAmount("");
+      setApplyTerm("");
+      setApplyPurpose("");
+      loadMyLoans();
+    } catch (err) {
+      setApplyError(errorDetail(err, tal("error")));
+    } finally {
+      setApplying(false);
     }
   }
 
@@ -150,6 +200,10 @@ export default function DashboardPage() {
       .catch(() => setMyMember(null));
 
     loadGuaranteeRequests();
+
+    apiFetch<{ results: LoanProductOption[] }>("/api/loans/products/")
+      .then((data) => setLoanProducts(data.results))
+      .catch(() => {});
   }, []);
 
   if (!profile) return null;
@@ -204,19 +258,22 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {myMember && (myLoans.length > 0 || guaranteeRequests.length > 0) && (
+      {myMember && (
         <div className="mb-6 grid gap-5 lg:grid-cols-2">
-          {myLoans.length > 0 && (
-            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
-              <div className="mb-4 flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
-                  <HandCoins size={16} strokeWidth={2} />
-                </div>
-                <h2 className="text-sm font-semibold text-primary-900">{tl("title")}</h2>
+          <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+            <div className="mb-4 flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+                <HandCoins size={16} strokeWidth={2} />
               </div>
-              <ul className="divide-y divide-primary-50">
+              <h2 className="text-sm font-semibold text-primary-900">{tl("title")}</h2>
+            </div>
+
+            {myLoans.length === 0 ? (
+              <p className="mb-4 text-sm text-primary-500">{tl("noLoans")}</p>
+            ) : (
+              <ul className="mb-4 divide-y divide-primary-50">
                 {myLoans.map((loan) => (
-                  <li key={loan.id} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+                  <li key={loan.id} className="flex items-center justify-between gap-3 py-2.5 first:pt-0">
                     <Link href={`/loans/${loan.id}`} className="min-w-0 hover:underline">
                       <p className="truncate text-sm font-medium text-primary-900">{loan.product_name}</p>
                       <p className="font-mono text-xs text-primary-500">{loan.amount_requested}</p>
@@ -225,8 +282,64 @@ export default function DashboardPage() {
                   </li>
                 ))}
               </ul>
-            </section>
-          )}
+            )}
+
+            <div className="border-t border-primary-50 pt-4">
+              <p className="mb-2 text-sm font-medium text-primary-900">{tal("title")}</p>
+              <div className="mb-2 flex flex-col gap-2 sm:flex-row">
+                <select
+                  value={applyProductId}
+                  onChange={(e) => setApplyProductId(e.target.value)}
+                  disabled={applying}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-60"
+                >
+                  <option value="">{tal("selectProduct")}</option>
+                  {loanProducts.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={applyAmount}
+                  onChange={(e) => setApplyAmount(e.target.value)}
+                  placeholder={tal("amount")}
+                  disabled={applying}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-60"
+                />
+                <input
+                  type="number"
+                  min="1"
+                  value={applyTerm}
+                  onChange={(e) => setApplyTerm(e.target.value)}
+                  placeholder={tal("term")}
+                  disabled={applying}
+                  className="w-28 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-60"
+                />
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="text"
+                  value={applyPurpose}
+                  onChange={(e) => setApplyPurpose(e.target.value)}
+                  placeholder={tal("purpose")}
+                  disabled={applying}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-60"
+                />
+                <button
+                  onClick={handleApplyForLoan}
+                  disabled={applying || !applyProductId || !applyAmount || !applyTerm}
+                  className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+                >
+                  {tal("submit")}
+                </button>
+              </div>
+              {applyError && <p className="mt-2 text-xs text-red-600">{applyError}</p>}
+            </div>
+          </section>
 
           {guaranteeRequests.length > 0 && (
             <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">

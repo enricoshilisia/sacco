@@ -28,7 +28,7 @@ export default function StaffAcceptPage() {
   const t = useTranslations("StaffAccept");
   const params = useParams<{ token: string }>();
   const [invite, setInvite] = useState<InviteDetail | null>(null);
-  const [state, setState] = useState<"loading" | "ready" | "invalid" | "done">("loading");
+  const [state, setState] = useState<"loading" | "ready" | "invalid" | "network-error" | "done">("loading");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -39,7 +39,11 @@ export default function StaffAcceptPage() {
         setInvite(data);
         setState("ready");
       })
-      .catch(() => setState("invalid"));
+      // Only an actual rejected response means the invite is dead; a thrown
+      // network error (fetch never got a response) shouldn't be reported
+      // as an invalid invite - see the member-portal accept page for the
+      // full rationale.
+      .catch((err) => setState(err instanceof ApiError ? "invalid" : "network-error"));
   }, [params.token]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -84,6 +88,13 @@ export default function StaffAcceptPage() {
             <div className="text-center">
               <h1 className="text-xl font-semibold text-primary-900">{t("invalidTitle")}</h1>
               <p className="mt-2 text-sm leading-6 text-primary-600">{t("invalidBody")}</p>
+            </div>
+          )}
+
+          {state === "network-error" && (
+            <div className="text-center">
+              <h1 className="text-xl font-semibold text-primary-900">{t("networkErrorTitle")}</h1>
+              <p className="mt-2 text-sm leading-6 text-primary-600">{t("networkErrorBody")}</p>
             </div>
           )}
 
