@@ -16,6 +16,15 @@ const REVOKE_PHONE = '+254799111222';
 async function run() {
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
   const adminPage = await browser.newPage();
+  // nairobi.localhost is a secure context in Chromium (localhost + its
+  // subdomains are always "potentially trustworthy"), so navigator.clipboard
+  // would actually be defined here - but the real bug report came from a
+  // plain-HTTP nip.io host, where it's undefined. Force that condition so
+  // this test actually exercises the execCommand fallback, regardless of
+  // which host the suite happens to run against.
+  await adminPage.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+  });
   const errors = [];
   adminPage.on('console', (msg) => {
     if (msg.type() === 'error' && !msg.text().startsWith('Failed to load resource')) {
@@ -52,6 +61,15 @@ async function run() {
 
   await adminPage.waitForSelector('text=Peter Njoroge', { timeout: 10000 });
   assert(await adminPage.isVisible('text=Peter Njoroge'), 'new invite appears in pending list');
+
+  // --- Copy the setup link (regression check: navigator.clipboard is
+  // undefined over plain HTTP on non-localhost hosts like nip.io, so this
+  // must fall back gracefully instead of throwing) ---
+  await adminPage
+    .locator('li:has-text("Peter Njoroge")')
+    .locator('button:has-text("Copy setup link")')
+    .click();
+  await adminPage.waitForSelector('li:has-text("Peter Njoroge") button:has-text("Copied")', { timeout: 5000 });
 
   // --- Accept the invite as a brand-new, unauthenticated user ---
   const inviteContext = await browser.newContext();

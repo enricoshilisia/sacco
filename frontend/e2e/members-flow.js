@@ -26,7 +26,7 @@ async function run() {
   await page.click('button[type="submit"]');
   await page.waitForURL((u) => u.pathname === '/en/dashboard', { timeout: 10000 });
 
-  await page.click('text=View members');
+  await page.locator('[data-testid="nav-members"]:visible').click();
   await page.waitForURL((u) => u.pathname === '/en/members', { timeout: 10000 });
   await page.waitForSelector('text=Add member', { timeout: 10000 });
 

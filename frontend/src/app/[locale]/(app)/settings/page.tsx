@@ -537,9 +537,11 @@ function StaffSection() {
   }
 
   async function copyLink(invite: StaffInvite) {
-    await navigator.clipboard.writeText(inviteUrl(invite));
-    setCopiedId(invite.id);
-    setTimeout(() => setCopiedId(null), 2000);
+    const copied = await copyToClipboard(inviteUrl(invite));
+    if (copied) {
+      setCopiedId(invite.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
   }
 
   if (state === "loading") {
@@ -766,4 +768,37 @@ function errorDetail(err: unknown, fallback: string) {
     if (detail) return detail;
   }
   return fallback;
+}
+
+/**
+ * navigator.clipboard only exists in secure contexts (HTTPS, or literally
+ * "localhost") - this app is often reached over plain HTTP on a nip.io/IP
+ * domain, where it's undefined. Falls back to the old execCommand trick,
+ * which still works over HTTP.
+ */
+async function copyToClipboard(text: string): Promise<boolean> {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // fall through to the legacy fallback below
+    }
+  }
+  if (typeof document === "undefined") return false;
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  }
+  document.body.removeChild(textarea);
+  return copied;
 }
