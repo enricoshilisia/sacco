@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Membership, Permission, Role, RolePermission
+from .models import Membership, Permission, Role, RolePermission, StaffInvite
 
 
 class RolePermissionInline(admin.TabularInline):
@@ -25,3 +25,11 @@ class RoleAdmin(admin.ModelAdmin):
 class MembershipAdmin(admin.ModelAdmin):
     list_display = ("user", "role", "is_active", "assigned_at")
     list_filter = ("role", "is_active")
+
+
+@admin.register(StaffInvite)
+class StaffInviteAdmin(admin.ModelAdmin):
+    list_display = ("phone_number", "first_name", "last_name", "role", "status", "created_at", "expires_at")
+    list_filter = ("role",)
+    search_fields = ("phone_number", "first_name", "last_name", "email")
+    readonly_fields = ("token", "accepted_at")
