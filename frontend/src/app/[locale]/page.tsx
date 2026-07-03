@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
   ArrowRight,
+  Check,
   HandCoins,
   Landmark,
   LineChart,
@@ -151,6 +152,7 @@ export default function Home() {
               imagePosition="object-center"
               title={t("savingsTitle")}
               body={t("savingsBody")}
+              bullets={[t("savingsBullet1"), t("savingsBullet2"), t("savingsBullet3")]}
             />
             <FeatureRow
               icon={HandCoins}
@@ -159,6 +161,7 @@ export default function Home() {
               imagePosition="object-left"
               title={t("loansTitle")}
               body={t("loansBody")}
+              bullets={[t("loansBullet1"), t("loansBullet2"), t("loansBullet3")]}
               reverse
             />
             <FeatureRow
@@ -168,6 +171,7 @@ export default function Home() {
               imagePosition="object-center"
               title={t("accountingTitle")}
               body={t("accountingBody")}
+              bullets={[t("accountingBullet1"), t("accountingBullet2"), t("accountingBullet3")]}
             />
             <FeatureRow
               icon={LineChart}
@@ -176,6 +180,7 @@ export default function Home() {
               imagePosition="object-center"
               title={t("reportsTitle")}
               body={t("reportsBody")}
+              bullets={[t("reportsBullet1"), t("reportsBullet2"), t("reportsBullet3")]}
               reverse
             />
           </div>
@@ -327,6 +332,7 @@ function FeatureRow({
   imagePosition,
   title,
   body,
+  bullets,
   reverse,
 }: {
   icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
@@ -335,6 +341,7 @@ function FeatureRow({
   imagePosition: string;
   title: string;
   body: string;
+  bullets: string[];
   reverse?: boolean;
 }) {
   return (
@@ -343,7 +350,7 @@ function FeatureRow({
         reverse ? "lg:[&>*:first-child]:order-2" : ""
       }`}
     >
-      <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-3xl shadow-lg ring-1 ring-primary-900/5 lg:max-w-none">
+      <div className="relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-3xl shadow-lg ring-1 ring-primary-900/5 lg:max-w-none">
         <Image
           src={image}
           alt={imageAlt}
@@ -360,6 +367,16 @@ function FeatureRow({
           {title}
         </h3>
         <p className="mt-3 max-w-md text-base leading-7 text-primary-700">{body}</p>
+        <ul className="mt-5 space-y-2.5 border-t border-primary-100 pt-5">
+          {bullets.map((bullet) => (
+            <li key={bullet} className="flex items-start gap-2.5 text-sm text-primary-800">
+              <span className="mt-0.5 flex h-4 w-4 flex-none items-center justify-center rounded-full bg-primary-100 text-primary-700">
+                <Check size={11} strokeWidth={3} />
+              </span>
+              {bullet}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
