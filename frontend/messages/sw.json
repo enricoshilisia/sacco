@@ -45,6 +45,7 @@
     "home": "Nyumbani",
     "dashboard": "Dashibodi",
     "members": "Wanachama",
+    "accounting": "Uhasibu",
     "settings": "Mipangilio",
     "language": "Lugha",
     "logout": "Toka"
@@ -151,5 +152,37 @@
     "save": "Hifadhi mabadiliko",
     "saved": "Imehifadhiwa",
     "error": "Imeshindikana kuhifadhi mipangilio. Jaribu tena."
+  },
+  "Accounting": {
+    "title": "Uhasibu",
+    "forbidden": "Huna ruhusa ya kuona uhasibu.",
+    "tab_trialBalance": "Mizani ya Majaribio",
+    "tab_journal": "Jarida",
+    "code": "Nambari",
+    "account": "Akaunti",
+    "accountType": "Aina",
+    "balance": "Salio",
+    "balanced": "Imesawazika",
+    "unbalanced": "Haijasawazika",
+    "totalDebits": "Jumla ya madeni",
+    "totalCredits": "Jumla ya mikopo",
+    "reversalOf": "Inabatilisha",
+    "reverse": "Batilisha",
+    "reverseReasonPlaceholder": "Sababu ya kubatilisha",
+    "confirmReverse": "Thibitisha kubatilisha"
+  },
+  "Savings": {
+    "sharesTitle": "Hisa",
+    "sharesBalance": "Salio la hisa",
+    "contribute": "Changia",
+    "amount": "Kiasi",
+    "savingsTitle": "Akiba",
+    "noAccounts": "Hakuna akaunti za akiba bado.",
+    "deposit": "Weka",
+    "withdraw": "Toa",
+    "openNewAccount": "Fungua akaunti mpya ya akiba",
+    "selectProduct": "Chagua bidhaa",
+    "error": "Imeshindikana kukamilisha muamala huu. Angalia taarifa na ujaribu tena.",
+    "insufficientBalance": "Salio halitoshi kwa uondoaji huu."
   }
 }

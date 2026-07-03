@@ -52,6 +52,8 @@ TENANT_APPS = [
     "configuration",
     "accesscontrol",
     "members",
+    "accounting",
+    "savings",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]

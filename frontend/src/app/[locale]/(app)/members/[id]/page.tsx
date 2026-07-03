@@ -3,9 +3,53 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Camera, CheckCircle2, Clock, Users } from "lucide-react";
+import { ArrowLeft, Camera, CheckCircle2, Clock, PiggyBank, Users, Wallet } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError, getAccessToken } from "@/lib/api";
+
+type SavingsProduct = {
+  id: string;
+  name: string;
+  code: string;
+  product_type: string;
+  is_active: boolean;
+};
+
+type SavingsTransaction = {
+  id: string;
+  transaction_type: string;
+  amount: string;
+  transaction_date: string;
+};
+
+type SavingsAccountData = {
+  id: string;
+  product: string;
+  product_name: string;
+  account_number: string;
+  balance: string;
+  transactions: SavingsTransaction[];
+};
+
+type MemberStatement = {
+  shares: {
+    balance: string;
+    contributions: { id: string; amount: string; transaction_date: string }[];
+  };
+  savings_accounts: SavingsAccountData[];
+};
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function errorDetail(err: unknown, fallback: string) {
+  if (err instanceof ApiError && err.body && typeof err.body === "object" && "detail" in err.body) {
+    const detail = (err.body as { detail?: string }).detail;
+    if (detail) return detail;
+  }
+  return fallback;
+}
 
 type MemberDetail = {
   id: string;
@@ -36,6 +80,7 @@ type MemberDetail = {
 
 export default function MemberDetailPage() {
   const t = useTranslations("Members");
+  const ts = useTranslations("Savings");
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +88,29 @@ export default function MemberDetailPage() {
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [verifying, setVerifying] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const [statement, setStatement] = useState<MemberStatement | null>(null);
+  const [products, setProducts] = useState<SavingsProduct[]>([]);
+
+  const [contributeAmount, setContributeAmount] = useState("");
+  const [contributing, setContributing] = useState(false);
+  const [contributeError, setContributeError] = useState("");
+
+  const [depositAmounts, setDepositAmounts] = useState<Record<string, string>>({});
+  const [withdrawAmounts, setWithdrawAmounts] = useState<Record<string, string>>({});
+  const [txnBusy, setTxnBusy] = useState<Record<string, boolean>>({});
+  const [txnError, setTxnError] = useState<Record<string, string>>({});
+
+  const [newProductId, setNewProductId] = useState("");
+  const [newAmount, setNewAmount] = useState("");
+  const [opening, setOpening] = useState(false);
+  const [openError, setOpenError] = useState("");
+
+  function loadStatement(memberId: string) {
+    apiFetch<MemberStatement>(`/api/savings/members/${memberId}/statement/`)
+      .then(setStatement)
+      .catch(() => {});
+  }
 
   useEffect(() => {
     if (!getAccessToken()) {
@@ -58,7 +126,88 @@ export default function MemberDetailPage() {
         if (err instanceof ApiError && err.status === 401) router.replace("/login");
         else setState("error");
       });
+    loadStatement(params.id);
+    apiFetch<{ results: SavingsProduct[] }>("/api/savings/products/")
+      .then((data) => setProducts(data.results))
+      .catch(() => {});
   }, [params.id, router]);
+
+  async function handleContribute() {
+    if (!member || !contributeAmount) return;
+    setContributing(true);
+    setContributeError("");
+    try {
+      await apiFetch(`/api/savings/members/${member.id}/shares/contribute/`, {
+        method: "POST",
+        body: JSON.stringify({ amount: contributeAmount, transaction_date: todayIso() }),
+      });
+      setContributeAmount("");
+      loadStatement(member.id);
+    } catch (err) {
+      setContributeError(errorDetail(err, ts("error")));
+    } finally {
+      setContributing(false);
+    }
+  }
+
+  async function handleDeposit(account: SavingsAccountData) {
+    if (!member) return;
+    const amount = depositAmounts[account.id];
+    if (!amount) return;
+    setTxnBusy((s) => ({ ...s, [account.id]: true }));
+    setTxnError((s) => ({ ...s, [account.id]: "" }));
+    try {
+      await apiFetch(`/api/savings/members/${member.id}/deposit/`, {
+        method: "POST",
+        body: JSON.stringify({ product: account.product, amount, transaction_date: todayIso() }),
+      });
+      setDepositAmounts((s) => ({ ...s, [account.id]: "" }));
+      loadStatement(member.id);
+    } catch (err) {
+      setTxnError((s) => ({ ...s, [account.id]: errorDetail(err, ts("error")) }));
+    } finally {
+      setTxnBusy((s) => ({ ...s, [account.id]: false }));
+    }
+  }
+
+  async function handleWithdraw(account: SavingsAccountData) {
+    if (!member) return;
+    const amount = withdrawAmounts[account.id];
+    if (!amount) return;
+    setTxnBusy((s) => ({ ...s, [account.id]: true }));
+    setTxnError((s) => ({ ...s, [account.id]: "" }));
+    try {
+      await apiFetch(`/api/savings/members/${member.id}/withdraw/`, {
+        method: "POST",
+        body: JSON.stringify({ savings_account: account.id, amount, transaction_date: todayIso() }),
+      });
+      setWithdrawAmounts((s) => ({ ...s, [account.id]: "" }));
+      loadStatement(member.id);
+    } catch (err) {
+      setTxnError((s) => ({ ...s, [account.id]: errorDetail(err, ts("insufficientBalance")) }));
+    } finally {
+      setTxnBusy((s) => ({ ...s, [account.id]: false }));
+    }
+  }
+
+  async function handleOpenAccount() {
+    if (!member || !newProductId || !newAmount) return;
+    setOpening(true);
+    setOpenError("");
+    try {
+      await apiFetch(`/api/savings/members/${member.id}/deposit/`, {
+        method: "POST",
+        body: JSON.stringify({ product: newProductId, amount: newAmount, transaction_date: todayIso() }),
+      });
+      setNewProductId("");
+      setNewAmount("");
+      loadStatement(member.id);
+    } catch (err) {
+      setOpenError(errorDetail(err, ts("error")));
+    } finally {
+      setOpening(false);
+    }
+  }
 
   async function handleVerifyKyc() {
     if (!member) return;
@@ -199,6 +348,143 @@ export default function MemberDetailPage() {
             <CheckCircle2 size={16} />
             {t("verifyKyc")}
           </button>
+        )}
+      </div>
+
+      <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+        <div className="mb-4 flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+            <Wallet size={16} strokeWidth={2} />
+          </div>
+          <h2 className="text-sm font-semibold text-primary-900">{ts("sharesTitle")}</h2>
+        </div>
+
+        <Row label={ts("sharesBalance")} value={statement?.shares.balance ?? "-"} />
+
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+          <input
+            type="number"
+            min="0.01"
+            step="0.01"
+            value={contributeAmount}
+            onChange={(e) => setContributeAmount(e.target.value)}
+            placeholder={ts("amount")}
+            className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          />
+          <button
+            onClick={handleContribute}
+            disabled={contributing || !contributeAmount}
+            className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+          >
+            {ts("contribute")}
+          </button>
+        </div>
+        {contributeError && <p className="mt-2 text-xs text-red-600">{contributeError}</p>}
+      </div>
+
+      <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+        <div className="mb-4 flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+            <PiggyBank size={16} strokeWidth={2} />
+          </div>
+          <h2 className="text-sm font-semibold text-primary-900">{ts("savingsTitle")}</h2>
+        </div>
+
+        {(!statement || statement.savings_accounts.length === 0) && (
+          <p className="text-sm text-primary-500">{ts("noAccounts")}</p>
+        )}
+
+        <div className="space-y-4">
+          {statement?.savings_accounts.map((account) => (
+            <div key={account.id} className="rounded-lg border border-primary-100 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-sm font-medium text-primary-900">{account.product_name}</p>
+                <p className="font-mono text-sm text-primary-900">{account.balance}</p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={depositAmounts[account.id] ?? ""}
+                  onChange={(e) =>
+                    setDepositAmounts((s) => ({ ...s, [account.id]: e.target.value }))
+                  }
+                  placeholder={ts("amount")}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+                <button
+                  onClick={() => handleDeposit(account)}
+                  disabled={txnBusy[account.id] || !depositAmounts[account.id]}
+                  className="rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+                >
+                  {ts("deposit")}
+                </button>
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={withdrawAmounts[account.id] ?? ""}
+                  onChange={(e) =>
+                    setWithdrawAmounts((s) => ({ ...s, [account.id]: e.target.value }))
+                  }
+                  placeholder={ts("amount")}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+                <button
+                  onClick={() => handleWithdraw(account)}
+                  disabled={txnBusy[account.id] || !withdrawAmounts[account.id]}
+                  className="rounded-full border border-primary-200 px-4 py-2 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-50 disabled:opacity-60"
+                >
+                  {ts("withdraw")}
+                </button>
+              </div>
+              {txnError[account.id] && (
+                <p className="mt-2 text-xs text-red-600">{txnError[account.id]}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {products.filter(
+          (p) => !statement?.savings_accounts.some((a) => a.product === p.id),
+        ).length > 0 && (
+          <div className="mt-4 border-t border-primary-50 pt-4">
+            <p className="mb-2 text-sm font-medium text-primary-900">{ts("openNewAccount")}</p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <select
+                value={newProductId}
+                onChange={(e) => setNewProductId(e.target.value)}
+                className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              >
+                <option value="">{ts("selectProduct")}</option>
+                {products
+                  .filter((p) => !statement?.savings_accounts.some((a) => a.product === p.id))
+                  .map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+              </select>
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={newAmount}
+                onChange={(e) => setNewAmount(e.target.value)}
+                placeholder={ts("amount")}
+                className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              />
+              <button
+                onClick={handleOpenAccount}
+                disabled={opening || !newProductId || !newAmount}
+                className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+              >
+                {ts("deposit")}
+              </button>
+            </div>
+            {openError && <p className="mt-2 text-xs text-red-600">{openError}</p>}
+          </div>
         )}
       </div>
 

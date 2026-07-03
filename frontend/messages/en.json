@@ -45,6 +45,7 @@
     "home": "Home",
     "dashboard": "Dashboard",
     "members": "Members",
+    "accounting": "Accounting",
     "settings": "Settings",
     "language": "Language",
     "logout": "Log out"
@@ -151,5 +152,37 @@
     "save": "Save changes",
     "saved": "Saved",
     "error": "Couldn't save settings. Try again."
+  },
+  "Accounting": {
+    "title": "Accounting",
+    "forbidden": "You don't have permission to view accounting.",
+    "tab_trialBalance": "Trial Balance",
+    "tab_journal": "Journal",
+    "code": "Code",
+    "account": "Account",
+    "accountType": "Type",
+    "balance": "Balance",
+    "balanced": "Balanced",
+    "unbalanced": "Unbalanced",
+    "totalDebits": "Total debits",
+    "totalCredits": "Total credits",
+    "reversalOf": "Reverses",
+    "reverse": "Reverse",
+    "reverseReasonPlaceholder": "Reason for reversal",
+    "confirmReverse": "Confirm reversal"
+  },
+  "Savings": {
+    "sharesTitle": "Shares",
+    "sharesBalance": "Share capital balance",
+    "contribute": "Contribute",
+    "amount": "Amount",
+    "savingsTitle": "Savings",
+    "noAccounts": "No savings accounts opened yet.",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "openNewAccount": "Open a new savings account",
+    "selectProduct": "Select a product",
+    "error": "Couldn't complete this transaction. Check the details and try again.",
+    "insufficientBalance": "Insufficient balance for this withdrawal."
   }
 }

@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Building2, LayoutDashboard, LogOut, Menu, Settings, Users, X } from "lucide-react";
+import { Building2, LayoutDashboard, LogOut, Menu, Scale, Settings, Users, X } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTenantProfile } from "@/lib/TenantProfileContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type NavItem = {
-  href: "/dashboard" | "/members" | "/settings";
+  href: "/dashboard" | "/members" | "/accounting" | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
 };
@@ -22,6 +22,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const navItems: NavItem[] = [
     { href: "/dashboard", label: t("dashboard"), icon: LayoutDashboard },
     { href: "/members", label: t("members"), icon: Users },
+    { href: "/accounting", label: t("accounting"), icon: Scale },
     { href: "/settings", label: t("settings"), icon: Settings },
   ];
 
