@@ -46,79 +46,88 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const userName =
     profile && `${profile.user.first_name} ${profile.user.last_name}`.trim();
   const roleName = profile?.memberships[0]?.role_name;
+  const initials = userName
+    ? userName
+        .split(" ")
+        .map((p) => p[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "";
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
-  const sidebarContent = (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 px-5 py-5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary-600 text-white">
-          {profile?.tenant.logo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={profile.tenant.logo} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <Building2 size={18} />
-          )}
-        </div>
-        <span className="truncate text-sm font-semibold text-primary-900">{saccoName}</span>
-      </div>
-
-      <nav className="flex-1 space-y-1 px-3">
-        {navItems.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            data-testid={`nav-${href.slice(1)}`}
-            onClick={() => setMobileOpen(false)}
-            className={
-              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors " +
-              (isActive(href)
-                ? "bg-primary-50 text-primary-700"
-                : "text-primary-600 hover:bg-primary-50 hover:text-primary-800")
-            }
-          >
-            <Icon size={18} strokeWidth={2} />
-            {label}
-          </Link>
-        ))}
-      </nav>
-
-      <div className="border-t border-primary-100 px-3 py-4">
-        <div className="mb-3 px-3">
-          <LanguageSwitcher />
-        </div>
-        {userName && (
-          <div className="mb-2 flex items-center gap-3 rounded-lg px-3 py-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700">
-              {userName
-                .split(" ")
-                .map((p) => p[0])
-                .join("")
-                .slice(0, 2)
-                .toUpperCase()}
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-primary-900">{userName}</p>
-              {roleName && <p className="truncate text-xs text-primary-500">{roleName}</p>}
-            </div>
-          </div>
+  const brand = (
+    <div className="flex items-center gap-2.5">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary-600 text-white">
+        {profile?.tenant.logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={profile.tenant.logo} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <Building2 size={18} />
         )}
-        <button
-          onClick={logout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary-600 transition-colors hover:bg-primary-50 hover:text-primary-800"
-        >
-          <LogOut size={18} strokeWidth={2} />
-          {t("logout")}
-        </button>
       </div>
+      <span className="truncate text-sm font-semibold text-primary-900">{saccoName}</span>
+    </div>
+  );
+
+  const navLinks = (
+    <nav className="flex-1 space-y-1 px-3 py-4">
+      {navItems.map(({ href, label, icon: Icon }) => (
+        <Link
+          key={href}
+          href={href}
+          data-testid={`nav-${href.slice(1)}`}
+          onClick={() => setMobileOpen(false)}
+          className={
+            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors " +
+            (isActive(href)
+              ? "bg-primary-50 text-primary-700"
+              : "text-primary-600 hover:bg-primary-50 hover:text-primary-800")
+          }
+        >
+          <Icon size={18} strokeWidth={2} />
+          {label}
+        </Link>
+      ))}
+    </nav>
+  );
+
+  const profileCluster = (
+    <div className="flex items-center gap-3 sm:gap-4">
+      <LanguageSwitcher />
+      {userName && (
+        <div className="hidden items-center gap-2.5 sm:flex">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700">
+            {initials}
+          </div>
+          <div className="min-w-0">
+            <p className="max-w-[10rem] truncate text-sm font-medium text-primary-900">{userName}</p>
+            {roleName && <p className="truncate text-xs text-primary-500">{roleName}</p>}
+          </div>
+        </div>
+      )}
+      {userName && (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700 sm:hidden">
+          {initials}
+        </div>
+      )}
+      <button
+        onClick={logout}
+        aria-label={t("logout")}
+        title={t("logout")}
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-primary-600 transition-colors hover:bg-primary-50 hover:text-primary-800"
+      >
+        <LogOut size={18} strokeWidth={2} />
+      </button>
     </div>
   );
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-full flex-1 items-center justify-center bg-primary-50">
+      <div className="flex h-full flex-1 items-center justify-center bg-primary-50">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-300 border-t-primary-600" />
       </div>
     );
@@ -126,7 +135,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   if (status === "expired") {
     return (
-      <div className="flex min-h-full flex-1 flex-col items-center justify-center gap-4 bg-primary-50 px-6 text-center">
+      <div className="flex h-full flex-1 flex-col items-center justify-center gap-4 bg-primary-50 px-6 text-center">
         <p className="text-sm text-primary-700">Your session has expired.</p>
         <Link
           href="/login"
@@ -139,47 +148,59 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-full bg-primary-50">
-      {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-primary-100 bg-white md:block">
-        {sidebarContent}
-      </aside>
-
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div
-            className="absolute inset-0 bg-black/30"
-            onClick={() => setMobileOpen(false)}
-            aria-hidden="true"
-          />
-          <aside className="absolute inset-y-0 left-0 w-72 bg-white shadow-xl">
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="absolute right-3 top-4 rounded-lg p-2 text-primary-500 hover:bg-primary-50"
-              aria-label="Close menu"
-            >
-              <X size={20} />
-            </button>
-            {sidebarContent}
-          </aside>
+    <div className="flex h-full flex-col bg-primary-50">
+      {/* Static top bar - spans the full width; its left zone lines up
+          with the sidebar's width/border below so the two read as one
+          connected frame rather than two floating panels. */}
+      <header className="flex h-16 shrink-0 items-stretch border-b border-primary-100 bg-white">
+        <div className="hidden w-64 shrink-0 items-center border-r border-primary-100 px-5 md:flex">
+          {brand}
         </div>
-      )}
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="flex items-center px-4 text-primary-600 hover:bg-primary-50 md:hidden"
+          aria-label="Open menu"
+        >
+          <Menu size={20} />
+        </button>
+        <div className="flex flex-1 items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="min-w-0 md:hidden">{brand}</div>
+          <div className="ml-auto">{profileCluster}</div>
+        </div>
+      </header>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile top bar */}
-        <header className="flex items-center gap-3 border-b border-primary-100 bg-white px-4 py-3 md:hidden">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="rounded-lg p-2 text-primary-600 hover:bg-primary-50"
-            aria-label="Open menu"
-          >
-            <Menu size={20} />
-          </button>
-          <span className="truncate text-sm font-semibold text-primary-900">{saccoName}</span>
-        </header>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Static desktop sidebar */}
+        <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r border-primary-100 bg-white md:flex">
+          {navLinks}
+        </aside>
 
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        {/* Mobile drawer */}
+        {mobileOpen && (
+          <div className="fixed inset-0 z-40 md:hidden">
+            <div
+              className="absolute inset-0 bg-black/30"
+              onClick={() => setMobileOpen(false)}
+              aria-hidden="true"
+            />
+            <aside className="absolute inset-y-0 left-0 flex w-72 flex-col overflow-y-auto bg-white shadow-xl">
+              <div className="flex items-center justify-between px-5 py-5">
+                {brand}
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg p-2 text-primary-500 hover:bg-primary-50"
+                  aria-label="Close menu"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              {navLinks}
+            </aside>
+          </div>
+        )}
+
+        {/* The only scrollable region - bars above/beside it stay put. */}
+        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>
   );

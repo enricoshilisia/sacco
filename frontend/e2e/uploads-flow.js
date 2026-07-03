@@ -46,9 +46,9 @@ async function run() {
   const logoImg = await page.locator('button:has-text("Change logo") >> xpath=../.. >> img').count();
   assert(logoImg > 0, 'logo image renders after reload');
 
-  // Sidebar should also pick up the new logo.
-  const sidebarLogo = await page.locator('aside img').count();
-  assert(sidebarLogo > 0, 'sidebar shows uploaded logo');
+  // The top bar's brand zone should also pick up the new logo.
+  const topBarLogo = await page.locator('header img').count();
+  assert(topBarLogo > 0, 'top bar shows uploaded logo');
 
   // --- Member photo upload ---
   await page.locator('[data-testid="nav-members"]:visible').click();
