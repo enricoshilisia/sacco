@@ -28,6 +28,7 @@ export type TenantProfile = {
     is_active: boolean;
     assigned_at: string;
   }[];
+  permissions: string[];
 };
 
 type ContextValue = {
@@ -35,6 +36,10 @@ type ContextValue = {
   status: "loading" | "ready" | "expired";
   logout: () => void;
   refresh: () => void;
+  /** True if the logged-in user holds this permission code in this SACCO. */
+  hasPermission: (code: string) => boolean;
+  /** True if the logged-in user holds any of these permission codes. */
+  hasAnyPermission: (codes: string[]) => boolean;
 };
 
 const TenantProfileContext = createContext<ContextValue | null>(null);
@@ -66,8 +71,18 @@ export function TenantProfileProvider({ children }: { children: React.ReactNode 
     router.push("/login");
   }
 
+  function hasPermission(code: string) {
+    return profile?.permissions.includes(code) ?? false;
+  }
+
+  function hasAnyPermission(codes: string[]) {
+    return codes.some(hasPermission);
+  }
+
   return (
-    <TenantProfileContext.Provider value={{ profile, status, logout, refresh: load }}>
+    <TenantProfileContext.Provider
+      value={{ profile, status, logout, refresh: load, hasPermission, hasAnyPermission }}
+    >
       {children}
     </TenantProfileContext.Provider>
   );

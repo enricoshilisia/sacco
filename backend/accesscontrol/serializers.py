@@ -4,7 +4,7 @@ from rest_framework import serializers
 from identity.serializers import UserSerializer
 from tenants.models import Tenant
 
-from .models import Membership, Role, StaffInvite
+from .models import Membership, Permission, Role, StaffInvite
 
 
 class TenantProfileSerializer(serializers.ModelSerializer):
@@ -50,6 +50,7 @@ class MyTenantProfileSerializer(serializers.Serializer):
     tenant = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
     memberships = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
     def get_tenant(self, request):
         tenant = Tenant.objects.get(schema_name=connection.schema_name)
@@ -61,6 +62,19 @@ class MyTenantProfileSerializer(serializers.Serializer):
     def get_memberships(self, request):
         memberships = Membership.objects.filter(user=request.user, is_active=True).select_related("role")
         return MembershipSerializer(memberships, many=True).data
+
+    def get_permissions(self, request):
+        """
+        The union of every permission code granted by this user's active
+        Membership role(s) - the frontend uses this to decide which nav
+        items to even show, not just what to 403 on click (accesscontrol
+        is the single source of truth for both).
+        """
+        codes = Permission.objects.filter(
+            roles__memberships__user=request.user,
+            roles__memberships__is_active=True,
+        ).values_list("code", flat=True)
+        return sorted(set(codes))
 
 
 class RoleSerializer(serializers.ModelSerializer):

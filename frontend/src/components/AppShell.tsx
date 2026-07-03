@@ -11,20 +11,36 @@ type NavItem = {
   href: "/dashboard" | "/members" | "/accounting" | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
+  /** Omit for items everyone can see (e.g. Dashboard). Otherwise the item
+   * only renders if the user holds at least one of these permission codes -
+   * accesscontrol is the single source of truth for both this and the
+   * page-level 403 each of these routes also enforces. */
+  permissions?: string[];
 };
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
-  const { profile, status, logout } = useTenantProfile();
+  const { profile, status, logout, hasAnyPermission } = useTenantProfile();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems: NavItem[] = [
+  const allNavItems: NavItem[] = [
     { href: "/dashboard", label: t("dashboard"), icon: LayoutDashboard },
-    { href: "/members", label: t("members"), icon: Users },
-    { href: "/accounting", label: t("accounting"), icon: Scale },
-    { href: "/settings", label: t("settings"), icon: Settings },
+    { href: "/members", label: t("members"), icon: Users, permissions: ["members.view"] },
+    {
+      href: "/accounting",
+      label: t("accounting"),
+      icon: Scale,
+      permissions: ["accounting.view_trial_balance", "accounting.view_ledger"],
+    },
+    {
+      href: "/settings",
+      label: t("settings"),
+      icon: Settings,
+      permissions: ["configuration.view", "accesscontrol.assign_roles"],
+    },
   ];
+  const navItems = allNavItems.filter((item) => !item.permissions || hasAnyPermission(item.permissions));
 
   const saccoName = profile?.tenant.name ?? "SACCO";
   const userName =
