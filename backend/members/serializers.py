@@ -47,6 +47,14 @@ class MemberSerializer(serializers.ModelSerializer):
         member = Member.objects.create(**validated_data)
         for relation in relations_data:
             MemberRelation.objects.create(member=member, **relation)
+        # Members don't create their own accounts (no open self-registration
+        # - a real cooperative registers the member first, on paper/by
+        # staff). So every new member gets a self-service setup link
+        # automatically, right away, instead of staff having to remember a
+        # separate "invite to portal" step afterward.
+        MemberPortalInvite.objects.create(
+            member=member, invited_by=request.user if request else None
+        )
         return member
 
     def update(self, instance, validated_data):

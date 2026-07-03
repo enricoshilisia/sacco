@@ -31,18 +31,6 @@ class TenantAccessSerializer(serializers.ModelSerializer):
         fields = ["tenant_name", "tenant_schema", "country", "is_active", "joined_at"]
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=8)
-
-    class Meta:
-        model = User
-        fields = ["phone_number", "email", "first_name", "last_name", "preferred_language", "password"]
-
-    def create(self, validated_data):
-        password = validated_data.pop("password")
-        return User.objects.create_user(password=password, **validated_data)
-
-
 class TenantScopedTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Identity (the User table) is shared across all SACCOs, but a login on a

@@ -8,12 +8,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from . import webauthn_service
 from .models import PushDeviceToken, TenantAccess, User
-from .serializers import (
-    RegisterSerializer,
-    TenantAccessSerializer,
-    TenantScopedTokenObtainPairSerializer,
-    UserSerializer,
-)
+from .serializers import TenantAccessSerializer, TenantScopedTokenObtainPairSerializer, UserSerializer
 
 
 class TenantScopedTokenObtainPairView(TokenObtainPairView):
@@ -38,12 +33,15 @@ def _assert_tenant_access(user):
 
 def _grant_default_tenant_membership(user):
     """
-    /register only resolves inside a tenant's own urlconf (never the public
-    one - see config/urls_public.py), so connection.schema_name here is
-    always a real SACCO, never the public schema. Without this, a
-    self-registered user gets a User row with no tie to any tenant and can
-    never log back in (TenantScopedTokenObtainPairSerializer would reject
-    every subsequent login).
+    Grants the default "Member" role + TenantAccess for this tenant. Only
+    ever called from within a tenant's own urlconf (never the public one -
+    see config/urls_public.py), so connection.schema_name here is always a
+    real SACCO, never the public schema. Used by
+    members.views.PortalInviteAcceptView - there's no open self-registration
+    path anymore (members don't create their own accounts; a real
+    cooperative registers the member first, on paper or by staff, and
+    grants portal access as a separate, later step - see
+    members.MemberPortalInvite).
     """
     from django.db import connection
 
@@ -54,20 +52,6 @@ def _grant_default_tenant_membership(user):
     TenantAccess.objects.get_or_create(user=user, tenant=tenant)
     member_role = Role.objects.get(name="Member")
     Membership.objects.get_or_create(user=user, role=member_role)
-
-
-class RegisterView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        _grant_default_tenant_membership(user)
-        return Response(
-            {"user": UserSerializer(user).data, **_tokens_for(user)},
-            status=status.HTTP_201_CREATED,
-        )
 
 
 class MeView(APIView):

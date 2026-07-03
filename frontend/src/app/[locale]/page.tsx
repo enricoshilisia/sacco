@@ -47,12 +47,6 @@ export default function Home() {
                 >
                   {t("login")}
                 </Link>
-                <Link
-                  href="/register"
-                  className="text-center text-sm font-medium text-primary-700 underline-offset-2 hover:underline"
-                >
-                  {t("register")}
-                </Link>
               </>
             )}
           </div>
