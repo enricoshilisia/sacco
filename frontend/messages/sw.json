@@ -70,6 +70,8 @@
     "sessionExpired": "Muda wako wa kuingia umeisha. Tafadhali ingia tena.",
     "backToLogin": "Rudi kuingia",
     "viewMembers": "Angalia wanachama",
+    "myAccount": "Akaunti yangu",
+    "myShares": "Mtaji wa hisa",
     "totalMembers": "Jumla ya wanachama",
     "shareCapital": "Mtaji wa hisa",
     "totalSavings": "Jumla ya akiba",
@@ -255,6 +257,21 @@
     "successBody": "Akaunti yako ya kazi iko tayari. Ingia ili uendelee.",
     "successCta": "Nenda kuingia"
   },
+  "MemberPortalAccept": {
+    "title": "Sanidi akaunti yako ya mwanachama",
+    "invalidTitle": "Kiungo hiki cha mwaliko si sahihi",
+    "invalidBody": "Huenda kimeisha muda, tayari kimetumika, au kimebatilishwa. Uliza SACCO yako mwaliko mpya.",
+    "welcomeBody": "Sanidi ufikiaji binafsi kwa {name} ({number}).",
+    "password": "Nenosiri",
+    "passwordHelp": "Angalau herufi 8.",
+    "existingAccountPassword": "Weka nenosiri la akaunti yako iliyopo",
+    "existingAccountHelp": "Tayari una akaunti na nambari hii ya simu. Thibitisha nenosiri lako kuunganisha uanachama huu.",
+    "submit": "Sanidi akaunti",
+    "error": "Imeshindikana kukamilisha usanidi. Angalia taarifa na ujaribu tena.",
+    "successTitle": "Umekamilika",
+    "successBody": "Akaunti yako iko tayari. Ingia ili uone hisa na akiba yako.",
+    "successCta": "Nenda kuingia"
+  },
   "Payments": {
     "title": "Malipo",
     "forbidden": "Huna ruhusa ya kuona malipo.",
@@ -288,6 +305,16 @@
     "success": "Malipo yamepokelewa.",
     "failed": "Malipo yameshindikana: {reason}",
     "error": "Imeshindikana kuanzisha ukusanyaji huu. Angalia taarifa na ujaribu tena."
+  },
+  "PortalAccess": {
+    "title": "Ufikiaji wa tovuti",
+    "linked": "Mwanachama huyu anaweza kuingia na kuona akaunti yake mwenyewe.",
+    "notInvited": "Mwanachama huyu hana ufikiaji wa kuingia bado.",
+    "invite": "Alika kwenye tovuti",
+    "pendingHelp": "Nakili kiungo cha kusanidi na ukishirikishe na mwanachama ili aweke nenosiri lake.",
+    "copyLink": "Nakili kiungo cha kusanidi",
+    "copied": "Imenakiliwa",
+    "error": "Imeshindikana kutuma mwaliko huu. Jaribu tena."
   },
   "Savings": {
     "sharesTitle": "Hisa",

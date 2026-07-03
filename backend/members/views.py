@@ -1,17 +1,22 @@
 from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from accesscontrol.permissions import require_permission
+from identity.models import User
+from identity.serializers import UserSerializer
+from identity.views import _grant_default_tenant_membership
 
-from .models import GuarantorConsent, GuarantorConsentStatus, Member
+from .models import GuarantorConsent, GuarantorConsentStatus, Member, MemberPortalInvite
 from .serializers import (
     GuarantorConsentSerializer,
     MemberListSerializer,
     MemberPhotoSerializer,
+    MemberPortalInviteSerializer,
     MemberSerializer,
 )
 
@@ -86,3 +91,133 @@ class GuarantorConsentRespondView(APIView):
         consent.responded_at = timezone.now()
         consent.save(update_fields=["status", "responded_at"])
         return Response(GuarantorConsentSerializer(consent).data)
+
+
+class MyMemberView(APIView):
+    """
+    Self-service: "my own member record", resolved from request.user - not
+    a member_id in the URL. This is deliberately not gated by members.view
+    (the staff-facing permission that lets someone look up ANY member by
+    id): ownership IS the access check here, so any authenticated user
+    with a linked Member record may use it, and one with no linked record
+    gets a 404, not a 403.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        member = Member.objects.filter(user=request.user).first()
+        if member is None:
+            return Response({"detail": "No member record is linked to this account."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(MemberSerializer(member).data)
+
+
+class InvitePortalAccessView(APIView):
+    """Staff generates a one-time setup link for an existing member who
+    doesn't have self-service login access yet."""
+
+    permission_classes = [IsAuthenticated, require_permission("members.edit")]
+
+    def post(self, request, member_id):
+        member = generics.get_object_or_404(Member, pk=member_id)
+        if member.user_id is not None:
+            return Response(
+                {"detail": "This member already has portal access."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        invite = MemberPortalInvite.objects.create(member=member, invited_by=request.user)
+        return Response(MemberPortalInviteSerializer(invite).data, status=status.HTTP_201_CREATED)
+
+
+class PortalInviteListView(generics.ListAPIView):
+    serializer_class = MemberPortalInviteSerializer
+    permission_classes = [IsAuthenticated, require_permission("members.edit")]
+
+    def get_queryset(self):
+        qs = MemberPortalInvite.objects.select_related("member").all()
+        member_id = self.request.query_params.get("member")
+        if member_id:
+            qs = qs.filter(member_id=member_id)
+        return qs
+
+
+class PortalInviteRevokeView(APIView):
+    permission_classes = [IsAuthenticated, require_permission("members.edit")]
+
+    def post(self, request, pk):
+        invite = generics.get_object_or_404(MemberPortalInvite, pk=pk)
+        if invite.status != "pending":
+            return Response(
+                {"detail": f"This invite is already {invite.status}."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        invite.revoked_at = timezone.now()
+        invite.save(update_fields=["revoked_at"])
+        return Response(MemberPortalInviteSerializer(invite).data)
+
+
+class PortalInviteAcceptView(APIView):
+    """
+    Public (no auth) - the destination of the setup link staff shares out
+    of band. GET prefills the accept page; POST creates/reuses the account,
+    links it to the member, and grants the default "Member" role. Only
+    reachable within a tenant's own urlconf, same as /api/auth/register.
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, token):
+        invite = generics.get_object_or_404(MemberPortalInvite, token=token)
+        if invite.status != "pending":
+            return Response({"detail": f"This invite is {invite.status}."}, status=status.HTTP_400_BAD_REQUEST)
+        existing_account = User.objects.filter(phone_number=invite.member.phone_number).exists()
+        return Response(
+            {
+                "member_name": invite.member.full_name(),
+                "member_number": invite.member.member_number,
+                "existing_account": existing_account,
+            }
+        )
+
+    def post(self, request, token):
+        invite = generics.get_object_or_404(MemberPortalInvite, token=token)
+        if invite.status != "pending":
+            return Response({"detail": f"This invite is {invite.status}."}, status=status.HTTP_400_BAD_REQUEST)
+
+        password = request.data.get("password", "")
+        existing_user = User.objects.filter(phone_number=invite.member.phone_number).first()
+
+        if existing_user:
+            if not existing_user.check_password(password):
+                return Response(
+                    {"detail": "Incorrect password for this existing account."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user = existing_user
+        else:
+            if len(password) < 8:
+                return Response(
+                    {"detail": "Password must be at least 8 characters."}, status=status.HTTP_400_BAD_REQUEST
+                )
+            user = User.objects.create_user(
+                phone_number=invite.member.phone_number,
+                first_name=invite.member.first_name,
+                last_name=invite.member.last_name,
+                email=invite.member.email or None,
+                password=password,
+            )
+
+        _grant_default_tenant_membership(user)
+        invite.member.user = user
+        invite.member.save(update_fields=["user"])
+
+        invite.accepted_at = timezone.now()
+        invite.save(update_fields=["accepted_at"])
+
+        refresh = RefreshToken.for_user(user)
+        return Response(
+            {
+                "user": UserSerializer(user).data,
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            },
+            status=status.HTTP_201_CREATED,
+        )

@@ -6,6 +6,7 @@ app_name = "savings"
 
 urlpatterns = [
     path("products/", views.SavingsProductListCreateView.as_view(), name="product_list_create"),
+    path("me/statement/", views.MyStatementView.as_view(), name="my_statement"),
     path("members/<uuid:member_id>/statement/", views.MemberStatementView.as_view(), name="member_statement"),
     path(
         "members/<uuid:member_id>/shares/contribute/",

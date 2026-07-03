@@ -70,6 +70,8 @@
     "sessionExpired": "Your session has expired. Please log in again.",
     "backToLogin": "Back to login",
     "viewMembers": "View members",
+    "myAccount": "My account",
+    "myShares": "Share capital",
     "totalMembers": "Total members",
     "shareCapital": "Share capital",
     "totalSavings": "Total savings",
@@ -255,6 +257,21 @@
     "successBody": "Your staff account is ready. Sign in to continue.",
     "successCta": "Go to sign in"
   },
+  "MemberPortalAccept": {
+    "title": "Set up your member account",
+    "invalidTitle": "This invite link isn't valid",
+    "invalidBody": "It may have expired, already been used, or been revoked. Ask your SACCO for a new invite.",
+    "welcomeBody": "Set up self-service access for {name} ({number}).",
+    "password": "Password",
+    "passwordHelp": "At least 8 characters.",
+    "existingAccountPassword": "Enter your existing account password",
+    "existingAccountHelp": "You already have an account with this phone number. Confirm your password to link this membership.",
+    "submit": "Set up account",
+    "error": "Couldn't complete setup. Check your details and try again.",
+    "successTitle": "You're all set",
+    "successBody": "Your account is ready. Sign in to view your shares and savings.",
+    "successCta": "Go to sign in"
+  },
   "Payments": {
     "title": "Payments",
     "forbidden": "You don't have permission to view payments.",
@@ -288,6 +305,16 @@
     "success": "Payment received.",
     "failed": "Payment failed: {reason}",
     "error": "Couldn't start this collection. Check the details and try again."
+  },
+  "PortalAccess": {
+    "title": "Portal access",
+    "linked": "This member can log in and view their own account.",
+    "notInvited": "This member doesn't have self-service login access yet.",
+    "invite": "Invite to portal",
+    "pendingHelp": "Copy the setup link and share it with the member so they can set their password.",
+    "copyLink": "Copy setup link",
+    "copied": "Copied",
+    "error": "Couldn't send this invite. Try again."
   },
   "Savings": {
     "sharesTitle": "Shares",

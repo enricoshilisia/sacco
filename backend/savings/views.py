@@ -36,42 +36,66 @@ class SavingsProductListCreateView(generics.ListCreateAPIView):
         return [IsAuthenticated(), require_permission(code)()]
 
 
-class MemberStatementView(APIView):
+def build_member_statement(member) -> dict:
     """
     Combined share + savings statement for one member - balances plus full
     transaction history for each. The savings balances here are derived the
     same way the trial balance derives control-account totals (sum of this
     member's JournalLines), so this is exactly the reconciliation check the
-    Phase 2 "done when" criterion asks for, not a separately-maintained number.
+    Phase 2 "done when" criterion asks for, not a separately-maintained
+    number. Shared by the staff-facing MemberStatementView (any member_id,
+    gated by savings.view) and the self-service MyStatementView (always
+    request.user's own member, no permission-catalog check needed) so the
+    two can never drift out of sync with each other.
     """
+    share_account = get_or_open_share_account(member)
+    savings_accounts = SavingsAccount.objects.filter(member=member).select_related("product")
+
+    return {
+        "shares": {
+            **ShareAccountSerializer(share_account).data,
+            "contributions": ShareContributionSerializer(
+                share_account.contributions.order_by("-transaction_date"), many=True
+            ).data,
+        },
+        "savings_accounts": [
+            {
+                **SavingsAccountSerializer(acc).data,
+                "transactions": SavingsTransactionSerializer(
+                    acc.transactions.order_by("-transaction_date"), many=True
+                ).data,
+            }
+            for acc in savings_accounts
+        ],
+    }
+
+
+class MemberStatementView(APIView):
+    """Staff-facing: any member_id, gated by savings.view."""
 
     permission_classes = [IsAuthenticated, require_permission("savings.view")]
 
     def get(self, request, member_id):
         member = generics.get_object_or_404(Member, pk=member_id)
-        share_account = get_or_open_share_account(member)
+        return Response(build_member_statement(member))
 
-        savings_accounts = SavingsAccount.objects.filter(member=member).select_related("product")
 
-        return Response(
-            {
-                "shares": {
-                    **ShareAccountSerializer(share_account).data,
-                    "contributions": ShareContributionSerializer(
-                        share_account.contributions.order_by("-transaction_date"), many=True
-                    ).data,
-                },
-                "savings_accounts": [
-                    {
-                        **SavingsAccountSerializer(acc).data,
-                        "transactions": SavingsTransactionSerializer(
-                            acc.transactions.order_by("-transaction_date"), many=True
-                        ).data,
-                    }
-                    for acc in savings_accounts
-                ],
-            }
-        )
+class MyStatementView(APIView):
+    """
+    Self-service: always request.user's own statement, never gated by
+    savings.view - ownership is the access check (see members.views.
+    MyMemberView for the same pattern applied to the member record itself).
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        member = Member.objects.filter(user=request.user).first()
+        if member is None:
+            return Response(
+                {"detail": "No member record is linked to this account."}, status=status.HTTP_404_NOT_FOUND
+            )
+        return Response(build_member_statement(member))
 
 
 class ContributeSharesView(APIView):

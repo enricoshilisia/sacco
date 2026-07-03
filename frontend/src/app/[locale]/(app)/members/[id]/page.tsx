@@ -2,10 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { ArrowLeft, Camera, CheckCircle2, Clock, PiggyBank, Smartphone, Users, Wallet } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import {
+  ArrowLeft,
+  Camera,
+  Check,
+  CheckCircle2,
+  Clock,
+  Copy,
+  KeyRound,
+  PiggyBank,
+  Smartphone,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError, getAccessToken } from "@/lib/api";
+import { copyToClipboard } from "@/lib/clipboard";
+import { useTenantProfile } from "@/lib/TenantProfileContext";
 
 type SavingsProduct = {
   id: string;
@@ -49,6 +63,12 @@ type PaymentCollectionData = {
   failure_reason: string;
 };
 
+type PortalInvite = {
+  id: string;
+  status: "pending" | "accepted" | "revoked" | "expired";
+  invite_path: string;
+};
+
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -64,6 +84,7 @@ function errorDetail(err: unknown, fallback: string) {
 type MemberDetail = {
   id: string;
   member_number: string;
+  user: string | null;
   category: string;
   status: string;
   first_name: string;
@@ -92,6 +113,9 @@ export default function MemberDetailPage() {
   const t = useTranslations("Members");
   const ts = useTranslations("Savings");
   const tc = useTranslations("CollectPayment");
+  const tp = useTranslations("PortalAccess");
+  const locale = useLocale();
+  const { hasPermission } = useTenantProfile();
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,6 +149,11 @@ export default function MemberDetailPage() {
   const [collection, setCollection] = useState<PaymentCollectionData | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const [portalInvite, setPortalInvite] = useState<PortalInvite | null>(null);
+  const [inviting, setInviting] = useState(false);
+  const [inviteError, setInviteError] = useState("");
+  const [linkCopied, setLinkCopied] = useState(false);
+
   useEffect(() => {
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
@@ -155,7 +184,36 @@ export default function MemberDetailPage() {
     apiFetch<{ results: SavingsProduct[] }>("/api/savings/products/")
       .then((data) => setProducts(data.results))
       .catch(() => {});
+    apiFetch<{ results: PortalInvite[] }>(`/api/members/portal-invites/?member=${params.id}`)
+      .then((data) => setPortalInvite(data.results.find((i) => i.status === "pending") ?? null))
+      .catch(() => {});
   }, [params.id, router]);
+
+  async function handleInvitePortalAccess() {
+    if (!member) return;
+    setInviting(true);
+    setInviteError("");
+    try {
+      const invite = await apiFetch<PortalInvite>(`/api/members/${member.id}/portal-invite/`, {
+        method: "POST",
+      });
+      setPortalInvite(invite);
+    } catch (err) {
+      setInviteError(errorDetail(err, tp("error")));
+    } finally {
+      setInviting(false);
+    }
+  }
+
+  async function handleCopyPortalLink() {
+    if (!portalInvite) return;
+    const url = `${window.location.origin}/${locale}${portalInvite.invite_path}`;
+    const copied = await copyToClipboard(url);
+    if (copied) {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    }
+  }
 
   async function handleContribute() {
     if (!member || !contributeAmount) return;
@@ -414,6 +472,48 @@ export default function MemberDetailPage() {
           </button>
         )}
       </div>
+
+      {hasPermission("members.edit") && (
+        <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+          <div className="mb-4 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+              <KeyRound size={16} strokeWidth={2} />
+            </div>
+            <h2 className="text-sm font-semibold text-primary-900">{tp("title")}</h2>
+          </div>
+
+          {member.user ? (
+            <p className="inline-flex items-center gap-1.5 text-sm text-primary-700">
+              <CheckCircle2 size={14} className="text-primary-600" />
+              {tp("linked")}
+            </p>
+          ) : portalInvite ? (
+            <div>
+              <p className="mb-2 text-sm text-primary-600">{tp("pendingHelp")}</p>
+              <button
+                type="button"
+                onClick={handleCopyPortalLink}
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 px-4 py-2 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-50"
+              >
+                {linkCopied ? <Check size={13} /> : <Copy size={13} />}
+                {linkCopied ? tp("copied") : tp("copyLink")}
+              </button>
+            </div>
+          ) : (
+            <div>
+              <p className="mb-2 text-sm text-primary-500">{tp("notInvited")}</p>
+              <button
+                onClick={handleInvitePortalAccess}
+                disabled={inviting}
+                className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+              >
+                {tp("invite")}
+              </button>
+            </div>
+          )}
+          {inviteError && <p className="mt-2 text-xs text-red-600">{inviteError}</p>}
+        </div>
+      )}
 
       <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
         <div className="mb-4 flex items-center gap-2.5">

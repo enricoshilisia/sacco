@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import GuarantorConsent, Member, MemberRelation
+from .models import GuarantorConsent, Member, MemberPortalInvite, MemberRelation
 from .services import generate_member_number
 
 
@@ -81,3 +81,21 @@ class GuarantorConsentSerializer(serializers.ModelSerializer):
             "status", "requested_at", "responded_at",
         ]
         read_only_fields = ["id", "status", "requested_at", "responded_at"]
+
+
+class MemberPortalInviteSerializer(serializers.ModelSerializer):
+    member_name = serializers.CharField(source="member.full_name", read_only=True)
+    member_number = serializers.CharField(source="member.member_number", read_only=True)
+    status = serializers.CharField(read_only=True)
+    invite_path = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MemberPortalInvite
+        fields = [
+            "id", "member", "member_name", "member_number", "token",
+            "status", "created_at", "expires_at", "invite_path",
+        ]
+        read_only_fields = ["id", "token", "status", "created_at", "expires_at"]
+
+    def get_invite_path(self, obj) -> str:
+        return f"/members-portal/accept/{obj.token}"

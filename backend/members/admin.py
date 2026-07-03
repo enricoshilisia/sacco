@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import GuarantorConsent, Member, MemberDocument, MemberRelation
+from .models import GuarantorConsent, Member, MemberDocument, MemberPortalInvite, MemberRelation
 
 
 class MemberRelationInline(admin.TabularInline):
@@ -25,3 +25,9 @@ class MemberAdmin(admin.ModelAdmin):
 class GuarantorConsentAdmin(admin.ModelAdmin):
     list_display = ("guarantor", "borrower", "status", "requested_at")
     list_filter = ("status",)
+
+
+@admin.register(MemberPortalInvite)
+class MemberPortalInviteAdmin(admin.ModelAdmin):
+    list_display = ("member", "status", "created_at", "expires_at")
+    readonly_fields = ("token", "accepted_at")

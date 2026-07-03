@@ -1,7 +1,10 @@
+import secrets
 import uuid
+from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from configuration.models import IdType
 from core.models import AuditMixin
@@ -89,6 +92,56 @@ class Member(AuditMixin, models.Model):
 
     def full_name(self):
         return " ".join(filter(None, [self.first_name, self.other_names, self.last_name]))
+
+
+def _generate_portal_invite_token():
+    return secrets.token_urlsafe(32)
+
+
+def _default_portal_invite_expiry():
+    return timezone.now() + timedelta(days=7)
+
+
+class MemberPortalInvite(models.Model):
+    """
+    A one-time link letting an EXISTING Member record set up self-service
+    login access. Unlike accesscontrol.StaffInvite there's no name/role to
+    collect - the Member row already exists (a real cooperative registers
+    the member first, usually on paper at a branch; login access is a
+    separate, later step), so this just links Member.user once accepted.
+    Same token-based pattern as staff invites: no SMS/email delivery
+    exists yet (Phase 3 notifications only sends after an event, it has no
+    "invite" template), so an admin copies the link and shares it
+    out of band until that's wired up.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="portal_invites")
+    token = models.CharField(max_length=64, unique=True, default=_generate_portal_invite_token, editable=False)
+
+    invited_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(default=_default_portal_invite_expiry)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    revoked_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Portal invite for {self.member}"
+
+    @property
+    def status(self) -> str:
+        if self.accepted_at:
+            return "accepted"
+        if self.revoked_at:
+            return "revoked"
+        if self.expires_at <= timezone.now():
+            return "expired"
+        return "pending"
 
 
 class MemberRelationKind(models.TextChoices):

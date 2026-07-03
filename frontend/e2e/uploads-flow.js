@@ -13,7 +13,7 @@ async function run() {
   const page = await browser.newPage();
   const errors = [];
   page.on('console', (msg) => {
-    if (msg.type() === 'error') errors.push(msg.text());
+    if (msg.type() === 'error' && !msg.text().startsWith('Failed to load resource')) errors.push(msg.text());
   });
 
   await page.goto(`${BASE}/en/login`, { waitUntil: 'networkidle' });

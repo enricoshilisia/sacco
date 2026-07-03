@@ -50,6 +50,15 @@ type JournalEntryLite = {
   lines: JournalLine[];
 };
 
+type MyMemberData = {
+  member_number: string;
+};
+
+type MyStatement = {
+  shares: { balance: string };
+  savings_accounts: { id: string; product_name: string; balance: string }[];
+};
+
 const SHARE_CAPITAL_CODE = "3000";
 const SAVINGS_CONTROL_CODE = "2000";
 
@@ -65,6 +74,8 @@ export default function DashboardPage() {
   const [recentMembers, setRecentMembers] = useState<MemberListItem[]>([]);
   const [trialBalance, setTrialBalance] = useState<TrialBalance | null | undefined>(undefined);
   const [journal, setJournal] = useState<JournalEntryLite[] | null | undefined>(undefined);
+  const [myMember, setMyMember] = useState<MyMemberData | null | undefined>(undefined);
+  const [myStatement, setMyStatement] = useState<MyStatement | null | undefined>(undefined);
 
   useEffect(() => {
     apiFetch<{ count: number; results: MemberListItem[] }>("/api/members/")
@@ -81,6 +92,18 @@ export default function DashboardPage() {
     apiFetch<{ results: JournalEntryLite[] }>("/api/accounting/journal-entries/")
       .then((data) => setJournal(data.results.slice(0, 5)))
       .catch(() => setJournal(null));
+
+    // Self-service: only succeeds if this login is linked to a member
+    // record (see members.views.MyMemberView) - a pure staff account gets
+    // a clean 404 here, so this section simply doesn't render for them.
+    apiFetch<MyMemberData>("/api/members/me/")
+      .then((data) => {
+        setMyMember(data);
+        apiFetch<MyStatement>("/api/savings/me/statement/")
+          .then(setMyStatement)
+          .catch(() => setMyStatement(null));
+      })
+      .catch(() => setMyMember(null));
   }, []);
 
   if (!profile) return null;
@@ -97,6 +120,43 @@ export default function DashboardPage() {
       <p className="mb-6 text-xl font-semibold text-primary-900">
         {t("welcome", { name: fullName || user.phone_number })}
       </p>
+
+      {myMember && (
+        <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+                <Wallet size={16} strokeWidth={2} />
+              </div>
+              <h2 className="text-sm font-semibold text-primary-900">{t("myAccount")}</h2>
+            </div>
+            <span className="font-mono text-xs text-primary-500">{myMember.member_number}</span>
+          </div>
+
+          {myStatement === undefined ? (
+            <div className="flex justify-center py-6">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary-300 border-t-primary-600" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div>
+                <p className="mb-1 text-xs text-primary-500">{t("myShares")}</p>
+                <p className="text-lg font-semibold text-primary-900">
+                  {money(Number(myStatement?.shares.balance ?? 0), tenant.currency)}
+                </p>
+              </div>
+              {myStatement?.savings_accounts.map((acc) => (
+                <div key={acc.id}>
+                  <p className="mb-1 truncate text-xs text-primary-500">{acc.product_name}</p>
+                  <p className="text-lg font-semibold text-primary-900">
+                    {money(Number(acc.balance), tenant.currency)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Live stats */}
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
