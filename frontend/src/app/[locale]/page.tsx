@@ -23,8 +23,8 @@ export default function Home() {
   const loggedIn = useIsLoggedIn();
 
   return (
-    <div className="flex min-h-full flex-col bg-primary-50">
-      <header className="sticky top-0 z-20 border-b border-primary-100/80 bg-primary-50/80 backdrop-blur-sm">
+    <div className="flex min-h-full flex-col bg-white">
+      <header className="sticky top-0 z-20 border-b border-primary-100/80 bg-white/80 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-sm font-bold text-white">
