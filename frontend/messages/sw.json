@@ -100,6 +100,7 @@
     "accounting": "Uhasibu",
     "payments": "Malipo",
     "loans": "Mikopo",
+    "savings": "Akiba",
     "settings": "Mipangilio",
     "language": "Lugha",
     "logout": "Toka"
@@ -125,6 +126,7 @@
     "viewMembers": "Angalia wanachama",
     "myAccount": "Akaunti yangu",
     "myShares": "Mtaji wa hisa",
+    "manage": "Simamia",
     "totalMembers": "Jumla ya wanachama",
     "shareCapital": "Mtaji wa hisa",
     "totalSavings": "Jumla ya akiba",
@@ -331,6 +333,7 @@
   },
   "Loans": {
     "title": "Mikopo",
+    "myLoansTitle": "Mikopo yangu",
     "forbidden": "Huna ruhusa ya kuona mikopo.",
     "member": "Mwanachama",
     "product": "Bidhaa",
@@ -478,6 +481,18 @@
     "openNewAccount": "Fungua akaunti mpya ya akiba",
     "selectProduct": "Chagua bidhaa",
     "error": "Imeshindikana kukamilisha muamala huu. Angalia taarifa na ujaribu tena.",
-    "insufficientBalance": "Salio halitoshi kwa uondoaji huu."
+    "insufficientBalance": "Salio halitoshi kwa uondoaji huu.",
+    "title": "Akiba",
+    "shares": "Mtaji wa hisa",
+    "savingsAccounts": "Akaunti za akiba",
+    "noSavingsAccounts": "Hakuna akaunti za akiba bado.",
+    "contributeShares": "Changia hisa",
+    "depositSavings": "Weka akiba",
+    "mobileMoneyHelp": "Utapokea ujumbe wa M-Pesa kwenye simu yako kuthibitisha.",
+    "phoneNumber": "Namba ya simu",
+    "contributeSubmit": "Changia kupitia M-Pesa",
+    "depositSubmit": "Weka kupitia M-Pesa",
+    "stkSent": "Ombi limetumwa. Thibitisha kwenye simu yako, kisha upakue upya kuona salio jipya.",
+    "forbidden": "Hakuna akaunti ya mwanachama iliyounganishwa na kuingia huku."
   }
 }

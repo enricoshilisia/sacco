@@ -100,6 +100,7 @@
     "accounting": "Accounting",
     "payments": "Payments",
     "loans": "Loans",
+    "savings": "Savings",
     "settings": "Settings",
     "language": "Language",
     "logout": "Log out"
@@ -125,6 +126,7 @@
     "viewMembers": "View members",
     "myAccount": "My account",
     "myShares": "Share capital",
+    "manage": "Manage",
     "totalMembers": "Total members",
     "shareCapital": "Share capital",
     "totalSavings": "Total savings",
@@ -331,6 +333,7 @@
   },
   "Loans": {
     "title": "Loans",
+    "myLoansTitle": "My loans",
     "forbidden": "You don't have permission to view loans.",
     "member": "Member",
     "product": "Product",
@@ -478,6 +481,18 @@
     "openNewAccount": "Open a new savings account",
     "selectProduct": "Select a product",
     "error": "Couldn't complete this transaction. Check the details and try again.",
-    "insufficientBalance": "Insufficient balance for this withdrawal."
+    "insufficientBalance": "Insufficient balance for this withdrawal.",
+    "title": "Savings",
+    "shares": "Share capital",
+    "savingsAccounts": "Savings accounts",
+    "noSavingsAccounts": "No savings accounts opened yet.",
+    "contributeShares": "Contribute shares",
+    "depositSavings": "Deposit savings",
+    "mobileMoneyHelp": "You'll get an M-Pesa prompt on your phone to confirm.",
+    "phoneNumber": "Phone number",
+    "contributeSubmit": "Contribute via M-Pesa",
+    "depositSubmit": "Deposit via M-Pesa",
+    "stkSent": "Prompt sent. Confirm on your phone, then refresh to see the updated balance.",
+    "forbidden": "No member account is linked to this login."
   }
 }

@@ -1,13 +1,17 @@
 // Smoke test: a self-service member (no staff permissions) can apply for a
-// loan from their own Dashboard, and - for a product requiring guarantors -
-// add a guarantor by member number from the loan detail page and submit for
-// appraisal, entirely without the `members.view`/`loans.manage_guarantor_pledge`
-// staff permissions. Covers the two self-service gaps found while
-// investigating "members i see only dashboard menu alone": no apply-for-a-loan
-// UI existed for members, and the guarantor/submit UI on the loan detail page
-// was staff-only with no borrower-ownership fallback. Requires both dev
-// servers running + nairobi_demo seeded, with Amina Njoroge already holding
-// portal access (phone +254788112233 / AminaPass123!).
+// loan from their own Loans page (nav item -> /loans, self-service view), and
+// - for a product requiring guarantors - add a guarantor by member number
+// from the loan detail page and submit for appraisal, entirely without the
+// `members.view`/`loans.manage_guarantor_pledge` staff permissions. Covers
+// the two self-service gaps found while investigating "members i see only
+// dashboard menu alone": no apply-for-a-loan UI existed for members, and the
+// guarantor/submit UI on the loan detail page was staff-only with no
+// borrower-ownership fallback. The apply form used to live inline on the
+// Dashboard; it now lives on its own /loans page (see the "professional
+// navigation" follow-up that gave members a real Loans/Savings menu instead
+// of one crowded Dashboard). Requires both dev servers running + nairobi_demo
+// seeded, with Amina Njoroge already holding portal access (phone
+// +254788112233 / AminaPass123!).
 
 const { chromium } = require('playwright');
 
@@ -31,9 +35,16 @@ async function run() {
   await page.click('button[type="submit"]');
   await page.waitForURL((u) => u.pathname === '/en/dashboard', { timeout: 10000 });
 
-  // --- Apply for a no-guarantor loan straight from the Dashboard ---
+  // --- Navigate to the self-service Loans page via its nav item ---
+  await page.locator('[data-testid="nav-loans"]:visible').click();
+  await page.waitForURL((u) => u.pathname === '/en/loans', { timeout: 10000 });
   await page.waitForSelector('text=Apply for a loan', { timeout: 10000 });
-  const applyCard = page.locator('h2:has-text("Loans")').first().locator('xpath=../..');
+  assert((await page.locator('table').count()) === 0, 'self-service member sees no staff loans table');
+
+  const myLoansCard = page.locator('h2:has-text("My loans")').locator('xpath=../..');
+  const applyCard = page.locator('h2:has-text("Apply for a loan")').locator('xpath=../..');
+
+  // --- Apply for a no-guarantor loan ---
   await applyCard.locator('select').selectOption({ label: 'Emergency Loan' });
   await applyCard.locator('input[type="number"]').first().fill('150');
   await applyCard.locator('input[type="number"]').nth(1).fill('3');
@@ -61,7 +72,7 @@ async function run() {
   await page.waitForSelector('text=Awaiting guarantors', { timeout: 10000 });
   assert(true, 'self-service member applied for a loan requiring guarantors');
 
-  await applyCard.locator('a:has-text("Development Loan")').first().click();
+  await myLoansCard.locator('a:has-text("Development Loan")').first().click();
   await page.waitForURL((u) => /\/en\/loans\/[0-9a-f-]+$/.test(u.pathname), { timeout: 10000 });
   await page.waitForSelector('text=No guarantors added yet.', { timeout: 10000 });
 

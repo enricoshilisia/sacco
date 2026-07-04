@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(source *)",
+      "Bash(pip install *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(curl * localhost*)",
+      "Bash(curl *.localhost*)",
+      "Bash(curl *nip.io*)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch *)",
+      "Bash(git show *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(ss *)",
+      "Bash(file *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git reset --hard*)",
+      "Bash(git rebase *)",
+      "Bash(git checkout .)",
+      "Bash(git clean *)",
+      "Bash(git branch -D *)",
+      "Bash(rm -rf *)",
+      "Bash(*DROP TABLE*)",
+      "Bash(*DROP SCHEMA*)",
+      "Bash(*TRUNCATE*)",
+      "Bash(*--no-verify*)",
+      "Bash(*--no-gpg-sign*)"
+    ]
+  }
+}

@@ -2,7 +2,18 @@
 
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Building2, HandCoins, LayoutDashboard, LogOut, Scale, Settings, Smartphone, Users, X } from "lucide-react";
+import {
+  Building2,
+  HandCoins,
+  LayoutDashboard,
+  LogOut,
+  PiggyBank,
+  Scale,
+  Settings,
+  Smartphone,
+  Users,
+  X,
+} from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTenantProfile } from "@/lib/TenantProfileContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -11,7 +22,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 const SWIPE_THRESHOLD = 28;
 
 type NavItem = {
-  href: "/dashboard" | "/members" | "/accounting" | "/payments" | "/loans" | "/settings";
+  href: "/dashboard" | "/members" | "/accounting" | "/payments" | "/loans" | "/savings" | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
   /** Omit for items everyone can see (e.g. Dashboard). Otherwise the item
@@ -19,12 +30,17 @@ type NavItem = {
    * accesscontrol is the single source of truth for both this and the
    * page-level 403 each of these routes also enforces. */
   permissions?: string[];
+  /** Also show this item to a self-service member (a login linked to its
+   * own Member record), regardless of staff permissions - Loans/Savings
+   * are ownership-scoped pages a member navigates to for their own
+   * applications/balances, not gated by the accesscontrol catalog at all. */
+  selfService?: boolean;
 };
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
-  const { profile, status, logout, hasAnyPermission } = useTenantProfile();
+  const { profile, status, logout, hasAnyPermission, myMemberId } = useTenantProfile();
   const [sheetOpen, setSheetOpen] = useState(false);
   const touchStartY = useRef<number | null>(null);
 
@@ -48,6 +64,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       label: t("loans"),
       icon: HandCoins,
       permissions: ["loans.view"],
+      selfService: true,
+    },
+    {
+      href: "/savings",
+      label: t("savings"),
+      icon: PiggyBank,
+      selfService: true,
     },
     {
       href: "/settings",
@@ -56,7 +79,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       permissions: ["configuration.view", "accesscontrol.assign_roles"],
     },
   ];
-  const navItems = allNavItems.filter((item) => !item.permissions || hasAnyPermission(item.permissions));
+  const navItems = allNavItems.filter(
+    (item) =>
+      (!item.permissions && !item.selfService) ||
+      (item.permissions && hasAnyPermission(item.permissions)) ||
+      (item.selfService && myMemberId),
+  );
 
   const saccoName = profile?.tenant.name ?? "SACCO";
   const userName =
