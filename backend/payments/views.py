@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accesscontrol.permissions import require_permission
+from loans.serializers import LoanSerializer
+from loans.services import handle_loan_disbursement_callback
 from members.models import Member
 from savings.services import get_or_open_savings_account
 
@@ -146,3 +148,28 @@ class MockCallbackView(APIView):
         if collection is None:
             return Response({"detail": "Unknown provider_reference."}, status=status.HTTP_404_NOT_FOUND)
         return Response(PaymentCollectionSerializer(collection).data)
+
+
+class MockLoanDisbursementCallbackView(APIView):
+    """
+    Manual trigger for the mock provider's loan-disbursement callback -
+    the disbursement-side twin of MockCallbackView above, same purpose
+    (let a test/curl script simulate a provider webhook directly rather
+    than waiting on the Celery-scheduled simulate_mock_loan_disbursement_
+    callback_task). Real providers never hit this path.
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        provider_reference = request.data.get("provider_reference", "")
+        success = bool(request.data.get("success", True))
+        disbursement = handle_loan_disbursement_callback(
+            provider_code="mock",
+            provider_reference=provider_reference,
+            success=success,
+            raw_payload=request.data,
+        )
+        if disbursement is None:
+            return Response({"detail": "Unknown provider_reference."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(LoanSerializer(disbursement.loan).data)

@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Loan, LoanGuarantor, LoanProduct
+from .models import (
+    Loan,
+    LoanDisbursement,
+    LoanGuarantor,
+    LoanProduct,
+    LoanRepayment,
+    LoanRepaymentSchedule,
+)
 
 
 @admin.register(LoanProduct)
@@ -19,12 +26,23 @@ class LoanGuarantorInline(admin.TabularInline):
         return False
 
 
+class LoanRepaymentScheduleInline(admin.TabularInline):
+    model = LoanRepaymentSchedule
+    extra = 0
+    fields = ("installment_number", "due_date", "principal_due", "interest_due", "principal_paid", "interest_paid")
+    readonly_fields = fields
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(Loan)
 class LoanAdmin(admin.ModelAdmin):
     list_display = ("member", "product", "amount_requested", "status", "applied_at")
     list_filter = ("status", "product")
     search_fields = ("member__first_name", "member__last_name", "member__member_number")
-    inlines = [LoanGuarantorInline]
+    inlines = [LoanGuarantorInline, LoanRepaymentScheduleInline]
     readonly_fields = [f.name for f in Loan._meta.fields]
 
     def has_add_permission(self, request):
@@ -38,3 +56,29 @@ class LoanAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+class ReadOnlyMoneyRecordAdmin(admin.ModelAdmin):
+    """Every field here is set by a service function that also posts the
+    matching journal entry (loans/services.py) - same principle as
+    savings/admin.py:ReadOnlyMoneyRecordAdmin."""
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(LoanRepayment)
+class LoanRepaymentAdmin(ReadOnlyMoneyRecordAdmin):
+    list_display = ("loan", "amount", "transaction_date", "created_by")
+
+
+@admin.register(LoanDisbursement)
+class LoanDisbursementAdmin(ReadOnlyMoneyRecordAdmin):
+    list_display = ("loan", "provider", "amount", "status", "created_at")
+    list_filter = ("status", "provider")

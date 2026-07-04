@@ -17,4 +17,8 @@ urlpatterns = [
     path("<uuid:pk>/submit/", views.SubmitForAppraisalView.as_view(), name="submit_for_appraisal"),
     path("<uuid:pk>/appraise/", views.AppraiseLoanView.as_view(), name="appraise"),
     path("<uuid:pk>/decide/", views.DecideLoanView.as_view(), name="decide"),
+    path("<uuid:pk>/disburse/savings/", views.DisburseToSavingsView.as_view(), name="disburse_savings"),
+    path("<uuid:pk>/disburse/mobile-money/", views.DisburseMobileMoneyView.as_view(), name="disburse_mobile_money"),
+    path("<uuid:pk>/repay/", views.RecordLoanRepaymentView.as_view(), name="repay"),
+    path("<uuid:pk>/default/", views.MarkLoanDefaultedView.as_view(), name="mark_defaulted"),
 ]

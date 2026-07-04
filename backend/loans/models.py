@@ -47,9 +47,16 @@ class LoanStatus(models.TextChoices):
     APPRAISED = "APPRAISED", "Appraised - awaiting decision"
     APPROVED = "APPROVED", "Approved - awaiting disbursement"
     REJECTED = "REJECTED", "Rejected"
-    # DISBURSED / ACTIVE / CLOSED / DEFAULTED are added when disbursement +
-    # repayment land (Phase 4 slice 2) - no point modeling states nothing
-    # can reach yet.
+    # Phase 4 slice 2:
+    DISBURSED = "DISBURSED", "Disbursement pending confirmation"
+    ACTIVE = "ACTIVE", "Active - being repaid"
+    CLOSED = "CLOSED", "Closed - fully repaid"
+    DEFAULTED = "DEFAULTED", "Defaulted"
+
+
+class DisbursementMethod(models.TextChoices):
+    SAVINGS_CREDIT = "SAVINGS_CREDIT", "Credited to savings account"
+    MOBILE_MONEY = "MOBILE_MONEY", "Mobile money"
 
 
 class Loan(models.Model):
@@ -94,6 +101,14 @@ class Loan(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    disbursed_at = models.DateTimeField(null=True, blank=True)
+    disbursement_method = models.CharField(max_length=20, choices=DisbursementMethod.choices, blank=True)
+
+    closed_at = models.DateTimeField(null=True, blank=True)
+
+    defaulted_at = models.DateTimeField(null=True, blank=True)
+    default_notes = models.TextField(blank=True)
+
     class Meta:
         ordering = ["-applied_at"]
 
@@ -135,3 +150,105 @@ class LoanGuarantor(models.Model):
 
     def __str__(self):
         return f"{self.guarantor} pledges {self.pledged_amount} for {self.loan} ({self.status})"
+
+
+class LoanRepaymentSchedule(models.Model):
+    """
+    One amortization installment. Generated once, in full, at the moment a
+    loan goes ACTIVE (loans/services.py:generate_amortization_schedule) -
+    never regenerated or edited afterwards; principal_paid/interest_paid
+    are the only fields a repayment ever touches (loans/services.py:
+    record_loan_repayment), and even those only move forward, never down.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name="schedule")
+    installment_number = models.PositiveSmallIntegerField()
+    due_date = models.DateField()
+
+    principal_due = models.DecimalField(max_digits=18, decimal_places=2)
+    interest_due = models.DecimalField(max_digits=18, decimal_places=2)
+    principal_paid = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    interest_paid = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+
+    class Meta:
+        unique_together = ("loan", "installment_number")
+        ordering = ["loan", "installment_number"]
+
+    @property
+    def total_due(self):
+        return self.principal_due + self.interest_due
+
+    @property
+    def is_paid(self):
+        return self.principal_paid >= self.principal_due and self.interest_paid >= self.interest_due
+
+    def __str__(self):
+        return f"{self.loan} installment {self.installment_number} due {self.due_date}"
+
+
+class LoanRepayment(models.Model):
+    """A repayment against a loan's schedule. Every row here has exactly one
+    balanced JournalEntry behind it - see loans/services.py:record_loan_repayment."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    loan = models.ForeignKey(Loan, on_delete=models.PROTECT, related_name="repayments")
+    amount = models.DecimalField(max_digits=18, decimal_places=2)
+    transaction_date = models.DateField()
+    journal_entry = models.OneToOneField(
+        "accounting.JournalEntry", on_delete=models.PROTECT, related_name="loan_repayment"
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ["-transaction_date", "-created_at"]
+
+    def __str__(self):
+        return f"Repayment {self.amount} on {self.loan}"
+
+
+class DisbursementStatus(models.TextChoices):
+    PENDING = "PENDING", "Pending"
+    SUCCESS = "SUCCESS", "Success"
+    FAILED = "FAILED", "Failed"
+
+
+class LoanDisbursement(models.Model):
+    """
+    One mobile-money disbursement attempt (mirrors payments.PaymentCollection,
+    same idempotency-key + provider-callback shape, just money moving the
+    other direction). Only ever created by
+    loans/services.py:initiate_loan_disbursement_mobile_money; only ever
+    resolved by loans/services.py:handle_loan_disbursement_callback, which
+    is idempotent against a redelivered callback the same way
+    payments.services.handle_collection_callback is (CLAUDE.md rule 4).
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    loan = models.ForeignKey(Loan, on_delete=models.PROTECT, related_name="disbursements")
+    idempotency_key = models.CharField(max_length=64, unique=True)
+
+    provider = models.CharField(max_length=30)
+    phone_number = models.CharField(max_length=20)
+    amount = models.DecimalField(max_digits=18, decimal_places=2)
+    status = models.CharField(max_length=10, choices=DisbursementStatus.choices, default=DisbursementStatus.PENDING)
+
+    provider_reference = models.CharField(max_length=100, blank=True, db_index=True)
+    failure_reason = models.TextField(blank=True)
+    raw_callback = models.JSONField(null=True, blank=True)
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.provider} disbursement {self.amount} for {self.loan} ({self.status})"

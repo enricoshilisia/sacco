@@ -26,6 +26,28 @@ def simulate_mock_callback_task(tenant_schema: str, provider_reference: str, suc
 
 
 @shared_task
+def simulate_mock_loan_disbursement_callback_task(tenant_schema: str, provider_reference: str, success: bool):
+    """
+    Loan-disbursement counterpart to simulate_mock_callback_task above -
+    same "resolve a couple seconds later, through the real idempotent
+    processing path" shape, just calling loans.services instead of
+    payments.services since disbursement money and journal postings belong
+    to the loans app, not this one (loans/services.py:
+    handle_loan_disbursement_callback).
+    """
+    with schema_context(tenant_schema):
+        from loans.services import handle_loan_disbursement_callback
+
+        handle_loan_disbursement_callback(
+            provider_code="mock",
+            provider_reference=provider_reference,
+            success=success,
+            failure_reason="" if success else "Simulated decline (mock phone number ending in 0000).",
+            raw_payload={"simulated": True, "success": success},
+        )
+
+
+@shared_task
 def reconcile_pending_collections():
     """
     Periodic job (BUILD_PLAN.md Phase 3: "daily reconciliation job") - for

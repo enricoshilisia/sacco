@@ -11,4 +11,9 @@ urlpatterns = [
     path("callbacks/mpesa/", views.MpesaCallbackView.as_view(), name="mpesa_callback"),
     path("callbacks/selcom/", views.SelcomCallbackView.as_view(), name="selcom_callback"),
     path("callbacks/mock/", views.MockCallbackView.as_view(), name="mock_callback"),
+    path(
+        "callbacks/mock/loan-disbursement/",
+        views.MockLoanDisbursementCallbackView.as_view(),
+        name="mock_loan_disbursement_callback",
+    ),
 ]

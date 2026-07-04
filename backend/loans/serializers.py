@@ -3,8 +3,10 @@ from decimal import Decimal
 from rest_framework import serializers
 
 from members.models import Member
+from savings.models import SavingsProduct
 
-from .models import Loan, LoanGuarantor, LoanProduct
+from .models import Loan, LoanGuarantor, LoanProduct, LoanRepayment, LoanRepaymentSchedule
+from .services import get_arrears_status
 
 
 class LoanProductSerializer(serializers.ModelSerializer):
@@ -31,6 +33,24 @@ class LoanGuarantorSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "status", "requested_at", "responded_at", "released_at"]
 
 
+class LoanRepaymentScheduleSerializer(serializers.ModelSerializer):
+    total_due = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+    is_paid = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = LoanRepaymentSchedule
+        fields = [
+            "id", "installment_number", "due_date", "principal_due", "interest_due",
+            "principal_paid", "interest_paid", "total_due", "is_paid",
+        ]
+
+
+class LoanRepaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoanRepayment
+        fields = ["id", "amount", "transaction_date", "created_at", "description"]
+
+
 class LoanSerializer(serializers.ModelSerializer):
     member_name = serializers.CharField(source="member.full_name", read_only=True)
     member_number = serializers.CharField(source="member.member_number", read_only=True)
@@ -38,6 +58,10 @@ class LoanSerializer(serializers.ModelSerializer):
     guarantors = LoanGuarantorSerializer(many=True, read_only=True)
     appraised_by_name = serializers.CharField(source="appraised_by.get_full_name", read_only=True, default=None)
     decided_by_name = serializers.CharField(source="decided_by.get_full_name", read_only=True, default=None)
+    schedule = LoanRepaymentScheduleSerializer(many=True, read_only=True)
+    repayments = LoanRepaymentSerializer(many=True, read_only=True)
+    outstanding_balance = serializers.SerializerMethodField()
+    arrears = serializers.SerializerMethodField()
 
     class Meta:
         model = Loan
@@ -46,7 +70,18 @@ class LoanSerializer(serializers.ModelSerializer):
             "amount_requested", "term_months", "purpose", "interest_method", "interest_rate",
             "status", "applied_at", "appraised_at", "appraised_by_name", "appraisal_notes",
             "decided_at", "decided_by_name", "decision_notes", "guarantors",
+            "disbursed_at", "disbursement_method", "closed_at", "defaulted_at", "default_notes",
+            "schedule", "repayments", "outstanding_balance", "arrears",
         ]
+
+    def get_outstanding_balance(self, loan):
+        return sum(
+            (row.total_due - row.principal_paid - row.interest_paid for row in loan.schedule.all()),
+            Decimal("0"),
+        )
+
+    def get_arrears(self, loan):
+        return get_arrears_status(loan)
 
 
 class LoanApplyInputSerializer(serializers.Serializer):
@@ -91,4 +126,23 @@ class AppraiseInputSerializer(serializers.Serializer):
 
 class DecideInputSerializer(serializers.Serializer):
     approved = serializers.BooleanField()
+    notes = serializers.CharField(required=False, allow_blank=True, default="")
+
+
+class DisburseToSavingsInputSerializer(serializers.Serializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=SavingsProduct.objects.filter(is_active=True))
+
+
+class DisburseMobileMoneyInputSerializer(serializers.Serializer):
+    phone_number = serializers.CharField()
+    idempotency_key = serializers.CharField(required=False, allow_blank=True, max_length=64)
+
+
+class RecordRepaymentInputSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=18, decimal_places=2, min_value=Decimal("0.01"))
+    transaction_date = serializers.DateField()
+    description = serializers.CharField(required=False, allow_blank=True, default="")
+
+
+class MarkDefaultedInputSerializer(serializers.Serializer):
     notes = serializers.CharField(required=False, allow_blank=True, default="")

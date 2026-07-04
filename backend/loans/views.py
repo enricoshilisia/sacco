@@ -11,10 +11,14 @@ from .serializers import (
     AddGuarantorInputSerializer,
     AppraiseInputSerializer,
     DecideInputSerializer,
+    DisburseMobileMoneyInputSerializer,
+    DisburseToSavingsInputSerializer,
     LoanApplyInputSerializer,
     LoanGuarantorSerializer,
     LoanProductSerializer,
     LoanSerializer,
+    MarkDefaultedInputSerializer,
+    RecordRepaymentInputSerializer,
     RespondGuaranteeInputSerializer,
 )
 from .services import (
@@ -22,11 +26,17 @@ from .services import (
     appraise_loan,
     apply_for_loan,
     decide_loan,
+    disburse_to_savings,
+    initiate_loan_disbursement_mobile_money,
+    mark_loan_defaulted,
+    record_loan_repayment,
     respond_to_guarantee,
     submit_for_appraisal,
 )
 
-LOAN_QUERYSET = Loan.objects.select_related("member", "product").prefetch_related("guarantors__guarantor")
+LOAN_QUERYSET = Loan.objects.select_related("member", "product").prefetch_related(
+    "guarantors__guarantor", "schedule", "repayments"
+)
 
 
 def _my_member(request):
@@ -235,6 +245,79 @@ class DecideLoanView(APIView):
         loan = generics.get_object_or_404(Loan, pk=pk)
         try:
             loan = decide_loan(loan=loan, approve=data["approved"], decided_by=request.user, notes=data["notes"])
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(LoanSerializer(loan).data)
+
+
+class DisburseToSavingsView(APIView):
+    """Path A: credit the loan straight into one of the member's own
+    savings accounts. Synchronous - the loan is ACTIVE, schedule and all,
+    by the time this returns."""
+
+    permission_classes = [IsAuthenticated, require_permission("loans.disburse")]
+
+    def post(self, request, pk):
+        loan = generics.get_object_or_404(Loan, pk=pk)
+        serializer = DisburseToSavingsInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            loan = disburse_to_savings(loan=loan, created_by=request.user, **serializer.validated_data)
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(LoanSerializer(loan).data)
+
+
+class DisburseMobileMoneyView(APIView):
+    """Path B: initiates a mobile-money disbursement. Returns with the loan
+    still DISBURSED (not yet ACTIVE) - the provider callback is what moves
+    it to ACTIVE, same async shape as an M-Pesa collection."""
+
+    permission_classes = [IsAuthenticated, require_permission("loans.disburse")]
+
+    def post(self, request, pk):
+        loan = generics.get_object_or_404(Loan, pk=pk)
+        serializer = DisburseMobileMoneyInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            initiate_loan_disbursement_mobile_money(loan=loan, created_by=request.user, **serializer.validated_data)
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        loan.refresh_from_db()
+        return Response(LoanSerializer(loan).data)
+
+
+class RecordLoanRepaymentView(APIView):
+    """Staff-recorded repayment (walk-in cash/bank) - self-service member
+    repayment via M-Pesa STK is a deliberately separate, not-yet-built
+    concern; see loans/services.py:record_loan_repayment's docstring."""
+
+    permission_classes = [IsAuthenticated, require_permission("loans.repay")]
+
+    def post(self, request, pk):
+        loan = generics.get_object_or_404(Loan, pk=pk)
+        serializer = RecordRepaymentInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            record_loan_repayment(loan=loan, created_by=request.user, **serializer.validated_data)
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        loan.refresh_from_db()
+        return Response(LoanSerializer(loan).data)
+
+
+class MarkLoanDefaultedView(APIView):
+    """Manual only - reuses loans.approve (the same authority that decided
+    to lend in the first place is who decides a loan has gone bad)."""
+
+    permission_classes = [IsAuthenticated, require_permission("loans.approve")]
+
+    def post(self, request, pk):
+        loan = generics.get_object_or_404(Loan, pk=pk)
+        serializer = MarkDefaultedInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            loan = mark_loan_defaulted(loan=loan, created_by=request.user, **serializer.validated_data)
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(LoanSerializer(loan).data)
