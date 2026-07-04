@@ -6,19 +6,20 @@ from django.db import transaction
 from django.utils import timezone
 
 from notifications.services import queue_sms
-from savings.services import deposit_savings
+from savings.services import contribute_shares, deposit_savings
 
-from .models import CollectionStatus, PaymentCollection
+from .models import CollectionPurpose, CollectionStatus, PaymentCollection
 from .providers.registry import get_active_payment_provider
 
 
 def initiate_collection(
     *,
     member,
-    savings_account,
     amount: Decimal,
     phone_number: str,
     callback_url: str,
+    savings_account=None,
+    purpose: str = CollectionPurpose.SAVINGS_DEPOSIT,
     idempotency_key: str | None = None,
     created_by=None,
 ) -> PaymentCollection:
@@ -31,9 +32,15 @@ def initiate_collection(
     key generated, which only protects against retries that explicitly
     reuse it - callers that need retry-safety across their own network
     failures should generate and pass their own key.
+
+    `savings_account` is required for the default SAVINGS_DEPOSIT purpose
+    and ignored for SHARE_CONTRIBUTION (shares have no per-product
+    account - CLAUDE.md: share capital != deposits, never conflated).
     """
     if amount <= 0:
         raise ValueError("Collection amount must be positive.")
+    if purpose == CollectionPurpose.SAVINGS_DEPOSIT and savings_account is None:
+        raise ValueError("savings_account is required for a savings deposit collection.")
 
     idempotency_key = idempotency_key or f"collect-{uuid.uuid4().hex}"
     existing = PaymentCollection.objects.filter(idempotency_key=idempotency_key).first()
@@ -44,7 +51,8 @@ def initiate_collection(
     collection = PaymentCollection.objects.create(
         idempotency_key=idempotency_key,
         member=member,
-        savings_account=savings_account,
+        purpose=purpose,
+        savings_account=savings_account if purpose == CollectionPurpose.SAVINGS_DEPOSIT else None,
         provider=provider.code,
         phone_number=phone_number,
         amount=amount,
@@ -108,19 +116,33 @@ def handle_collection_callback(
             collection.save(update_fields=["status", "failure_reason", "raw_callback", "completed_at"])
             return collection
 
-        txn = deposit_savings(
-            savings_account=collection.savings_account,
-            amount=collection.amount,
-            transaction_date=date.today(),
-            created_by=collection.created_by,
-            description=f"{provider_code.title()} collection {receipt or provider_reference}".strip(),
-        )
+        description = f"{provider_code.title()} collection {receipt or provider_reference}".strip()
+        if collection.purpose == CollectionPurpose.SHARE_CONTRIBUTION:
+            contribution = contribute_shares(
+                member=collection.member,
+                amount=collection.amount,
+                transaction_date=date.today(),
+                created_by=collection.created_by,
+                description=description,
+            )
+            collection.share_contribution = contribution
+            update_fields = ["status", "provider_receipt", "share_contribution", "raw_callback", "completed_at"]
+            confirmation_target = "share capital"
+        else:
+            txn = deposit_savings(
+                savings_account=collection.savings_account,
+                amount=collection.amount,
+                transaction_date=date.today(),
+                created_by=collection.created_by,
+                description=description,
+            )
+            collection.savings_transaction = txn
+            update_fields = ["status", "provider_receipt", "savings_transaction", "raw_callback", "completed_at"]
+            confirmation_target = f"{collection.savings_account.product.name} account"
+
         collection.status = CollectionStatus.SUCCESS
         collection.provider_receipt = receipt
-        collection.savings_transaction = txn
-        collection.save(
-            update_fields=["status", "provider_receipt", "savings_transaction", "raw_callback", "completed_at"]
-        )
+        collection.save(update_fields=update_fields)
 
         # Deferred to after commit: queuing the Celery send before the row
         # is actually committed risks the notification task running before
@@ -132,8 +154,7 @@ def handle_collection_callback(
                 recipient=collection.phone_number,
                 message=(
                     f"Confirmed. {collection.amount} received into your "
-                    f"{collection.savings_account.product.name} account. "
-                    f"Ref {receipt or provider_reference}."
+                    f"{confirmation_target}. Ref {receipt or provider_reference}."
                 ),
             )
         )

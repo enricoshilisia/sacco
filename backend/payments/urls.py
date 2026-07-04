@@ -6,6 +6,7 @@ app_name = "payments"
 
 urlpatterns = [
     path("members/<uuid:member_id>/collect/", views.InitiateCollectionView.as_view(), name="initiate_collection"),
+    path("me/collect/", views.MyInitiateCollectionView.as_view(), name="my_initiate_collection"),
     path("collections/", views.CollectionListView.as_view(), name="collection_list"),
     path("collections/<uuid:pk>/", views.CollectionDetailView.as_view(), name="collection_detail"),
     path("callbacks/mpesa/", views.MpesaCallbackView.as_view(), name="mpesa_callback"),

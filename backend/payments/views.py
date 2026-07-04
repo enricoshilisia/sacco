@@ -10,11 +10,15 @@ from loans.services import handle_loan_disbursement_callback
 from members.models import Member
 from savings.services import get_or_open_savings_account
 
-from .models import PaymentCollection
+from .models import CollectionPurpose, PaymentCollection
 from .providers.daraja import DarajaProvider
 from .providers.registry import get_active_payment_provider
 from .providers.selcom import SelcomProvider
-from .serializers import InitiateCollectionInputSerializer, PaymentCollectionSerializer
+from .serializers import (
+    InitiateCollectionInputSerializer,
+    MyInitiateCollectionInputSerializer,
+    PaymentCollectionSerializer,
+)
 from .services import handle_collection_callback, initiate_collection
 
 CALLBACK_URL_NAMES = {
@@ -22,6 +26,10 @@ CALLBACK_URL_NAMES = {
     "daraja": "payments:mpesa_callback",
     "selcom": "payments:selcom_callback",
 }
+
+
+def _my_member(request):
+    return Member.objects.filter(user=request.user).first()
 
 
 class InitiateCollectionView(APIView):
@@ -48,6 +56,54 @@ class InitiateCollectionView(APIView):
                 savings_account=savings_account,
                 amount=data["amount"],
                 phone_number=phone_number,
+                callback_url=callback_url,
+                idempotency_key=data.get("idempotency_key") or None,
+                created_by=request.user,
+            )
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(PaymentCollectionSerializer(collection).data, status=status.HTTP_201_CREATED)
+
+
+class MyInitiateCollectionView(APIView):
+    """
+    Self-service: a member funding their own share contribution or
+    savings deposit via mobile money, from their own dashboard - ownership
+    is the check (the member is resolved from request.user), the same
+    shape as every other /me/ endpoint in this codebase, needing no
+    accesscontrol permission at all. Real money only ever moves once the
+    provider confirms via callback (handle_collection_callback) - nothing
+    here posts to the ledger directly, so there's no way for a member to
+    just self-declare a contribution with no payment behind it.
+    """
+
+    permission_classes = [IsAuthenticated, require_permission("payments.initiate_own_collection")]
+
+    def post(self, request):
+        member = _my_member(request)
+        if member is None:
+            return Response(
+                {"detail": "No member record is linked to this account."}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = MyInitiateCollectionInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        purpose = data["purpose"]
+        savings_account = (
+            get_or_open_savings_account(member, data["product"]) if purpose == CollectionPurpose.SAVINGS_DEPOSIT else None
+        )
+
+        provider = get_active_payment_provider()
+        callback_path = reverse(CALLBACK_URL_NAMES.get(provider.code, "payments:mock_callback"))
+        callback_url = request.build_absolute_uri(callback_path)
+
+        try:
+            collection = initiate_collection(
+                member=member,
+                purpose=purpose,
+                savings_account=savings_account,
+                amount=data["amount"],
+                phone_number=data["phone_number"],
                 callback_url=callback_url,
                 idempotency_key=data.get("idempotency_key") or None,
                 created_by=request.user,

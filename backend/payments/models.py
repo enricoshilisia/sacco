@@ -11,26 +11,46 @@ class CollectionStatus(models.TextChoices):
     CANCELLED = "CANCELLED", "Cancelled"
 
 
+class CollectionPurpose(models.TextChoices):
+    SAVINGS_DEPOSIT = "SAVINGS_DEPOSIT", "Savings deposit"
+    SHARE_CONTRIBUTION = "SHARE_CONTRIBUTION", "Share contribution"
+
+
 class PaymentCollection(models.Model):
     """
     One mobile-money collection attempt (M-Pesa STK push / Selcom
-    checkout) that, on success, becomes a savings deposit posted to the
-    ledger. idempotency_key is the CLAUDE.md-mandated guard (rule 4)
-    against a retried provider callback double-posting: the callback
-    handler looks a collection up by provider_reference and is a no-op
-    once the row is already in a terminal state (SUCCESS/FAILED/
-    CANCELLED) - see payments/services.py:handle_collection_callback.
+    checkout) that, on success, becomes a savings deposit or share
+    contribution posted to the ledger (purpose decides which - CLAUDE.md:
+    "share capital != deposits", never conflated even though they share
+    this same collection mechanism). idempotency_key is the CLAUDE.md-
+    mandated guard (rule 4) against a retried provider callback double-
+    posting: the callback handler looks a collection up by
+    provider_reference and is a no-op once the row is already in a
+    terminal state (SUCCESS/FAILED/CANCELLED) - see
+    payments/services.py:handle_collection_callback.
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     idempotency_key = models.CharField(max_length=64, unique=True)
 
     member = models.ForeignKey("members.Member", on_delete=models.PROTECT, related_name="payment_collections")
+    purpose = models.CharField(
+        max_length=20, choices=CollectionPurpose.choices, default=CollectionPurpose.SAVINGS_DEPOSIT
+    )
+    # Only set (and only meaningful) for SAVINGS_DEPOSIT - a share
+    # contribution has no savings product/account of its own.
     savings_account = models.ForeignKey(
-        "savings.SavingsAccount", on_delete=models.PROTECT, related_name="payment_collections"
+        "savings.SavingsAccount", null=True, blank=True, on_delete=models.PROTECT, related_name="payment_collections"
     )
     savings_transaction = models.OneToOneField(
         "savings.SavingsTransaction",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="payment_collection",
+    )
+    share_contribution = models.OneToOneField(
+        "savings.ShareContribution",
         null=True,
         blank=True,
         on_delete=models.PROTECT,

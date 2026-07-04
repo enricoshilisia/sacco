@@ -28,12 +28,18 @@ from .services import (
 
 
 class SavingsProductListCreateView(generics.ListCreateAPIView):
+    """Product catalog - not member-specific data, so GET is open to any
+    authenticated tenant user (including self-service members choosing
+    what to contribute/deposit into), same treatment as
+    loans.views.LoanProductListCreateView."""
+
     queryset = SavingsProduct.objects.all()
     serializer_class = SavingsProductSerializer
 
     def get_permissions(self):
-        code = "savings.manage_products" if self.request.method == "POST" else "savings.view"
-        return [IsAuthenticated(), require_permission(code)()]
+        if self.request.method == "POST":
+            return [IsAuthenticated(), require_permission("savings.manage_products")()]
+        return [IsAuthenticated()]
 
 
 def build_member_statement(member) -> dict:
