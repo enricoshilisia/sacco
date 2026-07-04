@@ -61,7 +61,12 @@
     "orBiometric": "au tumia alama za kibiolojia",
     "biometricLogin": "Ingia kwa alama ya kidole / Face ID",
     "error": "Kuingia kumeshindwa. Angalia taarifa zako na ujaribu tena.",
-    "success": "Umeingia kwa mafanikio."
+    "success": "Umeingia kwa mafanikio.",
+    "findSaccoTitle": "Tafuta SACCO yako",
+    "findSaccoBody": "Kuingia hufanyika kwenye ukurasa wa SACCO yako mwenyewe. Weka anwani yake ya wavuti ili kuendelea.",
+    "findSaccoLabel": "Anwani ya wavuti ya SACCO yako",
+    "findSaccoPlaceholder": "mfano: shirika",
+    "findSaccoSubmit": "Endelea"
   },
   "SaccoSignup": {
     "title": "Anzisha jaribio la bure la SACCO yako",

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { apiFetch, setTokens } from "@/lib/api";
+import { apiFetch, goToTenantSubdomain, setTokens } from "@/lib/api";
+import { useIsOnPublicHost } from "@/lib/useIsOnPublicHost";
 import { loginWithBiometrics } from "@/lib/webauthn";
 import { enablePushNotifications } from "@/lib/firebase";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -12,10 +13,13 @@ type TokenPair = { access: string; refresh: string };
 
 export default function LoginPage() {
   const t = useTranslations("Login");
+  const locale = useLocale();
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [subdomain, setSubdomain] = useState("");
+  const onPublicHost = useIsOnPublicHost();
 
   async function afterLogin() {
     // Best-effort: don't block navigation if the browser denies/unsupports push.
@@ -60,6 +64,40 @@ export default function LoginPage() {
       </header>
 
       <main className="flex flex-1 items-center justify-center px-6 py-10">
+        {onPublicHost ? (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              goToTenantSubdomain(subdomain, locale);
+            }}
+            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100 sm:p-8"
+          >
+            <h1 className="mb-2 text-xl font-semibold text-primary-900">{t("findSaccoTitle")}</h1>
+            <p className="mb-6 text-sm leading-6 text-primary-600">{t("findSaccoBody")}</p>
+
+            <label className="mb-4 block">
+              <span className="mb-1 block text-sm font-medium text-primary-800">
+                {t("findSaccoLabel")}
+              </span>
+              <input
+                type="text"
+                required
+                autoFocus
+                placeholder={t("findSaccoPlaceholder")}
+                value={subdomain}
+                onChange={(e) => setSubdomain(e.target.value)}
+                className="w-full rounded-lg border border-primary-200 bg-white px-4 py-3 text-base text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              />
+            </label>
+
+            <button
+              type="submit"
+              className="mt-2 w-full rounded-full bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700"
+            >
+              {t("findSaccoSubmit")}
+            </button>
+          </form>
+        ) : (
         <form
           onSubmit={handlePasswordLogin}
           className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100 sm:p-8"
@@ -123,6 +161,7 @@ export default function LoginPage() {
             {t("biometricLogin")}
           </button>
         </form>
+        )}
       </main>
     </div>
   );

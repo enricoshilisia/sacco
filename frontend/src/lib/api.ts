@@ -29,6 +29,42 @@ function resolveApiBaseUrl(): string {
 const PUBLIC_API_BASE_URL =
   process.env.NEXT_PUBLIC_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
+/**
+ * True when the browser is on the bare/no-tenant host (the same one
+ * PUBLIC_API_BASE_URL points at) rather than a SACCO's own subdomain.
+ * There is no such thing as logging in from here - login is inherently
+ * tenant-scoped (it hits that tenant's own user table), and this host
+ * resolves to the public schema's deliberately tiny URLconf (backend/
+ * config/urls_public.py: admin + sign-up only, no /api/auth/*) - so a
+ * login attempt from this host 404s no matter who's asking. Pages reached
+ * from both the bare marketing domain and real tenant subdomains (the
+ * homepage) need to know this to avoid offering a login that can't work.
+ */
+export function isOnPublicHost(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.location.hostname === new URL(PUBLIC_API_BASE_URL).hostname;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Full-page navigation (not client-side routing - this crosses hostnames,
+ * which next/navigation can't do) to a SACCO's own subdomain, from the
+ * bare/public host. `subdomain` is whatever the user typed into a "find
+ * your SACCO" prompt - if they pasted a full hostname by mistake, only
+ * its first label is used, so "shirika.example.com" and "shirika" both
+ * resolve the same way.
+ */
+export function goToTenantSubdomain(subdomain: string, locale: string) {
+  if (typeof window === "undefined") return;
+  const label = subdomain.trim().toLowerCase().split(".")[0];
+  if (!label) return;
+  const port = window.location.port ? `:${window.location.port}` : "";
+  window.location.href = `${window.location.protocol}//${label}.${window.location.hostname}${port}/${locale}/login`;
+}
+
 const ACCESS_TOKEN_KEY = "sacco.access_token";
 const REFRESH_TOKEN_KEY = "sacco.refresh_token";
 

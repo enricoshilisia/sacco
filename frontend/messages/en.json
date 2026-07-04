@@ -61,7 +61,12 @@
     "orBiometric": "or use biometrics",
     "biometricLogin": "Log in with fingerprint / Face ID",
     "error": "Login failed. Check your details and try again.",
-    "success": "Logged in successfully."
+    "success": "Logged in successfully.",
+    "findSaccoTitle": "Find your SACCO",
+    "findSaccoBody": "Logging in happens on your own SACCO's page. Enter its web address to continue.",
+    "findSaccoLabel": "Your SACCO's web address",
+    "findSaccoPlaceholder": "e.g. shirika",
+    "findSaccoSubmit": "Continue"
   },
   "SaccoSignup": {
     "title": "Start your SACCO's free trial",
