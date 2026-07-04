@@ -178,7 +178,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   if (status === "loading") {
     return (
-      <div className="flex h-full flex-1 items-center justify-center bg-primary-50">
+      <div className="flex h-screen items-center justify-center bg-primary-50">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-300 border-t-primary-600" />
       </div>
     );
@@ -186,7 +186,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   if (status === "expired") {
     return (
-      <div className="flex h-full flex-1 flex-col items-center justify-center gap-4 bg-primary-50 px-6 text-center">
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-primary-50 px-6 text-center">
         <p className="text-sm text-primary-700">Your session has expired.</p>
         <Link
           href="/login"
@@ -199,7 +199,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-full flex-col bg-primary-50">
+    <div className="flex h-screen flex-col bg-primary-50">
       {/* Static top bar - spans the full width; its left zone lines up
           with the sidebar's width/border below so the two read as one
           connected frame rather than two floating panels. */}
@@ -207,8 +207,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="hidden w-64 shrink-0 items-center border-r border-primary-100 px-5 md:flex">
           {brand}
         </div>
-        <div className="flex min-w-0 flex-1 items-center justify-between gap-3 px-4 sm:px-6">
-          <div className="min-w-0">{brand}</div>
+        <div className="flex min-w-0 flex-1 items-center justify-between gap-3 px-4 sm:px-6 md:justify-end">
+          <div className="min-w-0 md:hidden">{brand}</div>
           {profileCluster}
         </div>
       </header>
