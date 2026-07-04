@@ -5,18 +5,13 @@ import { useTranslations } from "next-intl";
 import {
   ArrowRight,
   Banknote,
-  Building2,
   Check,
   Clock,
   Gavel,
   HandCoins,
   Handshake,
-  Mail,
-  MapPin,
-  Phone,
   PiggyBank,
   Scale,
-  User,
   Users,
   Wallet,
   X,
@@ -84,10 +79,14 @@ function money(value: number, currency: string) {
   return `${currency} ${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 }
 
+const ACCOUNTING_PERMISSIONS = ["accounting.view_trial_balance", "accounting.view_ledger"];
+
 export default function DashboardPage() {
   const t = useTranslations("Dashboard");
   const tl = useTranslations("MyLoans");
-  const { profile } = useTenantProfile();
+  const { profile, hasPermission, hasAnyPermission } = useTenantProfile();
+  const canViewMembers = hasPermission("members.view");
+  const canViewAccounting = hasAnyPermission(ACCOUNTING_PERMISSIONS);
 
   const [memberCount, setMemberCount] = useState<number | null | undefined>(undefined);
   const [recentMembers, setRecentMembers] = useState<MemberListItem[]>([]);
@@ -119,20 +118,28 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
-    apiFetch<{ count: number; results: MemberListItem[] }>("/api/members/")
-      .then((data) => {
-        setMemberCount(data.count);
-        setRecentMembers(data.results.slice(0, 5));
-      })
-      .catch(() => setMemberCount(null));
+    // Org-wide SACCO data - only fetched (and only ever shown) to logins
+    // that actually hold the relevant staff permission, so a self-service
+    // member's dashboard never even requests, let alone renders, numbers
+    // about the whole SACCO.
+    if (canViewMembers) {
+      apiFetch<{ count: number; results: MemberListItem[] }>("/api/members/")
+        .then((data) => {
+          setMemberCount(data.count);
+          setRecentMembers(data.results.slice(0, 5));
+        })
+        .catch(() => setMemberCount(null));
+    }
 
-    apiFetch<TrialBalance>("/api/accounting/trial-balance/")
-      .then(setTrialBalance)
-      .catch(() => setTrialBalance(null));
+    if (canViewAccounting) {
+      apiFetch<TrialBalance>("/api/accounting/trial-balance/")
+        .then(setTrialBalance)
+        .catch(() => setTrialBalance(null));
 
-    apiFetch<{ results: JournalEntryLite[] }>("/api/accounting/journal-entries/")
-      .then((data) => setJournal(data.results.slice(0, 5)))
-      .catch(() => setJournal(null));
+      apiFetch<{ results: JournalEntryLite[] }>("/api/accounting/journal-entries/")
+        .then((data) => setJournal(data.results.slice(0, 5)))
+        .catch(() => setJournal(null));
+    }
 
     // Self-service: only succeeds if this login is linked to a member
     // record (see members.views.MyMemberView) - a pure staff account gets
@@ -150,13 +157,12 @@ export default function DashboardPage() {
       .catch(() => setMyMember(null));
 
     loadGuaranteeRequests();
-  }, []);
+  }, [canViewMembers, canViewAccounting]);
 
   if (!profile) return null;
 
-  const { tenant, user, memberships } = profile;
+  const { tenant, user } = profile;
   const fullName = `${user.first_name} ${user.last_name}`.trim();
-  const primaryMembership = memberships[0];
 
   const shareCapital = trialBalance?.accounts.find((a) => a.code === SHARE_CAPITAL_CODE);
   const totalSavings = trialBalance?.accounts.find((a) => a.code === SAVINGS_CONTROL_CODE);
@@ -296,51 +302,59 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Live stats */}
-      <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {memberCount !== null && (
-          <StatCard
-            icon={Users}
-            label={t("totalMembers")}
-            value={memberCount === undefined ? undefined : memberCount.toLocaleString()}
-          />
-        )}
-        {trialBalance !== null && (
-          <StatCard
-            icon={Wallet}
-            label={t("shareCapital")}
-            value={
-              trialBalance === undefined
-                ? undefined
-                : money(Number(shareCapital?.balance ?? 0), tenant.currency)
-            }
-          />
-        )}
-        {trialBalance !== null && (
-          <StatCard
-            icon={PiggyBank}
-            label={t("totalSavings")}
-            value={
-              trialBalance === undefined
-                ? undefined
-                : money(Number(totalSavings?.balance ?? 0), tenant.currency)
-            }
-          />
-        )}
-        {trialBalance !== null && (
-          <StatCard
-            icon={Scale}
-            label={t("ledgerStatus")}
-            value={trialBalance === undefined ? undefined : trialBalance.balanced ? t("balanced") : t("unbalanced")}
-            tone={trialBalance && !trialBalance.balanced ? "warn" : "default"}
-          />
-        )}
-      </div>
+      {/* Live stats - SACCO-wide, so only for logins with the matching staff permission */}
+      {(canViewMembers || canViewAccounting) && (
+        <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {canViewMembers && (
+            <StatCard
+              icon={Users}
+              label={t("totalMembers")}
+              value={memberCount === null || memberCount === undefined ? undefined : memberCount.toLocaleString()}
+            />
+          )}
+          {canViewAccounting && (
+            <StatCard
+              icon={Wallet}
+              label={t("shareCapital")}
+              value={
+                trialBalance === null || trialBalance === undefined
+                  ? undefined
+                  : money(Number(shareCapital?.balance ?? 0), tenant.currency)
+              }
+            />
+          )}
+          {canViewAccounting && (
+            <StatCard
+              icon={PiggyBank}
+              label={t("totalSavings")}
+              value={
+                trialBalance === null || trialBalance === undefined
+                  ? undefined
+                  : money(Number(totalSavings?.balance ?? 0), tenant.currency)
+              }
+            />
+          )}
+          {canViewAccounting && (
+            <StatCard
+              icon={Scale}
+              label={t("ledgerStatus")}
+              value={
+                trialBalance === null || trialBalance === undefined
+                  ? undefined
+                  : trialBalance.balanced
+                    ? t("balanced")
+                    : t("unbalanced")
+              }
+              tone={trialBalance && !trialBalance.balanced ? "warn" : "default"}
+            />
+          )}
+        </div>
+      )}
 
-      {/* Live activity */}
-      {(memberCount || journal !== null) && (
+      {/* Live activity - same staff-only scope as the stats above */}
+      {(canViewMembers || canViewAccounting) && (
         <div className="mb-6 grid gap-5 lg:grid-cols-2">
-          {memberCount !== null && (
+          {canViewMembers && (
             <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -377,7 +391,7 @@ export default function DashboardPage() {
             </section>
           )}
 
-          {journal !== null && (
+          {canViewAccounting && (
             <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -419,51 +433,29 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="mb-8 grid gap-5 lg:grid-cols-2">
-        <Card icon={Building2} title={t("saccoProfile")}>
-          <Row icon={MapPin} label={t("country")} value={tenant.country} />
-          <Row icon={MapPin} label={t("currency")} value={tenant.currency} />
-          <Row icon={MapPin} label={t("address")} value={tenant.address || t("notProvided")} />
-          <Row icon={Mail} label={t("contactEmail")} value={tenant.contact_email || t("notProvided")} />
-          <Row icon={Phone} label={t("contactPhone")} value={tenant.contact_phone || t("notProvided")} />
-        </Card>
-
-        <Card icon={User} title={t("yourProfile")}>
-          <Row icon={Phone} label={t("phoneNumber")} value={user.phone_number} />
-          <Row icon={Mail} label={t("email")} value={user.email || t("notProvided")} />
-          {primaryMembership && (
-            <>
-              <Row icon={User} label={t("role")} value={primaryMembership.role_name} />
-              <Row
-                icon={User}
-                label={t("jobTitle")}
-                value={primaryMembership.job_title || t("notProvided")}
-              />
-            </>
-          )}
-        </Card>
-      </div>
-
       {/* Preview of not-yet-built modules - sample data only, clearly muted so it can never be mistaken for real numbers.
           Loans and Payments used to be mock cards here too - removed once each shipped for real, so a genuinely-built
-          feature is never shown sitting next to obviously-fake numbers. */}
-      <div>
-        <h2 className="text-sm font-semibold text-primary-400">{t("comingSoon")}</h2>
-        <p className="mb-4 text-xs text-primary-400">{t("comingSoonHelp")}</p>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <MockCard icon={Banknote} title={t("distributionsTitle")}>
-            <MockRow label={t("distributionsLast")} value="14 Dec 2025" />
-            <MockRow label={t("distributionsTotal")} value={`${tenant.currency} 1.8M`} />
-            <MockRow label={t("distributionsNextAgm")} value="22 Aug 2026" />
-          </MockCard>
+          feature is never shown sitting next to obviously-fake numbers. Staff-oriented previews of SACCO-wide
+          modules, so same staff-only scope as the stats above. */}
+      {(canViewMembers || canViewAccounting) && (
+        <div>
+          <h2 className="text-sm font-semibold text-primary-400">{t("comingSoon")}</h2>
+          <p className="mb-4 text-xs text-primary-400">{t("comingSoonHelp")}</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <MockCard icon={Banknote} title={t("distributionsTitle")}>
+              <MockRow label={t("distributionsLast")} value="14 Dec 2025" />
+              <MockRow label={t("distributionsTotal")} value={`${tenant.currency} 1.8M`} />
+              <MockRow label={t("distributionsNextAgm")} value="22 Aug 2026" />
+            </MockCard>
 
-          <MockCard icon={Gavel} title={t("governanceTitle")}>
-            <MockRow label={t("governanceNextMeeting")} value="9 Jul 2026" />
-            <MockRow label={t("governanceResolutions")} value="2" />
-            <MockRow label={t("governanceAttendance")} value="87%" />
-          </MockCard>
+            <MockCard icon={Gavel} title={t("governanceTitle")}>
+              <MockRow label={t("governanceNextMeeting")} value="9 Jul 2026" />
+              <MockRow label={t("governanceResolutions")} value="2" />
+              <MockRow label={t("governanceAttendance")} value="87%" />
+            </MockCard>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -497,48 +489,6 @@ function StatCard({
         </p>
       )}
       <p className="text-sm text-primary-500">{label}</p>
-    </div>
-  );
-}
-
-function Card({
-  icon: Icon,
-  title,
-  children,
-}: {
-  icon: typeof Building2;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
-      <div className="mb-5 flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
-          <Icon size={16} strokeWidth={2} />
-        </div>
-        <h2 className="text-sm font-semibold text-primary-900">{title}</h2>
-      </div>
-      <dl className="divide-y divide-primary-50">{children}</dl>
-    </section>
-  );
-}
-
-function Row({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Building2;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
-      <dt className="flex items-center gap-2 text-sm text-primary-500">
-        <Icon size={14} className="shrink-0" />
-        {label}
-      </dt>
-      <dd className="text-right text-sm font-medium text-primary-900">{value}</dd>
     </div>
   );
 }

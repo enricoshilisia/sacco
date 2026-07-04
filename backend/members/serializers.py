@@ -72,6 +72,26 @@ class MemberSerializer(serializers.ModelSerializer):
         return instance
 
 
+class MyMemberSerializer(MemberSerializer):
+    """
+    Self-service view/edit of one's own member record. Reuses
+    MemberSerializer's fields and update() (so `updated_by` still gets set
+    from context) but locks down everything except contact details -
+    identity/KYC fields (name, DOB, gender, ID type/number) and
+    membership status/category are staff-mediated changes only, since
+    changing them silently would invalidate the KYC verification already
+    on file. Only phone_number, email and physical_address are writable
+    here; the staff-facing MemberSerializer (any field, gated by
+    members.edit) is the one used for a real KYC-reviewed correction.
+    """
+
+    class Meta(MemberSerializer.Meta):
+        read_only_fields = MemberSerializer.Meta.read_only_fields + [
+            "user", "category", "status", "first_name", "last_name", "other_names",
+            "date_of_birth", "gender", "id_type", "id_number", "relations",
+        ]
+
+
 class MemberPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member

@@ -11,6 +11,7 @@ import {
   Scale,
   Settings,
   Smartphone,
+  User,
   Users,
   X,
 } from "lucide-react";
@@ -22,7 +23,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 const SWIPE_THRESHOLD = 28;
 
 type NavItem = {
-  href: "/dashboard" | "/members" | "/accounting" | "/payments" | "/loans" | "/savings" | "/settings";
+  href: "/dashboard" | "/members" | "/accounting" | "/payments" | "/loans" | "/savings" | "/profile" | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
   /** Omit for items everyone can see (e.g. Dashboard). Otherwise the item
@@ -70,6 +71,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       href: "/savings",
       label: t("savings"),
       icon: PiggyBank,
+      selfService: true,
+    },
+    {
+      href: "/profile",
+      label: t("profile"),
+      icon: User,
       selfService: true,
     },
     {

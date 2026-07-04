@@ -18,6 +18,7 @@ from .serializers import (
     MemberPhotoSerializer,
     MemberPortalInviteSerializer,
     MemberSerializer,
+    MyMemberSerializer,
 )
 
 
@@ -96,20 +97,39 @@ class GuarantorConsentRespondView(APIView):
 class MyMemberView(APIView):
     """
     Self-service: "my own member record", resolved from request.user - not
-    a member_id in the URL. This is deliberately not gated by members.view
+    a member_id in the URL. GET is deliberately not gated by members.view
     (the staff-facing permission that lets someone look up ANY member by
     id): ownership IS the access check here, so any authenticated user
     with a linked Member record may use it, and one with no linked record
-    gets a 404, not a 403.
+    gets a 404, not a 403. PATCH additionally requires members.edit_own -
+    a state change, so (like loans.repay/payments.initiate_own_collection)
+    it gets its own permission code rather than piggybacking on the
+    staff-facing members.edit, so an admin could toggle self-edit off for
+    the Member role without touching the staff permission.
     """
 
-    permission_classes = [IsAuthenticated]
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [IsAuthenticated(), require_permission("members.edit_own")()]
+        return [IsAuthenticated()]
+
+    def _my_member(self, request):
+        return Member.objects.filter(user=request.user).first()
 
     def get(self, request):
-        member = Member.objects.filter(user=request.user).first()
+        member = self._my_member(request)
         if member is None:
             return Response({"detail": "No member record is linked to this account."}, status=status.HTTP_404_NOT_FOUND)
         return Response(MemberSerializer(member).data)
+
+    def patch(self, request):
+        member = self._my_member(request)
+        if member is None:
+            return Response({"detail": "No member record is linked to this account."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = MyMemberSerializer(member, data=request.data, partial=True, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class InvitePortalAccessView(APIView):

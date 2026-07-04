@@ -29,11 +29,17 @@ async function shots(viewport, label, isMobile) {
   const page = await browser.newPage({ viewport });
   const errors = [];
   page.on('console', (msg) => {
-    if (msg.type() === 'error') errors.push(msg.text());
+    // Chromium logs a console "error" for every non-2xx fetch response,
+    // including the expected 404 from /api/members/me/ for a pure-staff
+    // login with no linked Member record - that's by-design network noise,
+    // not an application bug (same filter every other e2e script uses).
+    if (msg.type() === 'error' && !msg.text().startsWith('Failed to load resource')) {
+      errors.push(msg.text());
+    }
   });
 
   await login(page);
-  await page.waitForSelector('text=SACCO profile', { timeout: 10000 });
+  await page.waitForSelector('text=Recent members', { timeout: 10000 });
   await page.screenshot({ path: path.join(SCREENSHOTS_DIR, `${label}_dashboard.png`), fullPage: true });
 
   if (isMobile) {
