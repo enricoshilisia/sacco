@@ -3,13 +3,27 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, CheckCircle2, Gavel, HandCoins, UserPlus, XCircle } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Ban,
+  CheckCircle2,
+  Clock,
+  Gavel,
+  HandCoins,
+  Receipt,
+  Smartphone,
+  UserPlus,
+  Wallet,
+  XCircle,
+} from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useTenantProfile } from "@/lib/TenantProfileContext";
 import { LoanStatusBadge } from "../page";
 
 type MemberOption = { id: string; full_name: string; member_number: string };
+type SavingsProductOption = { id: string; name: string };
 
 type LoanGuarantorData = {
   id: string;
@@ -18,6 +32,33 @@ type LoanGuarantorData = {
   guarantor_member_number: string;
   pledged_amount: string;
   status: "PENDING" | "CONSENTED" | "DECLINED" | "RELEASED";
+};
+
+type ScheduleRow = {
+  id: string;
+  installment_number: number;
+  due_date: string;
+  principal_due: string;
+  interest_due: string;
+  principal_paid: string;
+  interest_paid: string;
+  total_due: string;
+  is_paid: boolean;
+};
+
+type RepaymentRow = {
+  id: string;
+  amount: string;
+  transaction_date: string;
+  created_at: string;
+  description: string;
+};
+
+type ArrearsStatus = {
+  is_overdue: boolean;
+  days_overdue: number;
+  bucket: string;
+  amount_overdue: string;
 };
 
 type LoanDetail = {
@@ -38,6 +79,15 @@ type LoanDetail = {
   decided_by_name: string | null;
   decision_notes: string;
   guarantors: LoanGuarantorData[];
+  disbursed_at: string | null;
+  disbursement_method: string;
+  closed_at: string | null;
+  defaulted_at: string | null;
+  default_notes: string;
+  schedule: ScheduleRow[];
+  repayments: RepaymentRow[];
+  outstanding_balance: number;
+  arrears: ArrearsStatus;
 };
 
 function errorDetail(err: unknown, fallback: string) {
@@ -75,6 +125,22 @@ export default function LoanDetailPage() {
   const [deciding, setDeciding] = useState(false);
   const [decideError, setDecideError] = useState("");
 
+  const [savingsProducts, setSavingsProducts] = useState<SavingsProductOption[]>([]);
+  const [disburseProductId, setDisburseProductId] = useState("");
+  const [disbursePhoneNumber, setDisbursePhoneNumber] = useState("");
+  const [disbursing, setDisbursing] = useState(false);
+  const [disburseError, setDisburseError] = useState("");
+
+  const [repayAmount, setRepayAmount] = useState("");
+  const [repayDate, setRepayDate] = useState("");
+  const [repayDescription, setRepayDescription] = useState("");
+  const [repaying, setRepaying] = useState(false);
+  const [repayError, setRepayError] = useState("");
+
+  const [defaultNotes, setDefaultNotes] = useState("");
+  const [defaulting, setDefaulting] = useState(false);
+  const [defaultError, setDefaultError] = useState("");
+
   function load() {
     apiFetch<LoanDetail>(`/api/loans/${params.id}/`)
       .then((data) => {
@@ -89,6 +155,11 @@ export default function LoanDetailPage() {
     if (hasPermission("loans.manage_guarantor_pledge")) {
       apiFetch<{ results: MemberOption[] }>("/api/members/")
         .then((data) => setMembers(data.results))
+        .catch(() => {});
+    }
+    if (hasPermission("loans.disburse")) {
+      apiFetch<{ results: SavingsProductOption[] }>("/api/savings/products/")
+        .then((data) => setSavingsProducts(data.results))
         .catch(() => {});
     }
     // 404s for staff with no linked member record - that's expected, not an error.
@@ -168,6 +239,81 @@ export default function LoanDetailPage() {
       setDecideError(errorDetail(err, t("error")));
     } finally {
       setDeciding(false);
+    }
+  }
+
+  async function handleDisburseToSavings() {
+    if (!disburseProductId) return;
+    setDisbursing(true);
+    setDisburseError("");
+    try {
+      await apiFetch(`/api/loans/${params.id}/disburse/savings/`, {
+        method: "POST",
+        body: JSON.stringify({ product: disburseProductId }),
+      });
+      load();
+    } catch (err) {
+      setDisburseError(errorDetail(err, t("error")));
+    } finally {
+      setDisbursing(false);
+    }
+  }
+
+  async function handleDisburseMobileMoney() {
+    if (!disbursePhoneNumber) return;
+    setDisbursing(true);
+    setDisburseError("");
+    try {
+      await apiFetch(`/api/loans/${params.id}/disburse/mobile-money/`, {
+        method: "POST",
+        body: JSON.stringify({ phone_number: disbursePhoneNumber }),
+      });
+      load();
+    } catch (err) {
+      setDisburseError(errorDetail(err, t("error")));
+    } finally {
+      setDisbursing(false);
+    }
+  }
+
+  async function handleRecordRepayment() {
+    if (!repayAmount || !repayDate) return;
+    setRepaying(true);
+    setRepayError("");
+    try {
+      await apiFetch(`/api/loans/${params.id}/repay/`, {
+        method: "POST",
+        body: JSON.stringify({
+          amount: repayAmount,
+          transaction_date: repayDate,
+          description: repayDescription,
+        }),
+      });
+      setRepayAmount("");
+      setRepayDate("");
+      setRepayDescription("");
+      load();
+    } catch (err) {
+      setRepayError(errorDetail(err, t("error")));
+    } finally {
+      setRepaying(false);
+    }
+  }
+
+  async function handleMarkDefaulted() {
+    setDefaulting(true);
+    setDefaultError("");
+    try {
+      await apiFetch(`/api/loans/${params.id}/default/`, {
+        method: "POST",
+        body: JSON.stringify({ notes: defaultNotes }),
+      });
+      setDefaultNotes("");
+      load();
+    } catch (err) {
+      setDefaultError(errorDetail(err, t("error")));
+    } finally {
+      setDefaulting(false);
     }
   }
 
@@ -400,6 +546,221 @@ export default function LoanDetailPage() {
             )}
           </div>
           {decideError && <p className="mt-2 text-xs text-red-600">{decideError}</p>}
+        </div>
+      )}
+
+      {loan.status === "APPROVED" && hasPermission("loans.disburse") && (
+        <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+          <div className="mb-4 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+              <Wallet size={16} strokeWidth={2} />
+            </div>
+            <h2 className="text-sm font-semibold text-primary-900">{t("disburse")}</h2>
+          </div>
+
+          <p className="mb-2 text-sm font-medium text-primary-900">{t("disburseToSavings")}</p>
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row">
+            <select
+              value={disburseProductId}
+              onChange={(e) => setDisburseProductId(e.target.value)}
+              className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            >
+              <option value="">{t("selectSavingsProduct")}</option>
+              {savingsProducts.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleDisburseToSavings}
+              disabled={disbursing || !disburseProductId}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+            >
+              <Wallet size={16} />
+              {t("disburseToSavingsSubmit")}
+            </button>
+          </div>
+
+          <p className="mb-2 border-t border-primary-50 pt-4 text-sm font-medium text-primary-900">
+            {t("disburseMobileMoney")}
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <input
+              type="tel"
+              value={disbursePhoneNumber}
+              onChange={(e) => setDisbursePhoneNumber(e.target.value)}
+              placeholder={t("phoneNumber")}
+              className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            />
+            <button
+              onClick={handleDisburseMobileMoney}
+              disabled={disbursing || !disbursePhoneNumber}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-primary-200 px-4 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-50 disabled:opacity-60"
+            >
+              <Smartphone size={16} />
+              {t("disburseMobileMoneySubmit")}
+            </button>
+          </div>
+          {disburseError && <p className="mt-2 text-xs text-red-600">{disburseError}</p>}
+        </div>
+      )}
+
+      {loan.status === "DISBURSED" && (
+        <div className="mb-5 flex items-center gap-3 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+          <div className="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+            <Clock size={16} strokeWidth={2} />
+          </div>
+          <p className="text-sm text-primary-700">{t("disbursementPending")}</p>
+        </div>
+      )}
+
+      {(loan.status === "ACTIVE" || loan.status === "CLOSED" || loan.status === "DEFAULTED") && (
+        <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+                <Receipt size={16} strokeWidth={2} />
+              </div>
+              <h2 className="text-sm font-semibold text-primary-900">{t("schedule")}</h2>
+            </div>
+            <span className="font-mono text-sm font-semibold text-primary-900">
+              {t("outstandingBalance")}: {loan.outstanding_balance}
+            </span>
+          </div>
+
+          {loan.arrears.is_overdue && (
+            <div className="mb-4 flex items-center gap-2.5 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+              <AlertTriangle size={16} className="flex-none" />
+              {t("arrearsWarning", {
+                days: loan.arrears.days_overdue,
+                bucket: loan.arrears.bucket,
+                amount: loan.arrears.amount_overdue,
+              })}
+            </div>
+          )}
+
+          {loan.closed_at && (
+            <p className="mb-4 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700">
+              {t("closedAt", { date: new Date(loan.closed_at).toLocaleDateString() })}
+            </p>
+          )}
+          {loan.defaulted_at && (
+            <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+              {t("defaultedAt", { date: new Date(loan.defaulted_at).toLocaleDateString() })}
+              {loan.default_notes && `: ${loan.default_notes}`}
+            </p>
+          )}
+
+          <div className="mb-4 overflow-x-auto">
+            <table className="w-full min-w-[520px] text-left text-sm">
+              <thead>
+                <tr className="border-b border-primary-100 text-xs font-medium uppercase tracking-wide text-primary-500">
+                  <th className="py-2 pr-3">#</th>
+                  <th className="py-2 pr-3">{t("dueDate")}</th>
+                  <th className="py-2 pr-3 text-right">{t("principal")}</th>
+                  <th className="py-2 pr-3 text-right">{t("interest")}</th>
+                  <th className="py-2 pr-3 text-right">{t("totalDue")}</th>
+                  <th className="py-2 pl-3 text-right">{t("paid")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loan.schedule.map((row) => (
+                  <tr key={row.id} className="border-b border-primary-50 last:border-0">
+                    <td className="py-2 pr-3 text-primary-600">{row.installment_number}</td>
+                    <td className="py-2 pr-3 text-primary-600">{row.due_date}</td>
+                    <td className="py-2 pr-3 text-right font-mono text-primary-900">{row.principal_due}</td>
+                    <td className="py-2 pr-3 text-right font-mono text-primary-900">{row.interest_due}</td>
+                    <td className="py-2 pr-3 text-right font-mono font-medium text-primary-900">
+                      {row.total_due}
+                    </td>
+                    <td className="py-2 pl-3 text-right">
+                      {row.is_paid ? (
+                        <CheckCircle2 size={16} className="ml-auto text-primary-600" />
+                      ) : (
+                        <span className="text-primary-300">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {loan.repayments.length > 0 && (
+            <div className="mb-4">
+              <p className="mb-2 text-sm font-medium text-primary-900">{t("repaymentHistory")}</p>
+              <ul className="divide-y divide-primary-50">
+                {loan.repayments.map((r) => (
+                  <li key={r.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                    <span className="text-primary-600">{r.transaction_date}</span>
+                    <span className="font-mono text-primary-900">{r.amount}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {loan.status === "ACTIVE" && hasPermission("loans.repay") && (
+            <div className="border-t border-primary-50 pt-4">
+              <p className="mb-2 text-sm font-medium text-primary-900">{t("recordRepayment")}</p>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={repayAmount}
+                  onChange={(e) => setRepayAmount(e.target.value)}
+                  placeholder={t("amount")}
+                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+                <input
+                  type="date"
+                  value={repayDate}
+                  onChange={(e) => setRepayDate(e.target.value)}
+                  className="rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+              </div>
+              <input
+                type="text"
+                value={repayDescription}
+                onChange={(e) => setRepayDescription(e.target.value)}
+                placeholder={t("descriptionOptional")}
+                className="mt-2 w-full rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              />
+              <button
+                onClick={handleRecordRepayment}
+                disabled={repaying || !repayAmount || !repayDate}
+                className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+              >
+                <Receipt size={16} />
+                {t("recordRepaymentSubmit")}
+              </button>
+              {repayError && <p className="mt-2 text-xs text-red-600">{repayError}</p>}
+            </div>
+          )}
+
+          {loan.status === "ACTIVE" && hasPermission("loans.approve") && (
+            <div className="mt-4 border-t border-primary-50 pt-4">
+              <p className="mb-2 text-sm font-medium text-primary-900">{t("markDefaulted")}</p>
+              <textarea
+                value={defaultNotes}
+                onChange={(e) => setDefaultNotes(e.target.value)}
+                placeholder={t("defaultNotesPlaceholder")}
+                rows={2}
+                className="mb-2 w-full rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              />
+              <button
+                onClick={handleMarkDefaulted}
+                disabled={defaulting}
+                className="inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-50 disabled:opacity-60"
+              >
+                <Ban size={16} />
+                {t("markDefaultedSubmit")}
+              </button>
+              {defaultError && <p className="mt-2 text-xs text-red-600">{defaultError}</p>}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -23,6 +23,10 @@ const STATUS_STYLES: Record<string, string> = {
   APPRAISED: "bg-primary-50 text-primary-700",
   APPROVED: "bg-primary-100 text-primary-800",
   REJECTED: "bg-red-50 text-red-700",
+  DISBURSED: "bg-amber-100 text-amber-800",
+  ACTIVE: "bg-primary-100 text-primary-800",
+  CLOSED: "bg-primary-50 text-primary-500",
+  DEFAULTED: "bg-red-100 text-red-800",
 };
 
 export function LoanStatusBadge({ status }: { status: string }) {

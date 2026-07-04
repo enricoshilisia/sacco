@@ -106,14 +106,29 @@ async function run() {
   await aminaPage.waitForSelector('text=Guarantee requests', { timeout: 10000 });
   assert(await aminaPage.isVisible('text=John Mwangi'), 'Amina sees the guarantee request naming the borrower');
 
-  const requestItem = aminaPage.locator('li:has-text("John Mwangi")').last();
+  // LoanGuarantor has no explicit default ordering, and repeated runs of
+  // this script (plus other guarantor-related tests) leave old
+  // RELEASED/CONSENTED requests for "John Mwangi" sitting alongside the
+  // fresh PENDING one this run just created - .last() doesn't reliably
+  // mean "the one just requested" once that history accumulates. Filter
+  // to the one that still has an Accept button (i.e. still PENDING)
+  // instead of assuming position.
+  const requestItem = aminaPage
+    .locator('li:has-text("John Mwangi")')
+    .filter({ has: aminaPage.locator('button:has-text("Accept")') })
+    .first();
+  // The <p> naming borrower+amount is stable across the accept action;
+  // the li's full text isn't, since "AcceptDecline" disappears once
+  // resolved - match on the stable part, not the whole li.
+  const pledgeDescription = await requestItem.locator('p').first().textContent();
   await requestItem.locator('button:has-text("Accept")').click();
   await aminaPage.waitForFunction(
-    () => {
+    (expectedText) => {
       const items = [...document.querySelectorAll('li')];
-      const item = items.find((li) => li.textContent.includes('John Mwangi'));
+      const item = items.find((li) => li.textContent.includes(expectedText));
       return item && !item.querySelector('button');
     },
+    pledgeDescription,
     { timeout: 10000 },
   );
   assert(true, 'accepting replaces the Accept/Decline buttons with a resolved state');
