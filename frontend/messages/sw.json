@@ -202,15 +202,16 @@
   },
   "Profile": {
     "title": "Wasifu wangu",
-    "memberDetails": "Taarifa za uanachama",
-    "memberDetailsHelp": "Hizi zinatoka kwenye rekodi yako ya KYC - wasiliana na SACCO yako kuzirekebisha.",
-    "contactDetails": "Mawasiliano",
-    "contactDetailsHelp": "Hakikisha haya yapo sahihi - hapa ndipo ujumbe wa pesa za simu na arifa huenda.",
     "save": "Hifadhi mabadiliko",
     "saved": "Imehifadhiwa",
     "error": "Imeshindikana kuhifadhi mabadiliko. Angalia taarifa na ujaribu tena.",
-    "forbidden": "Hakuna akaunti ya mwanachama iliyounganishwa na kuingia huku.",
-    "notProvided": "Haijatolewa"
+    "changePassword": "Badilisha nenosiri",
+    "changePasswordHelp": "Chagua nenosiri lenye angalau herufi 8.",
+    "changePasswordSubmit": "Badilisha nenosiri",
+    "currentPassword": "Nenosiri la sasa",
+    "newPassword": "Nenosiri jipya",
+    "confirmPassword": "Thibitisha nenosiri jipya",
+    "passwordMismatch": "Manenosiri mapya hayafanani."
   },
   "Settings": {
     "title": "Mipangilio",

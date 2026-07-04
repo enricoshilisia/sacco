@@ -202,15 +202,16 @@
   },
   "Profile": {
     "title": "My profile",
-    "memberDetails": "Member details",
-    "memberDetailsHelp": "These come from your KYC record - contact your SACCO to correct them.",
-    "contactDetails": "Contact details",
-    "contactDetailsHelp": "Keep these up to date - this is where mobile-money prompts and notifications go.",
     "save": "Save changes",
     "saved": "Saved",
     "error": "Couldn't save your changes. Check the details and try again.",
-    "forbidden": "No member account is linked to this login.",
-    "notProvided": "Not provided"
+    "changePassword": "Change password",
+    "changePasswordHelp": "Choose a password with at least 8 characters.",
+    "changePasswordSubmit": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "passwordMismatch": "New passwords don't match."
   },
   "Settings": {
     "title": "Settings",

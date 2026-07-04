@@ -67,6 +67,31 @@ class MeView(APIView):
         )
 
 
+class ChangePasswordView(APIView):
+    """
+    Every logged-in user (staff or self-service member alike) can change
+    their own password - this is a User-level action in the shared/public
+    schema, not tied to any tenant permission catalog, so ownership (must
+    know the current password) is the only check. Distinct from the
+    one-time password *set* during portal/invite acceptance
+    (members.views.PortalInviteAcceptView) which has no "current password"
+    to verify yet.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        current_password = request.data.get("current_password", "")
+        new_password = request.data.get("new_password", "")
+        if not request.user.check_password(current_password):
+            return Response({"detail": "Current password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+        if len(new_password) < 8:
+            return Response({"detail": "New password must be at least 8 characters."}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.set_password(new_password)
+        request.user.save(update_fields=["password"])
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class WebAuthnRegistrationOptionsView(APIView):
     """Start enrolling a new biometric credential for the logged-in user."""
 

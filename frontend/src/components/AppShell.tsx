@@ -73,12 +73,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       icon: PiggyBank,
       selfService: true,
     },
-    {
-      href: "/profile",
-      label: t("profile"),
-      icon: User,
-      selfService: true,
-    },
+    { href: "/profile", label: t("profile"), icon: User },
     {
       href: "/settings",
       label: t("settings"),
