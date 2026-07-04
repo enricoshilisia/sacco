@@ -49,16 +49,19 @@ async function run() {
   await applyCard.locator('input[type="number"]').first().fill('150');
   await applyCard.locator('input[type="number"]').nth(1).fill('3');
   await applyCard.locator('input[type="text"]').fill('School fees');
-  // Wait for the apply POST to actually resolve (not just for "Pending
-  // appraisal" text to appear) - Amina's dashboard can carry loans left
-  // over from earlier runs already in that status, which would make a
-  // text-based wait resolve immediately without the form having reset yet.
+  // Wait for the apply POST to actually resolve (not just for "Approved"
+  // text to appear) - Amina's dashboard can carry loans left over from
+  // earlier runs already in that status, which would make a text-based
+  // wait resolve immediately without the form having reset yet. Emergency
+  // Loan has an active eligibility policy (rules_engine), so a clean,
+  // KYC-verified, arrears-free member auto-approves immediately instead of
+  // landing at "Pending appraisal".
   await Promise.all([
     page.waitForResponse((r) => r.url().includes('/api/loans/me/apply/') && r.request().method() === 'POST'),
     applyCard.locator('button:has-text("Submit application")').click(),
   ]);
-  await page.waitForSelector('text=Pending appraisal', { timeout: 10000 });
-  assert(true, 'self-service member applied for a no-guarantor loan from the Dashboard');
+  await page.waitForSelector('text=Approved', { timeout: 10000 });
+  assert(true, 'self-service member applied for a no-guarantor loan and it auto-approved immediately (Rules Engine)');
 
   // --- Apply for a loan that requires guarantors ---
   await applyCard.locator('select').selectOption({ label: 'Development Loan' });

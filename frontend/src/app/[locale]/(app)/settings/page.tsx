@@ -9,6 +9,7 @@ import {
   Hash,
   ImagePlus,
   Save,
+  ShieldCheck,
   Smartphone,
   UserPlus,
   Users,
@@ -27,6 +28,33 @@ type TenantConfig = {
   member_number_next_sequence: number;
   active_sms_provider: string;
   active_payment_provider: string;
+  active_crb_provider: string;
+};
+
+type LoanProductOption = { id: string; name: string };
+
+type LoanEligibilityPolicy = {
+  is_active: boolean;
+  require_kyc_verified: boolean;
+  require_no_active_arrears: boolean;
+  max_active_loans: number | null;
+  min_membership_months: number;
+  min_guarantor_coverage_ratio: string | null;
+  require_crb_check: boolean;
+  crb_deny_below_score: number | null;
+  crb_refer_below_score: number | null;
+};
+
+const DEFAULT_POLICY: LoanEligibilityPolicy = {
+  is_active: true,
+  require_kyc_verified: true,
+  require_no_active_arrears: true,
+  max_active_loans: null,
+  min_membership_months: 0,
+  min_guarantor_coverage_ratio: null,
+  require_crb_check: false,
+  crb_deny_below_score: null,
+  crb_refer_below_score: null,
 };
 
 type TenantProfile = {
@@ -46,6 +74,7 @@ const TABS = [
   { key: "sacco", icon: Building2 },
   { key: "numbering", icon: Hash },
   { key: "providers", icon: Smartphone },
+  { key: "loanEligibility", icon: ShieldCheck },
   { key: "staff", icon: Users },
 ] as const;
 
@@ -81,6 +110,7 @@ export default function SettingsPage() {
       {tab === "sacco" && <SaccoDetailsSection />}
       {tab === "numbering" && <MemberNumberingSection />}
       {tab === "providers" && <ProvidersSection />}
+      {tab === "loanEligibility" && <LoanEligibilitySection />}
       {tab === "staff" && <StaffSection />}
     </div>
   );
@@ -409,6 +439,7 @@ function MemberNumberingSection() {
 
 const SMS_PROVIDER_OPTIONS = ["", "africastalking", "beem"] as const;
 const PAYMENT_PROVIDER_OPTIONS = ["", "daraja", "selcom"] as const;
+const CRB_PROVIDER_OPTIONS = ["", "mock"] as const;
 
 function ProvidersSection() {
   const t = useTranslations("Settings");
@@ -438,6 +469,7 @@ function ProvidersSection() {
         body: JSON.stringify({
           active_sms_provider: config.active_sms_provider,
           active_payment_provider: config.active_payment_provider,
+          active_crb_provider: config.active_crb_provider,
         }),
       });
       setConfig(updated);
@@ -499,6 +531,20 @@ function ProvidersSection() {
               ))}
             </select>
           </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-primary-800">{t("crbProvider")}</span>
+            <select
+              value={config.active_crb_provider}
+              onChange={(e) => setConfig({ ...config, active_crb_provider: e.target.value })}
+              className={inputClass}
+            >
+              {CRB_PROVIDER_OPTIONS.map((code) => (
+                <option key={code} value={code}>
+                  {code === "" ? t("providerMock") : t(`crbProvider_${code}`)}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </div>
 
@@ -507,6 +553,228 @@ function ProvidersSection() {
       <button
         type="submit"
         disabled={saveState === "saving"}
+        className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
+      >
+        <Save size={16} />
+        {saveState === "saved" ? t("saved") : t("save")}
+      </button>
+    </form>
+  );
+}
+
+function LoanEligibilitySection() {
+  const t = useTranslations("Settings");
+  const [products, setProducts] = useState<LoanProductOption[]>([]);
+  const [productId, setProductId] = useState("");
+  const [policy, setPolicy] = useState<LoanEligibilityPolicy | null>(null);
+  const [state, setState] = useState<"loading" | "ready" | "forbidden">("loading");
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  useEffect(() => {
+    apiFetch<{ results: LoanProductOption[] }>("/api/loans/products/")
+      .then((data) => {
+        setProducts(data.results);
+        if (data.results.length > 0) setProductId(data.results[0].id);
+        else setState("ready");
+      })
+      .catch(() => setState("forbidden"));
+  }, []);
+
+  useEffect(() => {
+    if (!productId) return;
+    apiFetch<LoanEligibilityPolicy>(`/api/rules-engine/loan-products/${productId}/eligibility-policy/`)
+      .then((data) => {
+        setPolicy(data);
+        setState("ready");
+      })
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 404) {
+          setPolicy(DEFAULT_POLICY);
+          setState("ready");
+        } else if (err instanceof ApiError && err.status === 403) {
+          setState("forbidden");
+        } else {
+          setState("forbidden");
+        }
+      });
+  }, [productId]);
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!policy) return;
+    setSaveState("saving");
+    try {
+      const updated = await apiFetch<LoanEligibilityPolicy>(
+        `/api/rules-engine/loan-products/${productId}/eligibility-policy/`,
+        { method: "PUT", body: JSON.stringify(policy) },
+      );
+      setPolicy(updated);
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 2000);
+    } catch {
+      setSaveState("error");
+    }
+  }
+
+  if (state === "loading") {
+    return (
+      <div className="mb-6 flex justify-center rounded-2xl bg-white py-12 shadow-sm ring-1 ring-primary-100/80">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-300 border-t-primary-600" />
+      </div>
+    );
+  }
+
+  if (state === "forbidden") {
+    return (
+      <div className="mb-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-primary-100/80">
+        <p className="text-sm text-red-600">{t("forbidden")}</p>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="mb-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-primary-100/80">
+        <p className="text-sm text-primary-500">{t("noLoanProducts")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSave}>
+      <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+        <h2 className="mb-1 text-sm font-semibold text-primary-900">{t("loanEligibility")}</h2>
+        <p className="mb-4 text-sm text-primary-500">{t("loanEligibilityHelp")}</p>
+
+        <label className="mb-4 block">
+          <span className="mb-1 block text-sm font-medium text-primary-800">{t("selectProduct")}</span>
+          <select value={productId} onChange={(e) => setProductId(e.target.value)} className={inputClass}>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {policy && (
+          <>
+            <label className="mb-4 flex items-center gap-2.5 rounded-lg border border-primary-100 px-4 py-3 text-sm text-primary-800">
+              <input
+                type="checkbox"
+                checked={policy.is_active}
+                onChange={(e) => setPolicy({ ...policy, is_active: e.target.checked })}
+                className="h-4 w-4 rounded border-primary-300 text-primary-600 focus:ring-primary-500"
+              />
+              {t("policyIsActive")}
+            </label>
+
+            <div className="mb-4 grid grid-cols-2 gap-3">
+              <label className="flex items-center gap-2.5 rounded-lg border border-primary-100 px-4 py-3 text-sm text-primary-800">
+                <input
+                  type="checkbox"
+                  checked={policy.require_kyc_verified}
+                  onChange={(e) => setPolicy({ ...policy, require_kyc_verified: e.target.checked })}
+                  className="h-4 w-4 rounded border-primary-300 text-primary-600 focus:ring-primary-500"
+                />
+                {t("requireKycVerified")}
+              </label>
+              <label className="flex items-center gap-2.5 rounded-lg border border-primary-100 px-4 py-3 text-sm text-primary-800">
+                <input
+                  type="checkbox"
+                  checked={policy.require_no_active_arrears}
+                  onChange={(e) => setPolicy({ ...policy, require_no_active_arrears: e.target.checked })}
+                  className="h-4 w-4 rounded border-primary-300 text-primary-600 focus:ring-primary-500"
+                />
+                {t("requireNoActiveArrears")}
+              </label>
+            </div>
+
+            <div className="mb-4 grid grid-cols-3 gap-3">
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-primary-800">{t("maxActiveLoans")}</span>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={policy.max_active_loans ?? ""}
+                  onChange={(e) =>
+                    setPolicy({ ...policy, max_active_loans: e.target.value ? Number(e.target.value) : null })
+                  }
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-primary-800">{t("minMembershipMonths")}</span>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={policy.min_membership_months}
+                  onChange={(e) => setPolicy({ ...policy, min_membership_months: Number(e.target.value) || 0 })}
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-primary-800">
+                  {t("minGuarantorCoverageRatio")}
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  className={inputClass}
+                  value={policy.min_guarantor_coverage_ratio ?? ""}
+                  onChange={(e) =>
+                    setPolicy({ ...policy, min_guarantor_coverage_ratio: e.target.value || null })
+                  }
+                />
+              </label>
+            </div>
+
+            <label className="mb-4 flex items-center gap-2.5 rounded-lg border border-primary-100 px-4 py-3 text-sm text-primary-800">
+              <input
+                type="checkbox"
+                checked={policy.require_crb_check}
+                onChange={(e) => setPolicy({ ...policy, require_crb_check: e.target.checked })}
+                className="h-4 w-4 rounded border-primary-300 text-primary-600 focus:ring-primary-500"
+              />
+              {t("requireCrbCheck")}
+            </label>
+
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-primary-800">{t("crbDenyBelowScore")}</span>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={policy.crb_deny_below_score ?? ""}
+                  onChange={(e) =>
+                    setPolicy({ ...policy, crb_deny_below_score: e.target.value ? Number(e.target.value) : null })
+                  }
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-primary-800">{t("crbReferBelowScore")}</span>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={policy.crb_refer_below_score ?? ""}
+                  onChange={(e) =>
+                    setPolicy({ ...policy, crb_refer_below_score: e.target.value ? Number(e.target.value) : null })
+                  }
+                />
+              </label>
+            </div>
+          </>
+        )}
+      </div>
+
+      {saveState === "error" && <p className="mb-4 text-sm text-red-600">{t("error")}</p>}
+
+      <button
+        type="submit"
+        disabled={saveState === "saving" || !policy}
         className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
       >
         <Save size={16} />

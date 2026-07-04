@@ -78,6 +78,7 @@ type LoanDetail = {
   appraisal_notes: string;
   decided_by_name: string | null;
   decision_notes: string;
+  is_auto_decision: boolean;
   guarantors: LoanGuarantorData[];
   disbursed_at: string | null;
   disbursement_method: string;
@@ -367,12 +368,18 @@ export default function LoanDetailPage() {
           />
         </dl>
 
-        {loan.appraisal_notes && (
-          <p className="mt-4 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700">
-            {t("appraisedBy", { name: loan.appraised_by_name ?? "" })}: {loan.appraisal_notes}
+        {loan.is_auto_decision && (
+          <p className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary-100 px-2.5 py-1 text-xs font-semibold text-primary-800">
+            <Gavel size={12} />
+            {t("automatedDecision")}
           </p>
         )}
-        {loan.decision_notes && (
+        {loan.appraisal_notes && (
+          <p className="mt-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700">
+            {loan.is_auto_decision ? loan.appraisal_notes : `${t("appraisedBy", { name: loan.appraised_by_name ?? "" })}: ${loan.appraisal_notes}`}
+          </p>
+        )}
+        {loan.decision_notes && !loan.is_auto_decision && (
           <p className="mt-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700">
             {t("decidedBy", { name: loan.decided_by_name ?? "" })}: {loan.decision_notes}
           </p>

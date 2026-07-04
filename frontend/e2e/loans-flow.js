@@ -1,10 +1,13 @@
 // Smoke test: staff applies for a loan on a member's behalf (no
-// guarantors required), appraises and approves it end to end; separately,
-// staff adds a guarantor to a different loan and the guarantor accepts the
-// request from their own self-service dashboard. Requires both dev
-// servers running + nairobi_demo seeded, with Amina Njoroge already
-// holding portal access (phone +254788112233 / AminaPass123! - set up
-// during this phase's backend verification).
+// guarantors required) - Emergency Loan has an active eligibility policy
+// (rules_engine app), so this auto-approves immediately instead of
+// walking through manual appraise/decide; separately, staff adds a
+// guarantor to a different loan (Development Loan, no policy attached,
+// unaffected) and the guarantor accepts the request from their own
+// self-service dashboard. Requires both dev servers running +
+// nairobi_demo seeded, with Amina Njoroge already holding portal access
+// (phone +254788112233 / AminaPass123! - set up during this phase's
+// backend verification).
 
 const { chromium } = require('playwright');
 
@@ -42,20 +45,16 @@ async function run() {
   await loansCard.locator('input[type="number"]').first().fill('500');
   await loansCard.locator('input[placeholder="Term (months)"]').fill('2');
   await loansCard.locator('button:has-text("Submit application")').click();
-  await adminPage.waitForSelector('text=Pending appraisal', { timeout: 10000 });
-  assert(true, 'no-guarantor loan applied and shows Pending appraisal on the member card');
+  // Emergency Loan has an active eligibility policy (rules_engine) - a
+  // clean, KYC-verified, arrears-free member auto-approves immediately,
+  // never observably sitting at "Pending appraisal".
+  await adminPage.waitForSelector('text=Approved', { timeout: 10000 });
+  assert(true, 'no-guarantor loan under an active eligibility policy auto-approves immediately (Rules Engine)');
 
   await loansCard.locator('a:has-text("Emergency Loan")').first().click();
   await adminPage.waitForURL((u) => /\/en\/loans\/[0-9a-f-]+$/.test(u.pathname), { timeout: 10000 });
-
-  await adminPage.fill('textarea[placeholder="Optional notes"]', 'Verified via smoke test.');
-  await adminPage.click('button:has-text("Appraise")');
-  await adminPage.waitForSelector('text=Appraised', { timeout: 10000 });
-
-  await adminPage.fill('textarea[placeholder="Decision notes"]', 'Approved via smoke test.');
-  await adminPage.click('button:has-text("Approve")');
-  await adminPage.waitForSelector('text=Approved', { timeout: 10000 });
-  assert(true, 'loan progressed through appraise -> approve in the UI');
+  await adminPage.waitForSelector('text=Automated decision', { timeout: 10000 });
+  assert(true, 'loan detail page shows the automated-decision banner instead of manual appraise/decide panels');
 
   // --- A separate loan needing a guarantor: add Amina, then she accepts from her own dashboard ---
   await adminPage.goto(`${BASE}/en/members`, { waitUntil: 'networkidle' });

@@ -15,6 +15,7 @@ class TenantConfigSerializer(serializers.ModelSerializer):
             "member_number_next_sequence",
             "active_sms_provider",
             "active_payment_provider",
+            "active_crb_provider",
         ]
         read_only_fields = ["member_number_next_sequence"]
 
@@ -37,6 +38,13 @@ class TenantConfigSerializer(serializers.ModelSerializer):
 
         if value and value not in PAYMENT_PROVIDERS:
             raise serializers.ValidationError(f"Unknown payment provider '{value}'.")
+        return value
+
+    def validate_active_crb_provider(self, value):
+        from rules_engine.crb.registry import CRB_PROVIDERS
+
+        if value and value not in CRB_PROVIDERS:
+            raise serializers.ValidationError(f"Unknown CRB provider '{value}'.")
         return value
 
     def validate_member_number_prefix(self, value):

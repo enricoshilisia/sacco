@@ -94,7 +94,7 @@ def apply_for_loan(
     initial_status = (
         LoanStatus.PENDING_GUARANTORS if product.requires_guarantors else LoanStatus.PENDING_APPRAISAL
     )
-    return Loan.objects.create(
+    loan = Loan.objects.create(
         member=member,
         product=product,
         amount_requested=amount_requested,
@@ -105,6 +105,9 @@ def apply_for_loan(
         status=initial_status,
         created_by=created_by,
     )
+    if initial_status == LoanStatus.PENDING_APPRAISAL:
+        loan = _attempt_auto_decision(loan)
+    return loan
 
 
 def add_guarantor(*, loan: Loan, guarantor, pledged_amount: Decimal) -> LoanGuarantor:
@@ -148,7 +151,7 @@ def submit_for_appraisal(*, loan: Loan) -> Loan:
         )
     loan.status = LoanStatus.PENDING_APPRAISAL
     loan.save(update_fields=["status"])
-    return loan
+    return _attempt_auto_decision(loan)
 
 
 def appraise_loan(*, loan: Loan, appraised_by, notes: str = "") -> Loan:
@@ -180,6 +183,33 @@ def decide_loan(*, loan: Loan, approve: bool, decided_by, notes: str = "") -> Lo
     loan.decided_by = decided_by
     loan.decision_notes = notes
     loan.save(update_fields=["status", "decided_at", "decided_by", "decision_notes"])
+    return loan
+
+
+def _attempt_auto_decision(loan: Loan) -> Loan:
+    """
+    Called the moment a loan reaches PENDING_APPRAISAL (from apply_for_loan
+    for no-guarantor products, or from submit_for_appraisal once guarantor
+    consent completes). If the product has an active LoanEligibilityPolicy
+    (rules_engine app - BUILD_PLAN.md Phase 4's "rules engine
+    approves/denies") that can confidently decide, this reuses
+    appraise_loan/decide_loan exactly as a human would (appraised_by/
+    decided_by=None marks "the system decided this"), landing at APPROVED
+    or REJECTED immediately. A REFER outcome (no policy configured, or the
+    engine can't confidently decide) leaves the loan untouched at
+    PENDING_APPRAISAL for the existing manual appraise->decide flow.
+    """
+    from rules_engine.services import evaluate_loan
+
+    decision = evaluate_loan(loan)
+    if decision.outcome == "REFER":
+        return loan
+
+    notes = "Automated decision (Rules Engine): " + "; ".join(decision.reasons)
+    loan = appraise_loan(loan=loan, appraised_by=None, notes=notes)
+    loan = decide_loan(loan=loan, approve=(decision.outcome == "APPROVE"), decided_by=None, notes=notes)
+    loan.is_auto_decision = True
+    loan.save(update_fields=["is_auto_decision"])
     return loan
 
 

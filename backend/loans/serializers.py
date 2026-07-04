@@ -69,7 +69,7 @@ class LoanSerializer(serializers.ModelSerializer):
             "id", "member", "member_name", "member_number", "product", "product_name",
             "amount_requested", "term_months", "purpose", "interest_method", "interest_rate",
             "status", "applied_at", "appraised_at", "appraised_by_name", "appraisal_notes",
-            "decided_at", "decided_by_name", "decision_notes", "guarantors",
+            "decided_at", "decided_by_name", "decision_notes", "is_auto_decision", "guarantors",
             "disbursed_at", "disbursement_method", "closed_at", "defaulted_at", "default_notes",
             "schedule", "repayments", "outstanding_balance", "arrears",
         ]

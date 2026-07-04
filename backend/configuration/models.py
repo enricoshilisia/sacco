@@ -59,6 +59,7 @@ class TenantConfig(models.Model):
     active_sms_provider = models.CharField(max_length=30, default="", blank=True)
     sms_provider_backup = models.CharField(max_length=30, default="africastalking", blank=True)
     active_payment_provider = models.CharField(max_length=30, default="", blank=True)
+    active_crb_provider = models.CharField(max_length=30, default="", blank=True)
 
     feature_flags = models.JSONField(default=dict, blank=True)
 

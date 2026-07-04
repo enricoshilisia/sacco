@@ -95,6 +95,9 @@ class Loan(models.Model):
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
     decision_notes = models.TextField(blank=True)
+    # Set by loans.services._attempt_auto_decision when appraised_by/
+    # decided_by are None because the rules engine decided this, not a person.
+    is_auto_decision = models.BooleanField(default=False)
 
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
