@@ -132,6 +132,25 @@ class MyMemberView(APIView):
         return Response(serializer.data)
 
 
+class MyMemberPhotoUploadView(APIView):
+    """Self-service twin of MemberPhotoUploadView - a member updating their
+    own profile photo, gated by members.edit_own (the same self-service
+    permission as the rest of MyMemberView's PATCH) rather than the
+    staff-facing members.edit."""
+
+    permission_classes = [IsAuthenticated, require_permission("members.edit_own")]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        member = Member.objects.filter(user=request.user).first()
+        if member is None:
+            return Response({"detail": "No member record is linked to this account."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = MemberPhotoSerializer(member, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(updated_by=request.user)
+        return Response(MemberSerializer(member).data)
+
+
 class InvitePortalAccessView(APIView):
     """Staff generates a one-time setup link for an existing member who
     doesn't have self-service login access yet."""

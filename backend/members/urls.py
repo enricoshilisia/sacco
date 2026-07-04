@@ -7,6 +7,7 @@ app_name = "members"
 urlpatterns = [
     path("", views.MemberListCreateView.as_view(), name="member_list_create"),
     path("me/", views.MyMemberView.as_view(), name="my_member"),
+    path("me/photo/", views.MyMemberPhotoUploadView.as_view(), name="my_member_photo_upload"),
     path("portal-invites/", views.PortalInviteListView.as_view(), name="portal_invite_list"),
     path(
         "portal-invites/<uuid:pk>/revoke/",

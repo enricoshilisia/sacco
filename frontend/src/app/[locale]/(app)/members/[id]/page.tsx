@@ -5,12 +5,14 @@ import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowLeft,
+  Calendar,
   Camera,
   Check,
   CheckCircle2,
   Clock,
   Copy,
   HandCoins,
+  IdCard,
   KeyRound,
   PiggyBank,
   Smartphone,
@@ -111,6 +113,7 @@ type MemberDetail = {
   physical_address: string;
   photo: string | null;
   is_kyc_verified: boolean;
+  date_joined: string;
   relations: {
     id: string;
     kind: string;
@@ -457,8 +460,12 @@ export default function MemberDetailPage() {
   const fullName = `${member.first_name} ${member.other_names} ${member.last_name}`.replace(/\s+/g, " ").trim();
   const initials = `${member.first_name[0] ?? ""}${member.last_name[0] ?? ""}`.toUpperCase();
 
+  const joined = member.date_joined
+    ? new Date(member.date_joined).toLocaleDateString(locale, { month: "short", year: "numeric" })
+    : "";
+
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-4xl">
       <Link
         href="/members"
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-800"
@@ -467,73 +474,106 @@ export default function MemberDetailPage() {
         {t("title")}
       </Link>
 
-      <div className="mb-5 flex items-center gap-4">
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploadingPhoto}
-          className="group relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-lg font-semibold text-primary-700"
-        >
-          {member.photo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={member.photo} alt="" className="h-full w-full object-cover" />
-          ) : (
-            initials
-          )}
-          <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-            <Camera size={16} className="text-white" />
-          </span>
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handlePhotoChange}
-        />
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-xl font-semibold text-primary-900">{fullName}</h1>
-          <p className="font-mono text-sm text-primary-500">{member.member_number}</p>
+      <div className="mb-5 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-primary-100/80">
+        <div className="h-20 bg-gradient-to-r from-primary-600 to-primary-800" />
+        <div className="px-6 pb-5">
+          <div className="-mt-10 mb-3 flex items-end gap-4">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              className="group relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-xl font-semibold text-primary-700 ring-4 ring-white"
+            >
+              {member.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={member.photo} alt="" className="h-full w-full object-cover" />
+              ) : (
+                initials
+              )}
+              <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera size={18} className="text-white" />
+              </span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handlePhotoChange}
+            />
+            <div className="min-w-0 flex-1 pb-1">
+              <h1 className="truncate text-lg font-semibold text-primary-900">{fullName}</h1>
+              <p className="font-mono text-xs text-primary-500">{member.member_number}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 ring-1 ring-primary-100">
+              {member.status === "ACTIVE" ? (
+                <CheckCircle2 size={12} className="text-primary-600" />
+              ) : (
+                <Clock size={12} className="text-amber-600" />
+              )}
+              {member.status}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 ring-1 ring-primary-100">
+              <IdCard size={12} />
+              {categoryLabel[member.category] ?? member.category}
+            </span>
+            <span
+              className={
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 " +
+                (member.is_kyc_verified
+                  ? "bg-primary-50 text-primary-700 ring-primary-100"
+                  : "bg-amber-50 text-amber-800 ring-amber-100")
+              }
+            >
+              {member.is_kyc_verified ? <CheckCircle2 size={12} /> : <Clock size={12} />}
+              {member.is_kyc_verified ? t("kycVerified") : t("kycPending")}
+            </span>
+            {joined && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 ring-1 ring-primary-100">
+                <Calendar size={12} />
+                {t("memberSince", { date: joined })}
+              </span>
+            )}
+          </div>
         </div>
-        <span
-          className={
-            "inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium " +
-            (member.is_kyc_verified
-              ? "bg-primary-100 text-primary-800"
-              : "bg-amber-100 text-amber-800")
-          }
-        >
-          {member.is_kyc_verified ? <CheckCircle2 size={13} /> : <Clock size={13} />}
-          {member.is_kyc_verified ? t("kycVerified") : t("kycPending")}
-        </span>
       </div>
 
-      <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
-        <dl className="divide-y divide-primary-50">
-          <Row label={t("category")} value={categoryLabel[member.category] ?? member.category} />
-          <Row label={t("idType")} value={idTypeLabel[member.id_type] ?? member.id_type} />
-          <Row label={t("idNumber")} value={member.id_number} />
-          <Row label={t("phoneNumber")} value={member.phone_number} />
-          {member.email && <Row label={t("email")} value={member.email} />}
-          {member.physical_address && (
-            <Row label={t("physicalAddress")} value={member.physical_address} />
+      <div className="mb-5 grid gap-5 lg:grid-cols-2">
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+          <div className="mb-4 flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+              <IdCard size={16} strokeWidth={2} />
+            </div>
+            <h2 className="text-sm font-semibold text-primary-900">{t("basicInfo")}</h2>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <ReadOnlyField label={t("idType")} value={idTypeLabel[member.id_type] ?? member.id_type} />
+            <ReadOnlyField label={t("idNumber")} value={member.id_number} />
+            <ReadOnlyField label={t("phoneNumber")} value={member.phone_number} />
+            <ReadOnlyField label={t("email")} value={member.email || "-"} />
+            <div className="col-span-2">
+              <ReadOnlyField label={t("physicalAddress")} value={member.physical_address || "-"} />
+            </div>
+          </div>
+
+          {!member.is_kyc_verified && (
+            <button
+              onClick={handleVerifyKyc}
+              disabled={verifying}
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+            >
+              <CheckCircle2 size={16} />
+              {t("verifyKyc")}
+            </button>
           )}
-        </dl>
+        </div>
 
-        {!member.is_kyc_verified && (
-          <button
-            onClick={handleVerifyKyc}
-            disabled={verifying}
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
-          >
-            <CheckCircle2 size={16} />
-            {t("verifyKyc")}
-          </button>
-        )}
-      </div>
-
-      {hasPermission("members.edit") && (
-        <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+        {hasPermission("members.edit") && (
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
           <div className="mb-4 flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
               <KeyRound size={16} strokeWidth={2} />
@@ -571,10 +611,12 @@ export default function MemberDetailPage() {
             </div>
           )}
           {inviteError && <p className="mt-2 text-xs text-red-600">{inviteError}</p>}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
-      <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+      <div className="mb-5 grid gap-5 lg:grid-cols-2">
+      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
         <div className="mb-4 flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
             <Wallet size={16} strokeWidth={2} />
@@ -605,7 +647,7 @@ export default function MemberDetailPage() {
         {contributeError && <p className="mt-2 text-xs text-red-600">{contributeError}</p>}
       </div>
 
-      <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
+      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
         <div className="mb-4 flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
             <PiggyBank size={16} strokeWidth={2} />
@@ -624,43 +666,47 @@ export default function MemberDetailPage() {
                 <p className="text-sm font-medium text-primary-900">{account.product_name}</p>
                 <p className="font-mono text-sm text-primary-900">{account.balance}</p>
               </div>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={depositAmounts[account.id] ?? ""}
-                  onChange={(e) =>
-                    setDepositAmounts((s) => ({ ...s, [account.id]: e.target.value }))
-                  }
-                  placeholder={ts("amount")}
-                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                />
-                <button
-                  onClick={() => handleDeposit(account)}
-                  disabled={txnBusy[account.id] || !depositAmounts[account.id]}
-                  className="rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
-                >
-                  {ts("deposit")}
-                </button>
-                <input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={withdrawAmounts[account.id] ?? ""}
-                  onChange={(e) =>
-                    setWithdrawAmounts((s) => ({ ...s, [account.id]: e.target.value }))
-                  }
-                  placeholder={ts("amount")}
-                  className="flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                />
-                <button
-                  onClick={() => handleWithdraw(account)}
-                  disabled={txnBusy[account.id] || !withdrawAmounts[account.id]}
-                  className="rounded-full border border-primary-200 px-4 py-2 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-50 disabled:opacity-60"
-                >
-                  {ts("withdraw")}
-                </button>
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={depositAmounts[account.id] ?? ""}
+                    onChange={(e) =>
+                      setDepositAmounts((s) => ({ ...s, [account.id]: e.target.value }))
+                    }
+                    placeholder={ts("amount")}
+                    className="min-w-0 flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  />
+                  <button
+                    onClick={() => handleDeposit(account)}
+                    disabled={txnBusy[account.id] || !depositAmounts[account.id]}
+                    className="shrink-0 rounded-full bg-primary-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+                  >
+                    {ts("deposit")}
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={withdrawAmounts[account.id] ?? ""}
+                    onChange={(e) =>
+                      setWithdrawAmounts((s) => ({ ...s, [account.id]: e.target.value }))
+                    }
+                    placeholder={ts("amount")}
+                    className="min-w-0 flex-1 rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-primary-900 placeholder:text-primary-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  />
+                  <button
+                    onClick={() => handleWithdraw(account)}
+                    disabled={txnBusy[account.id] || !withdrawAmounts[account.id]}
+                    className="shrink-0 rounded-full border border-primary-200 px-4 py-2 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-50 disabled:opacity-60"
+                  >
+                    {ts("withdraw")}
+                  </button>
+                </div>
               </div>
               {txnError[account.id] && (
                 <p className="mt-2 text-xs text-red-600">{txnError[account.id]}</p>
@@ -709,6 +755,7 @@ export default function MemberDetailPage() {
             {openError && <p className="mt-2 text-xs text-red-600">{openError}</p>}
           </div>
         )}
+      </div>
       </div>
 
       <div className="mb-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-primary-100/80">
@@ -892,6 +939,21 @@ function Row({ label, value }: { label: string; value: string }) {
     <div className="flex justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
       <dt className="text-sm text-primary-500">{label}</dt>
       <dd className="text-right text-sm font-medium text-primary-900">{value}</dd>
+    </div>
+  );
+}
+
+function ReadOnlyField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="mb-1 text-xs font-medium text-primary-600">{label}</p>
+      {/* border-primary-200 (not -100) deliberately - some e2e scripts
+          (savings-flow.js) select ".rounded-lg.border.border-primary-100"
+          page-wide to find a savings-account box; a matching combo here
+          would make that selector's .first() resolve to this field instead. */}
+      <p className="truncate rounded-lg border border-primary-200 bg-primary-50/60 px-3 py-2 text-sm text-primary-700">
+        {value}
+      </p>
     </div>
   );
 }

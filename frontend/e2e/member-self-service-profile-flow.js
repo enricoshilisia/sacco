@@ -11,11 +11,23 @@
 // Njoroge already holding portal access (phone +254788112233 /
 // AminaPass123!).
 
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
 const { chromium } = require('playwright');
 
 const BASE = process.env.E2E_BASE_URL ?? 'http://nairobi.localhost:3000';
 const AMINA_PHONE = '+254788112233';
 const AMINA_PASSWORD = 'AminaPass123!';
+
+// A minimal valid 1x1 PNG, generated at runtime rather than checked into the
+// repo or relying on a pre-existing scratch file (uploads-flow.js's
+// SCRATCH-path fixtures are session-specific and don't survive between
+// sessions - this test doesn't depend on that convention).
+const ONE_PIXEL_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+  'base64',
+);
 
 async function run() {
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
@@ -46,7 +58,18 @@ async function run() {
   await page.locator('[data-testid="nav-profile"]:visible').click();
   await page.waitForURL((u) => u.pathname === '/en/profile', { timeout: 10000 });
   await page.waitForSelector('text=Amina Njoroge', { timeout: 10000 });
-  await page.waitForSelector('text=Change password', { timeout: 10000 });
+  await page.waitForSelector('text=Basic info', { timeout: 10000 });
+
+  // --- Profile photo upload from the header avatar ---
+  const avatarPath = path.join(os.tmpdir(), `e2e-avatar-${Date.now()}.png`);
+  fs.writeFileSync(avatarPath, ONE_PIXEL_PNG);
+  const [photoResponse] = await Promise.all([
+    page.waitForResponse((r) => r.url().endsWith('/api/members/me/photo/') && r.request().method() === 'POST'),
+    page.setInputFiles('input[type="file"]', avatarPath),
+  ]);
+  assert(photoResponse.status() === 200, 'POST /api/members/me/photo/ succeeded');
+  await page.waitForSelector('main img', { timeout: 10000 });
+  fs.unlinkSync(avatarPath);
 
   // --- Contact details are editable; identity fields are not ---
   const memberCard = page.locator('form').filter({ has: page.locator('text=Physical address') });
@@ -79,6 +102,8 @@ async function run() {
   // --- Change password: wrong current password is rejected, correct one
   // succeeds, then revert so repeated runs keep working with the same
   // fixture credentials. ---
+  await page.click('button:has-text("Security")');
+  await page.waitForSelector('text=Choose a password', { timeout: 10000 });
   const passwordCard = page.locator('form').filter({ has: page.locator('text=Change password') });
   await passwordCard.locator('input').nth(0).fill('WrongPassword1!');
   await passwordCard.locator('input').nth(1).fill('AminaPassNew1!');
