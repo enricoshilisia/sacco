@@ -17,4 +17,9 @@ urlpatterns = [
         views.MockLoanDisbursementCallbackView.as_view(),
         name="mock_loan_disbursement_callback",
     ),
+    path(
+        "callbacks/mock/distribution-payout/",
+        views.MockDistributionPayoutCallbackView.as_view(),
+        name="mock_distribution_payout_callback",
+    ),
 ]

@@ -10,10 +10,11 @@ class MockPaymentProvider(PaymentProvider):
     succeed immediately and schedule a short-delayed simulated callback
     through the exact same idempotent processing path a real provider's
     webhook would hit (payments/tasks.py:simulate_mock_callback_task /
-    simulate_mock_loan_disbursement_callback_task) - so the full async
-    round trip (initiate -> provider confirms -> ledger posts ->
-    notification fires) is proven for real via Celery, not faked as a
-    synchronous shortcut.
+    simulate_mock_loan_disbursement_callback_task /
+    simulate_mock_distribution_payout_callback_task, chosen by
+    initiate_disbursement's `kind`) - so the full async round trip
+    (initiate -> provider confirms -> ledger posts -> notification fires)
+    is proven for real via Celery, not faked as a synchronous shortcut.
 
     Testing hook only: a phone number ending in "0000" simulates a
     declined collection/disbursement instead of a success, so both
@@ -36,14 +37,19 @@ class MockPaymentProvider(PaymentProvider):
         )
         return CollectionInitiationResult(success=True, provider_reference=provider_reference)
 
-    def initiate_disbursement(self, *, phone_number, amount, reference) -> CollectionInitiationResult:
+    def initiate_disbursement(self, *, phone_number, amount, reference, kind: str = "loan") -> CollectionInitiationResult:
         from django.db import connection
 
         from .. import tasks
 
         provider_reference = f"MOCK-{uuid.uuid4().hex[:10].upper()}"
         should_succeed = not phone_number.endswith("0000")
-        tasks.simulate_mock_loan_disbursement_callback_task.apply_async(
+        task = (
+            tasks.simulate_mock_distribution_payout_callback_task
+            if kind == "distribution"
+            else tasks.simulate_mock_loan_disbursement_callback_task
+        )
+        task.apply_async(
             args=[connection.schema_name, provider_reference, should_succeed],
             countdown=2,
         )

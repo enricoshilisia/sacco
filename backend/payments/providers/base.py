@@ -18,9 +18,10 @@ class PaymentProvider:
     (TenantConfig.active_payment_provider via payments/providers/registry.py),
     never a country branch in calling code.
 
-    initiate_disbursement has no caller yet - Phase 4 (Loans) is the first
-    real use - but it's on the interface now so every adapter added later
-    has to account for it rather than being retrofitted.
+    initiate_disbursement's `kind` tells a simulated/mock provider which
+    callback family to invoke (Phase 4 loans, Phase 5 distributions, ...) -
+    a real provider ignores it entirely (its webhook carries its own
+    reference, resolved by whichever app's callback view receives it).
     """
 
     code = "base"
@@ -31,7 +32,7 @@ class PaymentProvider:
         raise NotImplementedError
 
     def initiate_disbursement(
-        self, *, phone_number: str, amount: Decimal, reference: str
+        self, *, phone_number: str, amount: Decimal, reference: str, kind: str = "loan"
     ) -> CollectionInitiationResult:
         raise NotImplementedError
 

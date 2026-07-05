@@ -381,7 +381,7 @@ def initiate_loan_disbursement_mobile_money(
         created_by=created_by,
     )
     result = provider.initiate_disbursement(
-        phone_number=phone_number, amount=loan.amount_requested, reference=str(disbursement.id)
+        phone_number=phone_number, amount=loan.amount_requested, reference=str(disbursement.id), kind="loan"
     )
     if result.success:
         disbursement.provider_reference = result.provider_reference

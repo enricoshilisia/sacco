@@ -72,10 +72,10 @@ class DarajaProvider(PaymentProvider):
         except requests.RequestException as exc:
             return CollectionInitiationResult(success=False, error=str(exc))
 
-    def initiate_disbursement(self, *, phone_number, amount, reference) -> CollectionInitiationResult:
-        # B2C (Business to Customer) - no caller until Phase 4 (loan
-        # disbursement); left unimplemented rather than guessed at without
-        # a concrete requirement to design against.
+    def initiate_disbursement(self, *, phone_number, amount, reference, kind: str = "loan") -> CollectionInitiationResult:
+        # B2C (Business to Customer) - callers exist now (loan disbursement,
+        # distribution payouts) but left unimplemented rather than guessed
+        # at without a concrete requirement to design a real integration against.
         raise NotImplementedError("Daraja B2C disbursement isn't wired up yet - see Phase 4.")
 
     def verify_callback(self, *, headers: dict, body: bytes) -> bool:

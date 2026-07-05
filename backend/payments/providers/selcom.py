@@ -61,7 +61,7 @@ class SelcomProvider(PaymentProvider):
         except requests.RequestException as exc:
             return CollectionInitiationResult(success=False, error=str(exc))
 
-    def initiate_disbursement(self, *, phone_number, amount, reference) -> CollectionInitiationResult:
+    def initiate_disbursement(self, *, phone_number, amount, reference, kind: str = "loan") -> CollectionInitiationResult:
         raise NotImplementedError("Selcom disbursement isn't wired up yet - see Phase 4.")
 
     def verify_callback(self, *, headers: dict, body: bytes) -> bool:

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
+  Banknote,
   Building2,
   HandCoins,
   LayoutDashboard,
@@ -23,7 +24,16 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 const SWIPE_THRESHOLD = 28;
 
 type NavItem = {
-  href: "/dashboard" | "/members" | "/accounting" | "/payments" | "/loans" | "/savings" | "/profile" | "/settings";
+  href:
+    | "/dashboard"
+    | "/members"
+    | "/accounting"
+    | "/payments"
+    | "/loans"
+    | "/savings"
+    | "/distributions"
+    | "/profile"
+    | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
   /** Omit for items everyone can see (e.g. Dashboard). Otherwise the item
@@ -71,6 +81,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       href: "/savings",
       label: t("savings"),
       icon: PiggyBank,
+      selfService: true,
+    },
+    {
+      href: "/distributions",
+      label: t("distributions"),
+      icon: Banknote,
+      permissions: ["distributions.view"],
       selfService: true,
     },
     { href: "/profile", label: t("profile"), icon: User },

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   ArrowRight,
-  Banknote,
   Check,
   Clock,
   Gavel,
@@ -434,20 +433,14 @@ export default function DashboardPage() {
       )}
 
       {/* Preview of not-yet-built modules - sample data only, clearly muted so it can never be mistaken for real numbers.
-          Loans and Payments used to be mock cards here too - removed once each shipped for real, so a genuinely-built
-          feature is never shown sitting next to obviously-fake numbers. Staff-oriented previews of SACCO-wide
-          modules, so same staff-only scope as the stats above. */}
+          Loans, Payments and Distributions used to be mock cards here too - removed once each shipped for real, so
+          a genuinely-built feature is never shown sitting next to obviously-fake numbers. Staff-oriented preview of
+          a SACCO-wide module, so same staff-only scope as the stats above. */}
       {(canViewMembers || canViewAccounting) && (
         <div>
           <h2 className="text-sm font-semibold text-primary-400">{t("comingSoon")}</h2>
           <p className="mb-4 text-xs text-primary-400">{t("comingSoonHelp")}</p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <MockCard icon={Banknote} title={t("distributionsTitle")}>
-              <MockRow label={t("distributionsLast")} value="14 Dec 2025" />
-              <MockRow label={t("distributionsTotal")} value={`${tenant.currency} 1.8M`} />
-              <MockRow label={t("distributionsNextAgm")} value="22 Aug 2026" />
-            </MockCard>
-
             <MockCard icon={Gavel} title={t("governanceTitle")}>
               <MockRow label={t("governanceNextMeeting")} value="9 Jul 2026" />
               <MockRow label={t("governanceResolutions")} value="2" />

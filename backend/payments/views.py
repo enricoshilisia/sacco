@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accesscontrol.permissions import require_permission
+from distributions.serializers import DistributionEntrySerializer
+from distributions.services import handle_distribution_payout_callback
 from loans.serializers import LoanSerializer
 from loans.services import handle_loan_disbursement_callback
 from members.models import Member
@@ -229,3 +231,26 @@ class MockLoanDisbursementCallbackView(APIView):
         if disbursement is None:
             return Response({"detail": "Unknown provider_reference."}, status=status.HTTP_404_NOT_FOUND)
         return Response(LoanSerializer(disbursement.loan).data)
+
+
+class MockDistributionPayoutCallbackView(APIView):
+    """
+    Manual trigger for the mock provider's distribution-payout callback -
+    the payout-side twin of MockLoanDisbursementCallbackView above. Real
+    providers never hit this path.
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        provider_reference = request.data.get("provider_reference", "")
+        success = bool(request.data.get("success", True))
+        payout = handle_distribution_payout_callback(
+            provider_code="mock",
+            provider_reference=provider_reference,
+            success=success,
+            raw_payload=request.data,
+        )
+        if payout is None:
+            return Response({"detail": "Unknown provider_reference."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(DistributionEntrySerializer(payout.entry).data)

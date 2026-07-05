@@ -48,6 +48,28 @@ def simulate_mock_loan_disbursement_callback_task(tenant_schema: str, provider_r
 
 
 @shared_task
+def simulate_mock_distribution_payout_callback_task(tenant_schema: str, provider_reference: str, success: bool):
+    """
+    Distribution-payout counterpart to simulate_mock_loan_disbursement_
+    callback_task above - same "resolve a couple seconds later, through
+    the real idempotent processing path" shape, calling distributions.
+    services since payout money and journal postings belong to the
+    distributions app, not this one (distributions/services.py:
+    handle_distribution_payout_callback).
+    """
+    with schema_context(tenant_schema):
+        from distributions.services import handle_distribution_payout_callback
+
+        handle_distribution_payout_callback(
+            provider_code="mock",
+            provider_reference=provider_reference,
+            success=success,
+            failure_reason="" if success else "Simulated decline (mock phone number ending in 0000).",
+            raw_payload={"simulated": True, "success": success},
+        )
+
+
+@shared_task
 def reconcile_pending_collections():
     """
     Periodic job (BUILD_PLAN.md Phase 3: "daily reconciliation job") - for

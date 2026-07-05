@@ -42,14 +42,15 @@ async function run() {
   await page.waitForSelector('text=Recent ledger activity', { timeout: 10000 });
 
   // --- Coming-soon preview grid: present, labelled, and visually muted ---
-  // Loans and Payments used to be mock cards here too - both were removed
-  // from the preview grid once each shipped for real (Phase 3, and this
-  // phase), leaving only modules that genuinely aren't built yet.
+  // Loans, Payments and Distributions used to be mock cards here too - all
+  // three were removed from the preview grid once each shipped for real
+  // (Phase 3, Phase 4, and Phase 5), leaving only modules that genuinely
+  // aren't built yet.
   await page.waitForSelector('text=Coming soon', { timeout: 10000 });
   const previewBadgeCount = await page.locator('[data-testid="preview-badge"]').count();
-  assert(previewBadgeCount === 2, `expected 2 "Preview" badges, got ${previewBadgeCount}`);
-  assert(await page.isVisible('text=Dividends & interest'), 'distributions preview card renders');
+  assert(previewBadgeCount === 1, `expected 1 "Preview" badge, got ${previewBadgeCount}`);
   assert(await page.isVisible('text=Governance'), 'governance preview card renders');
+  assert(!(await page.isVisible('text=Dividends & interest')), 'distributions preview card no longer renders - real page exists now');
 
   // Contrast check: a live stat's number should render far darker than a
   // mock card's numbers, so the two are never visually confused.
