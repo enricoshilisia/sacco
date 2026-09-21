@@ -14,5 +14,7 @@ urlpatterns = [
     path("api/loans/", include("loans.urls")),
     path("api/rules-engine/", include("rules_engine.urls")),
     path("api/distributions/", include("distributions.urls")),
+    path("api/welfare/", include("welfare.urls")),
+    path("api/reports/", include("reports.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
 ]

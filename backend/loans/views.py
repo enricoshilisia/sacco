@@ -69,6 +69,10 @@ class LoanListView(generics.ListAPIView):
         member_id = self.request.query_params.get("member")
         if member_id:
             qs = qs.filter(member_id=member_id)
+        # ?status=APPRAISED or a comma list - the leader app's approval queues.
+        status_filter = self.request.query_params.get("status")
+        if status_filter:
+            qs = qs.filter(status__in=status_filter.split(","))
         return qs
 
 

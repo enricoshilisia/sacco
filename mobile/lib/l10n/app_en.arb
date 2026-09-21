@@ -1,0 +1,730 @@
+{
+  "@@locale": "en",
+  "appTitle": "Inuka West",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "done": "Done",
+  "save": "Save",
+  "saved": "Saved",
+  "networkError": "Can't reach the server. Check your connection and try again.",
+  "genericError": "Something went wrong. Please try again.",
+  "findSaccoTitle": "Find your SACCO",
+  "findSaccoBody": "Enter the code your SACCO gave you. It's the first part of its web address, for example \"shirika\".",
+  "saccoCode": "SACCO code",
+  "saccoNotFound": "No SACCO found with that code.",
+  "continueLabel": "Continue",
+  "loginTitle": "Log in",
+  "phoneNumber": "Phone number",
+  "phoneHint": "+2547...",
+  "password": "Password",
+  "loginSubmit": "Log in",
+  "loginError": "Login failed. Check your details and try again.",
+  "sessionExpired": "Your session has expired. Please log in again.",
+  "noMemberRecord": "This login has no member record and no staff tools available on mobile. Ask your SACCO administrator to assign you a role.",
+  "notYourSacco": "Not your SACCO?",
+  "changeSacco": "Change SACCO",
+  "unlockTitle": "Unlock",
+  "unlockReason": "Unlock your SACCO account",
+  "unlockButton": "Unlock",
+  "usePassword": "Log in with password instead",
+  "navHome": "Home",
+  "navSavings": "Savings",
+  "navLoans": "Loans",
+  "navProfile": "Profile",
+  "welcome": "Welcome, {name}",
+  "@welcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "memberNumber": "Member no. {number}",
+  "@memberNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCapital": "Share capital",
+  "shareCapitalHelp": "Your ownership stake. Earns dividends; not withdrawable.",
+  "savingsTotal": "Savings",
+  "savingsHelp": "Withdrawable deposits. Earn interest and set how much you can borrow.",
+  "loanOutstanding": "Loan balance",
+  "noActiveLoans": "No active loans",
+  "nextPayment": "Next payment {amount} due {date}",
+  "@nextPayment": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "overdue": "Overdue {days} days · {amount}",
+  "@overdue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "quickActions": "Quick actions",
+  "actionDeposit": "Deposit",
+  "actionContribute": "Buy shares",
+  "actionApply": "Apply for loan",
+  "actionDividends": "Dividends",
+  "guaranteeRequestsBanner": "{count, plural, =1{1 member has asked you to guarantee their loan} other{{count} members have asked you to guarantee their loans}}",
+  "@guaranteeRequestsBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recentPayments": "Recent mobile-money payments",
+  "savingsTitle": "Savings & shares",
+  "savingsAccounts": "Savings accounts",
+  "noSavingsAccounts": "No savings accounts yet. Make a deposit to open one.",
+  "contributions": "Contributions",
+  "transactions": "Transactions",
+  "noTransactions": "No transactions yet.",
+  "txDEPOSIT": "Deposit",
+  "txWITHDRAWAL": "Withdrawal",
+  "txCONTRIBUTION": "Share contribution",
+  "withdrawalsAtBranch": "Withdrawals are handled by your SACCO.",
+  "pledgedLocked": "{amount} locked as guarantee for other members' loans",
+  "@pledgedLocked": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payTitleDeposit": "Deposit to savings",
+  "payTitleContribute": "Buy shares",
+  "savingsProduct": "Savings product",
+  "selectProduct": "Select a product",
+  "amount": "Amount",
+  "amountInvalid": "Enter an amount greater than 0 with at most 2 decimals.",
+  "payFromPhone": "Pay from phone number",
+  "mobileMoneyHelp": "You'll get a mobile-money prompt on this phone to confirm.",
+  "payButton": "Send payment request",
+  "payWaiting": "Check your phone and enter your PIN to confirm…",
+  "paySuccess": "Payment received",
+  "payFailed": "Payment failed",
+  "payCancelled": "Payment cancelled",
+  "payStillPending": "Still waiting for confirmation. It will show in your statement once your provider confirms it.",
+  "receipt": "Receipt {receipt}",
+  "@receipt": {
+    "placeholders": {
+      "receipt": {
+        "type": "String"
+      }
+    }
+  },
+  "statusPENDING": "Pending",
+  "statusSUCCESS": "Successful",
+  "statusFAILED": "Failed",
+  "statusCANCELLED": "Cancelled",
+  "purposeSAVINGS_DEPOSIT": "Savings deposit",
+  "purposeSHARE_CONTRIBUTION": "Share contribution",
+  "loansTitle": "Loans",
+  "myLoans": "My loans",
+  "noLoans": "You haven't applied for a loan yet.",
+  "guaranteeRequests": "Guarantee requests",
+  "guaranteeFor": "{name} asks you to pledge {amount}",
+  "@guaranteeFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "guaranteeWarning": "Accepting locks this amount of your deposits until their loan is repaid. You won't be able to withdraw or borrow against it.",
+  "accept": "Accept",
+  "decline": "Decline",
+  "confirmAcceptTitle": "Pledge your deposits?",
+  "loanStatusPENDING_GUARANTORS": "Awaiting guarantors",
+  "loanStatusPENDING_APPRAISAL": "Pending appraisal",
+  "loanStatusAPPRAISED": "Appraised",
+  "loanStatusAPPROVED": "Approved",
+  "loanStatusREJECTED": "Rejected",
+  "loanStatusDISBURSED": "Disbursement pending",
+  "loanStatusACTIVE": "Active",
+  "loanStatusCLOSED": "Repaid",
+  "loanStatusDEFAULTED": "Defaulted",
+  "guarantorStatusPENDING": "Pending",
+  "guarantorStatusCONSENTED": "Accepted",
+  "guarantorStatusDECLINED": "Declined",
+  "guarantorStatusRELEASED": "Released",
+  "termMonths": "{months, plural, =1{1 month} other{{months} months}}",
+  "@termMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "applyTitle": "Apply for a loan",
+  "loanProduct": "Loan product",
+  "productTerms": "{rate}% · {method} · {min}–{max} months · up to {multiple}× deposits",
+  "@productTerms": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "method": {
+        "type": "String"
+      },
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      },
+      "multiple": {
+        "type": "String"
+      }
+    }
+  },
+  "methodREDUCING_BALANCE": "reducing balance",
+  "methodFLAT": "flat rate",
+  "term": "Term (months)",
+  "termInvalid": "Enter a term between {min} and {max} months.",
+  "@termInvalid": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "purpose": "Purpose (optional)",
+  "applySubmit": "Submit application",
+  "applied": "Application created. Add your guarantors next.",
+  "loanDetail": "Loan details",
+  "requested": "Requested",
+  "interest": "Interest",
+  "outstanding": "Outstanding",
+  "guarantors": "Guarantors",
+  "noGuarantors": "No guarantors yet.",
+  "guarantorsNeeded": "This product needs at least {count} guarantors who accept.",
+  "@guarantorsNeeded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addGuarantor": "Add guarantor",
+  "guarantorMemberNumber": "Guarantor's member number",
+  "pledgedAmount": "Amount they pledge",
+  "add": "Add",
+  "submitForAppraisal": "Submit for appraisal",
+  "submitted": "Submitted for appraisal",
+  "schedule": "Repayment schedule",
+  "installment": "#{n} · due {date}",
+  "@installment": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "paid": "Paid",
+  "repayments": "Repayments",
+  "automatedDecision": "Automated decision",
+  "decisionNotes": "Decision notes",
+  "repayHelp": "To repay, pay through your SACCO's usual repayment channel. In-app loan repayment is coming soon.",
+  "dividendsTitle": "Dividends & interest",
+  "noDistributions": "No dividend or interest payments yet.",
+  "kindDIVIDEND": "Dividend on shares",
+  "kindINTEREST": "Interest on savings",
+  "gross": "Gross",
+  "wht": "Withholding tax",
+  "net": "Net",
+  "entryStatusPROPOSED": "Proposed",
+  "entryStatusPOSTED": "Credited",
+  "entryStatusPAID": "Paid out",
+  "profileTitle": "My profile",
+  "kycVerified": "KYC verified",
+  "kycPending": "KYC pending",
+  "idNumber": "ID number",
+  "contactDetails": "Contact details",
+  "email": "Email",
+  "address": "Physical address",
+  "kycLockedHelp": "Name and ID come from your KYC record. Contact your SACCO to correct them.",
+  "security": "Security",
+  "biometricUnlock": "Unlock with fingerprint / face",
+  "biometricUnavailable": "Not available on this device",
+  "changePassword": "Change password",
+  "currentPassword": "Current password",
+  "newPassword": "New password",
+  "confirmPassword": "Confirm new password",
+  "passwordTooShort": "Use at least 8 characters.",
+  "passwordMismatch": "The new passwords don't match.",
+  "passwordChanged": "Password changed",
+  "language": "Language",
+  "logout": "Log out",
+  "required": "Required",
+  "active": "Active",
+  "inactive": "Inactive",
+  "all": "All",
+  "approve": "Approve",
+  "reject": "Reject",
+  "methodCash": "Cash",
+  "methodBank": "Bank",
+  "methodMobileMoney": "Mobile money",
+  "myRoles": "My roles",
+  "navWelfare": "Welfare",
+  "searchMemberHint": "Name, member no. or phone",
+  "noMembersFound": "No members found.",
+  "payTitleWelfare": "Pay welfare",
+  "purposeWELFARE_CONTRIBUTION": "Welfare contribution",
+  "welfareTitle": "Welfare",
+  "welfareMine": "My welfare",
+  "welfareCases": "Cases",
+  "welfareCounter": "Counter",
+  "welfareRules": "Rules",
+  "welfarePay": "Pay welfare",
+  "welfarePayHelp": "Pays off anything you owe for past cases first; the rest goes to your yearly welfare balance.",
+  "welfareBalance": "Welfare balance",
+  "welfareBalanceHelp": "Your yearly contribution not yet used. Cases are taken from here first.",
+  "welfareYearly": "Paid for {year}",
+  "@welfareYearly": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "welfareOwed": "You owe",
+  "welfareOwedBanner": "You owe {amount} in welfare contributions",
+  "@welfareOwedBanner": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfareContributions": "Case contributions",
+  "welfareNoContributions": "No welfare contributions yet.",
+  "welfareStillOwed": "{amount} owed",
+  "@welfareStillOwed": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfarePayments": "Payments",
+  "welfareToDues": "{amount} to dues",
+  "@welfareToDues": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfareToBalance": "{amount} to balance",
+  "@welfareToBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfareYearlyAmount": "Yearly welfare contribution",
+  "welfareCaseTypes": "Case types",
+  "welfareRulesHelp": "From the constitution: what each member contributes for each kind of case.",
+  "welfareNoRules": "No welfare rules set up yet.",
+  "welfareBeneficiaryContributes": "Affected member also contributes",
+  "welfarePerMember": "per member",
+  "welfarePerMemberAmount": "{amount} per member",
+  "@welfarePerMemberAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfareAddRule": "Add case type",
+  "welfareEditRule": "Edit case type",
+  "welfareRuleName": "Name",
+  "welfareRuleNameHint": "e.g. Member hospitalised",
+  "welfareRuleDescription": "Constitution clause / notes",
+  "welfareContributionPerMember": "Contribution per member",
+  "welfareYearEnd": "Year end",
+  "welfareYearEndHelp": "Moves members' unused yearly welfare balances into the Welfare Fund.",
+  "welfareCloseYear": "Close {year}",
+  "@welfareCloseYear": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "welfareCloseYearTitle": "Close welfare year {year}?",
+  "@welfareCloseYearTitle": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "welfareCloseYearBody": "Every member's unused {year} welfare balance will move to the Welfare Fund. This can't be undone.",
+  "@welfareCloseYearBody": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "welfareYearClosing": "Closing {year}. Balances will update shortly.",
+  "@welfareYearClosing": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "welfareYearClosed": "{year} is closed.",
+  "@welfareYearClosed": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "welfareFilterOpen": "Open",
+  "welfareStatusPENDING_APPROVAL": "Pending approval",
+  "welfareStatusAPPROVED": "Approved",
+  "welfareStatusREJECTED": "Rejected",
+  "welfareStatusCLOSED": "Closed",
+  "welfareNewCase": "New case",
+  "welfareNoCases": "No cases here.",
+  "welfareCollectedOf": "Collected {collected} of {total}",
+  "@welfareCollectedOf": {
+    "placeholders": {
+      "collected": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "welfarePickMember": "Choose member",
+  "welfareCaseType": "Case type",
+  "welfareLevyPreview": "On approval, every active member contributes {amount}, taken from their welfare balance first.",
+  "@welfareLevyPreview": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfareAffectedPerson": "Affected person",
+  "welfareAffectedPersonHint": "If not the member, e.g. Mary W. (daughter)",
+  "welfareCaseDetails": "Details",
+  "welfareNeedsApproval": "A second person (e.g. the treasurer) must approve before members are charged.",
+  "welfareOpenCase": "Open case",
+  "welfareCaseOpened": "Case opened, awaiting approval",
+  "welfareCase": "Welfare case",
+  "welfareBeneficiary": "Member",
+  "welfareOpenedBy": "Opened by",
+  "welfareDecidedBy": "Decided by",
+  "welfareCollection": "Collection",
+  "welfareLevyRunning": "Charging members…",
+  "welfareMembersLevied": "Members charged",
+  "welfareTotalLevied": "Total charged",
+  "welfareCollected": "Collected",
+  "welfareOutstanding": "Still owed by members",
+  "welfarePaidOut": "Paid out",
+  "welfareAvailable": "Available to pay out",
+  "welfareApproveTitle": "Approve case",
+  "welfareRejectTitle": "Reject case",
+  "welfareReason": "Reason",
+  "welfareNotesOptional": "Notes (optional)",
+  "welfareApproved": "Approved. Members are being charged.",
+  "welfareRejected": "Case rejected",
+  "welfareApproveHelp": "Approving charges every active member. You can't approve a case you opened.",
+  "welfareRecordPayout": "Record payout",
+  "welfarePayoutHelp": "Record money already handed to the member. Up to {amount} is available.",
+  "@welfarePayoutHelp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfareMoreThanAvailable": "Only {amount} is available",
+  "@welfareMoreThanAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "welfarePaidTo": "Paid to",
+  "welfareReference": "Reference / receipt no.",
+  "welfarePaidOn": "Date paid",
+  "welfarePayoutRecorded": "Payout recorded",
+  "welfareCloseCase": "Close case",
+  "welfareCaseClosed": "Case closed",
+  "welfarePayouts": "Payouts",
+  "welfareWhoOwes": "Member contributions",
+  "welfareOnlyOwing": "Only members who still owe",
+  "welfareEveryonePaid": "Everyone has paid.",
+  "welfareCounterHelp": "Choose a member to see their welfare position and record a cash or bank payment.",
+  "welfareRecordPayment": "Record payment",
+  "welfareAllocationHelp": "Clears their oldest welfare dues first; the rest goes to their yearly balance.",
+  "welfarePaymentRecorded": "Payment recorded",
+  "navLeader": "Leader",
+  "leaderTitle": "Leadership",
+  "leaderNeedsAttention": "Needs your attention",
+  "leaderAllClear": "Nothing waiting on you right now.",
+  "leaderModules": "Your tools",
+  "leaderFinance": "Finance",
+  "leaderFinanceHelp": "Financial position, journal, chart of accounts",
+  "leaderReports": "Reports",
+  "leaderReportsHelp": "Financial statements and audit reports",
+  "leaderLoanDesk": "Loan desk",
+  "leaderLoanDeskHelp": "Appraise, approve, disburse, record repayments",
+  "leaderMembers": "Members",
+  "leaderMembersHelp": "Find a member, counter deposits and withdrawals",
+  "leaderMember": "Member",
+  "leaderDistributions": "Dividends & interest runs",
+  "leaderDistributionsHelp": "Propose, approve and pay out",
+  "leaderWelfare": "Welfare administration",
+  "leaderWelfareHelp": "Cases, counter payments, rules, year end",
+  "taskLoansToAppraise": "Loans waiting for appraisal",
+  "taskLoansToDecide": "Loans waiting for a decision",
+  "taskLoansToDisburse": "Approved loans to disburse",
+  "taskDistributionsToApprove": "Dividend / interest runs to approve",
+  "taskWelfareToApprove": "Welfare cases to approve",
+  "financeBalanced": "Books balance",
+  "financeUnbalanced": "Books do not balance",
+  "financeTrialBalanceHint": "Tap to open the trial balance",
+  "financeCash": "Cash and bank",
+  "financeCollectionsToday": "Mobile money today",
+  "financeLoans": "Loans outstanding",
+  "financePar": "Portfolio at risk (>30d)",
+  "financeWelfareFund": "Welfare fund",
+  "financeMembers": "Active members",
+  "financeThisYear": "This year",
+  "financeIncome": "Income",
+  "financeExpenses": "Expenses",
+  "financeSurplus": "Surplus / (deficit)",
+  "financeTools": "Tools",
+  "financeJournal": "Journal",
+  "financeJournalHelp": "Every posted entry; reverse mistakes",
+  "financeNewEntry": "New journal entry",
+  "financeNewEntryHelp": "Expenses, fees, bank charges",
+  "financeChart": "Chart of accounts",
+  "financeChartHelp": "Accounts and adding new ones",
+  "journalReversedBy": "reversed by {ref}",
+  "@journalReversedBy": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "journalReverses": "reverses {ref}",
+  "@journalReverses": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "journalDate": "Date",
+  "journalPostedBy": "Posted by",
+  "journalReversesLabel": "Reverses",
+  "journalReversedByLabel": "Reversed by",
+  "journalLines": "Lines",
+  "debitShort": "Dr",
+  "creditShort": "Cr",
+  "debit": "Debit",
+  "credit": "Credit",
+  "journalReverse": "Reverse this entry",
+  "journalReverseTitle": "Reverse entry",
+  "journalReverseHelp": "Posted entries are never edited or deleted. This posts an equal and opposite entry, keeping both on record.",
+  "journalReversed": "Entry reversed",
+  "journalDescription": "Description",
+  "journalControlHelp": "Member accounts (savings, shares, loans, welfare) aren't listed; they change only through their own screens.",
+  "journalAccount": "Account",
+  "journalMemo": "Line note (optional)",
+  "journalAddLine": "Add line",
+  "journalDifference": "Difference",
+  "journalPost": "Post entry",
+  "journalPosted": "Entry posted",
+  "journalNeedsDescription": "Add a description.",
+  "journalNeedsTwoLines": "An entry needs at least two lines with an account and amount.",
+  "journalOneSidePerLine": "Each line is either a debit or a credit, not both.",
+  "journalNotBalanced": "Debits and credits must be equal.",
+  "chartAdd": "Add account",
+  "chartCode": "Code",
+  "chartName": "Name",
+  "chartNameHint": "e.g. Office rent",
+  "chartType": "Type",
+  "chartAdded": "Account added",
+  "chartControl": "Member control account",
+  "typeAsset": "Assets",
+  "typeLiability": "Liabilities",
+  "typeEquity": "Equity",
+  "typeIncome": "Income",
+  "typeExpense": "Expenses",
+  "reportsIntro": "Figures come straight from the ledger. Share any report as a spreadsheet (CSV) for internal, external or Auditor-General audits.",
+  "reportsNone": "No reports are available for your role.",
+  "reportTrialBalance": "Trial balance",
+  "reportTrialBalanceHelp": "Every account's debit or credit balance",
+  "reportBalanceSheet": "Statement of financial position",
+  "reportBalanceSheetHelp": "Assets, liabilities and equity",
+  "reportIncomeStatement": "Income statement",
+  "reportIncomeStatementHelp": "Income, expenses and surplus for a period",
+  "reportGeneralLedger": "General ledger",
+  "reportGeneralLedgerHelp": "One account's transactions with running balance",
+  "reportJournal": "Journal (day book)",
+  "reportJournalHelp": "Every entry, who posted it, reversals",
+  "reportMemberBalances": "Member balances & reconciliation",
+  "reportMemberBalancesHelp": "Each member's balances, checked against control accounts",
+  "reportLoanPortfolio": "Loan portfolio & arrears",
+  "reportLoanPortfolioHelp": "Outstanding loans, ageing and portfolio at risk",
+  "reportCollections": "Mobile money collections",
+  "reportCollectionsHelp": "M-Pesa / Selcom payments by outcome",
+  "reportDistributions": "Dividend & interest register",
+  "reportDistributionsHelp": "Declared amounts with withholding tax",
+  "reportExport": "Share as spreadsheet",
+  "reportAsAt": "As at",
+  "reportFrom": "From",
+  "reportTo": "To",
+  "reportGeneratedBy": "Prepared by {name} · amounts in {currency}",
+  "@reportGeneratedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "reportNoRows": "Nothing in this period.",
+  "runPropose": "Propose run",
+  "noRuns": "No dividend or interest runs yet.",
+  "runMembers": "{count, plural, =1{1 member} other{{count} members}}",
+  "@runMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "runPeriod": "Period",
+  "runRate": "Rate",
+  "runMembersLabel": "Members",
+  "runProposedBy": "Proposed by",
+  "runWhtUnconfirmed": "Withholding tax rates haven't been confirmed by a tax adviser yet.",
+  "runApproveTitle": "Approve run?",
+  "runApproveBody": "This posts {amount} net to members' accounts in the ledger.",
+  "@runApproveBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "runApproveHelp": "You can't approve a run you proposed.",
+  "runApproved": "Run approved and posted",
+  "runRejectTitle": "Reject run",
+  "runRejected": "Run rejected",
+  "runPayout": "Pay out by mobile money",
+  "runPayoutBody": "Send {amount} to members' phones now?",
+  "@runPayoutBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "runPayoutStarted": "Payouts started",
+  "runRatePercent": "Rate (%)",
+  "runRatePercentOptional": "Rate (%) - blank uses the product rate",
+  "runDescription": "Description, e.g. AGM FY2025 dividend",
+  "runProposeHelp": "A different leader must approve before anything is posted.",
+  "runRateRequired": "Enter the dividend rate.",
+  "runProposed": "Run proposed, awaiting approval",
+  "welfareRequiredProduct": "Choose a savings product.",
+  "queueAppraise": "To appraise",
+  "queueDecide": "To decide",
+  "queueDisburse": "To disburse",
+  "queueActive": "Active",
+  "queueEmpty": "No loans here.",
+  "queueDaysOverdue": "{days} days overdue",
+  "@queueDaysOverdue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "queueArrears": "Arrears",
+  "queueAppraisedBy": "Appraised by",
+  "queueAppraisalNotes": "Appraisal notes",
+  "queuePledged": "Total pledged by guarantors: {amount}",
+  "@queuePledged": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "queueAppraiseAction": "Record appraisal",
+  "queueAppraised": "Appraisal recorded",
+  "queueApproved": "Loan approved",
+  "queueRejected": "Loan rejected",
+  "queueDisburseAction": "Disburse loan",
+  "queueToSavings": "To savings",
+  "queueDisbursed": "Disbursement sent",
+  "queueAwaitingProvider": "Waiting for the mobile money provider to confirm.",
+  "queueRecordRepayment": "Record repayment",
+  "queueRepaymentRecorded": "Repayment recorded",
+  "counterActions": "Counter",
+  "counterWithdraw": "Withdraw",
+  "counterWithdrawConfirm": "Pay out {amount} to {name}?",
+  "@counterWithdrawConfirm": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "counterFromAccount": "From account",
+  "counterRecorded": "Recorded",
+  "counterVerifyKyc": "Verify KYC",
+  "counterVerifyKycBody": "Confirm you've checked this member's ID documents.",
+  "counterPledged": "Locked as guarantor",
+  "counterLimitedView": "Your role shows member details only.",
+  "brandTagline": "Empowerment Group",
+  "connecting": "Connecting…"
+}

@@ -10,12 +10,18 @@ from .models import DistributionEntry, DistributionRun
 class DistributionEntrySerializer(serializers.ModelSerializer):
     member_name = serializers.CharField(source="member.full_name", read_only=True)
     member_number = serializers.CharField(source="member.member_number", read_only=True)
+    # Enough of the parent run for a member's own history (MyDistributionsListView)
+    # to say what each line was, without a second request per run.
+    run_kind = serializers.CharField(source="run.kind", read_only=True)
+    run_period_end = serializers.DateField(source="run.period_end", read_only=True)
+    run_description = serializers.CharField(source="run.description", read_only=True)
     latest_payout = serializers.SerializerMethodField()
 
     class Meta:
         model = DistributionEntry
         fields = [
-            "id", "run", "member", "member_name", "member_number", "savings_account",
+            "id", "run", "run_kind", "run_period_end", "run_description",
+            "member", "member_name", "member_number", "savings_account",
             "basis_balance", "gross_amount", "wht_amount", "net_amount", "status", "latest_payout",
         ]
 

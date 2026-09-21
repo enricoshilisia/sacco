@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accesscontrol.permissions import require_permission
+from accounting.models import Account
 from members.models import Member
 
 from .models import SavingsAccount, SavingsProduct
@@ -18,6 +19,7 @@ from .serializers import (
     WithdrawInputSerializer,
 )
 from .services import (
+    SAVINGS_CONTROL_ACCOUNT_CODE,
     InsufficientBalance,
     contribute_shares,
     deposit_savings,
@@ -54,10 +56,23 @@ def build_member_statement(member) -> dict:
     request.user's own member, no permission-catalog check needed) so the
     two can never drift out of sync with each other.
     """
+    # Lazy import: loans depends on savings, not the other way round (same
+    # reason as savings.services.withdraw_savings).
+    from loans.services import locked_pledge_total
+
     share_account = get_or_open_share_account(member)
     savings_accounts = SavingsAccount.objects.filter(member=member).select_related("product")
 
     return {
+        # The member's total deposits straight from the ledger (their slice
+        # of the 2000 control account), and how much of it is locked
+        # pledging someone else's loan. Clients should show this total
+        # rather than summing savings_accounts[].balance: the ledger tags
+        # lines by member but not by product, so each account's `balance`
+        # is currently the member's whole savings total, not that
+        # account's share of it.
+        "savings_total": str(Account.objects.get(code=SAVINGS_CONTROL_ACCOUNT_CODE).balance(member=member)),
+        "savings_pledged": str(locked_pledge_total(member)),
         "shares": {
             **ShareAccountSerializer(share_account).data,
             "contributions": ShareContributionSerializer(

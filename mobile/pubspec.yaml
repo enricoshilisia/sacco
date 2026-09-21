@@ -1,0 +1,42 @@
+name: sacco_mobile
+description: "Inuka West Empowerment Group - member and leader app."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  decimal: ^3.2.6
+  dio: ^5.11.1
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_secure_storage: ^11.2.0
+  intl: ^0.20.3
+  local_auth: ^3.0.2
+  path_provider: ^2.1.6
+  provider: ^6.1.5+1
+  share_plus: ^13.3.0
+  uuid: ^4.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+    - assets/branding/logo.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/branding/icon_1024.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/branding/icon_foreground.png"
+  remove_alpha_ios: true

@@ -10,6 +10,7 @@ plus Phase 1: Members).
 
 - **Backend:** Django 5 + DRF, `django-tenants` (schema-per-tenant), Celery + Redis
 - **Frontend:** Next.js 16 (App Router, Turbopack), TypeScript, Tailwind v4, `next-intl`
+- **Mobile:** Flutter member self-service app for Android/iOS, in [`mobile/`](mobile/README.md)
 - **DB / cache / storage:** PostgreSQL, Redis, MinIO (S3-compatible) - all via Docker Compose
 - **Auth:** JWT (phone number + password) and WebAuthn (biometric/passkey)
 - **Push:** Firebase Cloud Messaging (web push)

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -23,7 +24,16 @@ from .serializers import (
 
 
 class MemberListCreateView(generics.ListCreateAPIView):
-    queryset = Member.objects.prefetch_related("relations").all()
+    def get_queryset(self):
+        qs = Member.objects.prefetch_related("relations").all()
+        # ?search= matches member number, name or phone (leader app lookup).
+        search = self.request.query_params.get("search", "").strip()
+        if search:
+            qs = qs.filter(
+                Q(member_number__icontains=search) | Q(first_name__icontains=search)
+                | Q(last_name__icontains=search) | Q(phone_number__icontains=search)
+            )
+        return qs
 
     def get_serializer_class(self):
         return MemberListSerializer if self.request.method == "GET" else MemberSerializer

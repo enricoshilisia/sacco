@@ -59,6 +59,8 @@ TENANT_APPS = [
     "loans",
     "rules_engine",
     "distributions",
+    "welfare",
+    "reports",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
@@ -220,8 +222,8 @@ CORS_ALLOWED_ORIGINS = env.list(
 # Tenant subdomains are created dynamically (self-service SACCO sign-up
 # - see subscriptions.views.SaccoSignupView), so a fixed origin list can't
 # keep up with them. Allow any subdomain of TENANT_BASE_DOMAIN, on any
-# port, instead - e.g. http://dar.20.56.34.194.nip.io:3000 alongside
-# http://nairobi.20.56.34.194.nip.io:3000, with no per-tenant config.
+# port, instead - e.g. http://dar.20.166.120.83.nip.io:3000 alongside
+# http://nairobi.20.166.120.83.nip.io:3000, with no per-tenant config.
 CORS_ALLOWED_ORIGIN_REGEXES = [
     # .localhost always allowed for local dev, regardless of what
     # TENANT_BASE_DOMAIN is set to for actually provisioning new tenants -

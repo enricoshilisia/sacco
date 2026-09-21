@@ -117,7 +117,24 @@ def handle_collection_callback(
             return collection
 
         description = f"{provider_code.title()} collection {receipt or provider_reference}".strip()
-        if collection.purpose == CollectionPurpose.SHARE_CONTRIBUTION:
+        if collection.purpose == CollectionPurpose.WELFARE_CONTRIBUTION:
+            # Clears the member's oldest welfare dues first, the rest tops
+            # up their yearly welfare balance (welfare.services.record_payment).
+            from welfare.models import WelfarePaymentMethod
+            from welfare.services import record_payment
+
+            payment = record_payment(
+                member=collection.member,
+                amount=collection.amount,
+                method=WelfarePaymentMethod.MOBILE_MONEY,
+                transaction_date=date.today(),
+                reference=receipt or provider_reference,
+                created_by=collection.created_by,
+            )
+            collection.welfare_payment = payment
+            update_fields = ["status", "provider_receipt", "welfare_payment", "raw_callback", "completed_at"]
+            confirmation_target = "welfare contributions"
+        elif collection.purpose == CollectionPurpose.SHARE_CONTRIBUTION:
             contribution = contribute_shares(
                 member=collection.member,
                 amount=collection.amount,

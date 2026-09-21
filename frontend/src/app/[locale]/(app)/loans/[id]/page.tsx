@@ -87,7 +87,7 @@ type LoanDetail = {
   default_notes: string;
   schedule: ScheduleRow[];
   repayments: RepaymentRow[];
-  outstanding_balance: number;
+  outstanding_balance: string;
   arrears: ArrearsStatus;
 };
 

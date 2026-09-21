@@ -8,8 +8,13 @@ from rest_framework.views import APIView
 from accesscontrol.permissions import require_permission
 
 from .models import Account, JournalEntry
-from .serializers import AccountBalanceSerializer, JournalEntrySerializer
-from .services import reverse_journal_entry
+from .serializers import (
+    AccountBalanceSerializer,
+    AccountSerializer,
+    JournalEntrySerializer,
+    ManualJournalInputSerializer,
+)
+from .services import LineInput, UnbalancedJournalEntry, post_journal_entry, reverse_journal_entry
 
 
 class TrialBalanceView(APIView):
@@ -43,9 +48,54 @@ class TrialBalanceView(APIView):
 
 
 class JournalEntryListView(generics.ListAPIView):
-    queryset = JournalEntry.objects.prefetch_related("lines", "lines__account", "lines__member").all()
+    """GET: the journal, newest first. POST: a manual journal entry
+    (accounting.post_journal) - expenses, fees, bank charges and other
+    entries no module posts for you. Still balanced and append-only."""
+
     serializer_class = JournalEntrySerializer
-    permission_classes = [IsAuthenticated, require_permission("accounting.view_ledger")]
+
+    def get_queryset(self):
+        return (
+            JournalEntry.objects.select_related("created_by", "reverses", "reversed_by")
+            .prefetch_related("lines", "lines__account", "lines__member")
+            .order_by("-entry_date", "-created_at")
+        )
+
+    def get_permissions(self):
+        code = "accounting.post_journal" if self.request.method == "POST" else "accounting.view_ledger"
+        return [IsAuthenticated(), require_permission(code)()]
+
+    def post(self, request):
+        serializer = ManualJournalInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        try:
+            entry = post_journal_entry(
+                description=data["description"],
+                entry_date=data["entry_date"],
+                lines=[
+                    LineInput(account=l["account"], debit=l["debit"], credit=l["credit"], description=l["description"])
+                    for l in data["lines"]
+                ],
+                created_by=request.user,
+            )
+        except UnbalancedJournalEntry as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(JournalEntrySerializer(entry).data, status=status.HTTP_201_CREATED)
+
+
+class AccountListCreateView(generics.ListCreateAPIView):
+    """Chart of accounts. Adding accounts (e.g. a new expense line) needs
+    accounting.manage_chart; accounts are deactivated, never deleted."""
+
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+    pagination_class = None
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated(), require_permission("accounting.manage_chart")()]
+        return [IsAuthenticated(), require_permission("accounting.view_ledger")()]
 
 
 class JournalEntryReverseView(APIView):

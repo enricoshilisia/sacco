@@ -145,4 +145,8 @@ class MyDistributionsListView(generics.ListAPIView):
         member = Member.objects.filter(user=self.request.user).first()
         if member is None:
             return DistributionEntry.objects.none()
-        return DistributionEntry.objects.filter(member=member)
+        return (
+            DistributionEntry.objects.filter(member=member)
+            .select_related("run", "member")
+            .order_by("-run__period_end")
+        )

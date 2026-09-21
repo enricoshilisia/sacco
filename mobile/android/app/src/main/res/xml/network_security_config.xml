@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- HTTPS everywhere by default. The one exception is the Inuka West server
+     reached by IP / nip.io, which has no TLS certificate yet: plain HTTP is
+     allowed to that host only. Remove this exception once the server has a
+     real domain with HTTPS (then build with TENANT_SCHEME=https). -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">20.166.120.83</domain>
+        <domain includeSubdomains="true">20.166.120.83.nip.io</domain>
+    </domain-config>
+</network-security-config>

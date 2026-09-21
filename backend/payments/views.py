@@ -115,6 +115,42 @@ class MyInitiateCollectionView(APIView):
         return Response(PaymentCollectionSerializer(collection).data, status=status.HTTP_201_CREATED)
 
 
+class MyCollectionListView(generics.ListAPIView):
+    """Self-service: my own mobile-money collections, newest first, so a
+    member (e.g. the mobile app) can follow an STK push they started
+    through to SUCCESS/FAILED. Ownership is the check - same shape as
+    MyInitiateCollectionView - rather than the staff-facing
+    payments.view_transactions, which lets someone see every member's."""
+
+    serializer_class = PaymentCollectionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        member = _my_member(self.request)
+        if member is None:
+            return PaymentCollection.objects.none()
+        return (
+            PaymentCollection.objects.select_related("member", "savings_account__product")
+            .filter(member=member)
+            .order_by("-created_at")
+        )
+
+
+class MyCollectionDetailView(generics.RetrieveAPIView):
+    """Self-service twin of CollectionDetailView. Scoping the queryset to
+    the caller's own member means another member's collection id 404s
+    rather than leaking."""
+
+    serializer_class = PaymentCollectionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        member = _my_member(self.request)
+        if member is None:
+            return PaymentCollection.objects.none()
+        return PaymentCollection.objects.select_related("member", "savings_account__product").filter(member=member)
+
+
 class CollectionListView(generics.ListAPIView):
     queryset = PaymentCollection.objects.select_related("member", "savings_account__product").all()
     serializer_class = PaymentCollectionSerializer

@@ -183,10 +183,14 @@ def approve_distribution_run(run: DistributionRun, *, approved_by=None) -> Distr
     half-posted dividend declaration). This is where the maker-checker
     separation of duties actually takes effect: distributions.run_dividend/
     run_interest only ever gets here indirectly, via a SEPARATELY
-    permissioned distributions.approve_distribution call.
+    permissioned distributions.approve_distribution call. A separate
+    permission isn't enough on its own once one role (e.g. the Treasurer)
+    holds both, so the proposer is also refused as approver.
     """
     if run.status != DistributionRunStatus.PENDING_APPROVAL:
         raise ValueError("Only a pending-approval run can be approved.")
+    if approved_by is not None and run.proposed_by_id == approved_by.pk:
+        raise ValueError("The person who proposed a distribution run can't also approve it.")
 
     expense_code = (
         DIVIDEND_EXPENSE_ACCOUNT_CODE if run.kind == DistributionKind.DIVIDEND else INTEREST_EXPENSE_ACCOUNT_CODE

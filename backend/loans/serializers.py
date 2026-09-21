@@ -74,14 +74,22 @@ class LoanSerializer(serializers.ModelSerializer):
             "schedule", "repayments", "outstanding_balance", "arrears",
         ]
 
-    def get_outstanding_balance(self, loan):
-        return sum(
-            (row.total_due - row.principal_paid - row.interest_paid for row in loan.schedule.all()),
-            Decimal("0"),
+    # Both return money as a string, same as every balance elsewhere in the
+    # API (e.g. savings.serializers.ShareAccountSerializer.get_balance) -
+    # a raw Decimal from a SerializerMethodField is rendered by DRF's JSON
+    # encoder as a float, which clients (the mobile app especially) would
+    # then have to parse back from a lossy number. CLAUDE.md rule 1.
+    def get_outstanding_balance(self, loan) -> str:
+        return str(
+            sum(
+                (row.total_due - row.principal_paid - row.interest_paid for row in loan.schedule.all()),
+                Decimal("0"),
+            )
         )
 
     def get_arrears(self, loan):
-        return get_arrears_status(loan)
+        arrears = get_arrears_status(loan)
+        return {**arrears, "amount_overdue": str(arrears["amount_overdue"])}
 
 
 class LoanApplyInputSerializer(serializers.Serializer):
