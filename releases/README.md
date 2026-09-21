@@ -13,5 +13,5 @@ number and password your group gave you.
 ## Details
 - Version 0.1.0, Android 7.0 or newer.
 - Signed by Inuka West Empowerment Group.
-- Server: `http://inuka.20.166.120.83.nip.io:8090`. It uses plain HTTP (no certificate yet).
+- Server: `http://inuka.20.166.120.83.sslip.io:8090`. It uses plain HTTP (no certificate yet).
   Move to a real domain with HTTPS before using it for real member money.
