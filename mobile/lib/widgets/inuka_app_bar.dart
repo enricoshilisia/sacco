@@ -8,9 +8,10 @@ import '../theme.dart';
 import 'glass.dart';
 import 'member_avatar.dart';
 
-/// The one top bar used on every screen, so the app looks the same
-/// everywhere: frosted glass, the Inuka West logo (or a back button on
-/// inner screens), the title, and the person's avatar for their profile.
+/// The one top bar used on every signed-in screen, so the app looks the same
+/// everywhere: frosted glass, a back button when there's somewhere to go
+/// back to, the Inuka West logo and name, the page name, and the person's
+/// photo/initials opening their profile.
 class InukaAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String? subtitle;
@@ -55,34 +56,36 @@ class InukaAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Row(
                     children: [
                       const SizedBox(width: 8),
-                      if (canPop)
-                        _CircleButton(icon: Icons.arrow_back_rounded, onTap: () => Navigator.of(context).maybePop())
-                      else
-                        const Padding(padding: EdgeInsets.all(6), child: InukaLogo(size: 38)),
+                      // Same layout on every screen: [back] logo  Inuka West / page  ...  avatar
+                      if (canPop) ...[
+                        _CircleButton(icon: Icons.arrow_back_rounded, onTap: () => Navigator.of(context).maybePop()),
+                        const SizedBox(width: 6),
+                      ],
+                      const Padding(padding: EdgeInsets.symmetric(vertical: 6), child: InukaLogo(size: 38)),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Main screens: "Inuka West" with the page underneath.
-                            // Inner screens (with a back button): the page title.
-                            Text(canPop ? title : AppLocalizations.of(context).appTitle,
+                            Text(AppLocalizations.of(context).appTitle,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.titleLarge?.copyWith(
+                                style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w800,
-                                  letterSpacing: -0.3,
-                                  color: canPop ? null : InukaColors.red,
+                                  letterSpacing: -0.2,
+                                  color: InukaColors.red,
+                                  height: 1.1,
                                 )),
-                            if ((canPop ? subtitle : (subtitle ?? title))?.isNotEmpty ?? false)
-                              Text((canPop ? subtitle : (subtitle ?? title))!,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                    fontWeight: FontWeight.w600,
-                                  )),
+                            Text(
+                              [title, if (subtitle != null && subtitle!.isNotEmpty) subtitle!].join(' · '),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/session.dart';
@@ -62,6 +63,15 @@ class HomeShellState extends State<HomeShell> {
   // Bumped to force a tab to reload after an action elsewhere changed its data.
   final Map<AppTab, int> _versions = {for (final t in AppTab.values) t: 0};
 
+  // Each tab has its own screen stack, so screens opened from a tab (a loan,
+  // a report, Profile...) open *inside* it: the top bar and the bottom menu
+  // stay on every screen, and each tab remembers where you were.
+  final Map<AppTab, GlobalKey<NavigatorState>> _navigators = {
+    for (final t in AppTab.values) t: GlobalKey<NavigatorState>(debugLabel: 'tab-${t.name}'),
+  };
+
+  NavigatorState? get _currentNavigator => _navigators[_current]!.currentState;
+
   bool get profileInBar => _bar.contains(AppTab.profile);
 
   void _layout(Session session) {
@@ -71,7 +81,8 @@ class HomeShellState extends State<HomeShell> {
     if (!_bar.contains(_current)) _current = _bar.first;
   }
 
-  /// Show a destination: switch to it if it's in the bar, otherwise open it.
+  /// Show a destination: switch to it if it's in the bar, otherwise open it
+  /// inside the current tab (so the bottom menu stays).
   void goTo(AppTab tab, {bool refresh = false}) {
     if (_bar.contains(tab)) {
       setState(() {
@@ -84,13 +95,36 @@ class HomeShellState extends State<HomeShell> {
   }
 
   void open(BuildContext context, AppTab tab) =>
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => screenFor(tab, pushed: true)));
+      _currentNavigator?.push(MaterialPageRoute(builder: (_) => screenFor(tab, pushed: true)));
 
   void refreshAll() => setState(() {
         for (final t in AppTab.values) {
           _versions[t] = _versions[t]! + 1;
         }
       });
+
+  void _select(int i) {
+    final tab = _bar[i];
+    if (tab == _current) {
+      // Tapping the tab you're on takes you back to its first screen.
+      _currentNavigator?.popUntil((route) => route.isFirst);
+    } else {
+      setState(() => _current = tab);
+    }
+  }
+
+  /// Android back: step back inside the current tab first, then return to
+  /// the first tab, and only then leave the app.
+  void _handleBack() {
+    final nav = _currentNavigator;
+    if (nav != null && nav.canPop()) {
+      nav.pop();
+    } else if (_current != _bar.first) {
+      setState(() => _current = _bar.first);
+    } else {
+      SystemNavigator.pop();
+    }
+  }
 
   Widget screenFor(AppTab tab, {bool pushed = false}) {
     final key = pushed ? null : ValueKey('${tab.name}${_versions[tab]}');
@@ -114,16 +148,30 @@ class HomeShellState extends State<HomeShell> {
     };
   }
 
+  Widget _tab(AppTab tab) => Navigator(
+        key: _navigators[tab],
+        // The root page keeps its key; its screen is keyed by the tab's
+        // version, so a refresh reloads it without closing screens opened on top.
+        pages: [MaterialPage(key: ValueKey('${tab.name}-root'), child: screenFor(tab))],
+        onDidRemovePage: (_) {},
+      );
+
   @override
   Widget build(BuildContext context) {
     _layout(context.watch<Session>());
     final index = _bar.indexOf(_current);
-    return Scaffold(
-      body: IndexedStack(index: index, children: [for (final t in _bar) screenFor(t)]),
-      bottomNavigationBar: GlassNavBar(
-        selectedIndex: index,
-        onSelected: (i) => setState(() => _current = _bar[i]),
-        items: [for (final t in _bar) navItem(AppLocalizations.of(context), t)],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _handleBack();
+      },
+      child: Scaffold(
+        body: IndexedStack(index: index, children: [for (final t in _bar) _tab(t)]),
+        bottomNavigationBar: GlassNavBar(
+          selectedIndex: index,
+          onSelected: _select,
+          items: [for (final t in _bar) navItem(AppLocalizations.of(context), t)],
+        ),
       ),
     );
   }

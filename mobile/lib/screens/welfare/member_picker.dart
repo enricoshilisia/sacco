@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../core/session.dart';
 import '../../models/welfare.dart';
 import '../../widgets/common.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 /// Full-screen member search (by name, member number or phone) using the
 /// welfare-scoped search endpoint. Pops with the chosen [MemberBrief].
@@ -63,16 +64,18 @@ class _MemberPickerScreenState extends State<_MemberPickerScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(
-        title: TextField(
-          controller: _query,
-          autofocus: true,
-          onChanged: _onChanged,
-          decoration: InputDecoration(
-            hintText: l10n.searchMemberHint,
-            border: InputBorder.none,
-            filled: false,
-            prefixIcon: const Icon(Icons.search),
+      appBar: InukaAppBar(
+        title: l10n.welfarePickMember,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(64),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+            child: TextField(
+              controller: _query,
+              autofocus: true,
+              onChanged: _onChanged,
+              decoration: InputDecoration(hintText: l10n.searchMemberHint, prefixIcon: const Icon(Icons.search)),
+            ),
           ),
         ),
       ),
