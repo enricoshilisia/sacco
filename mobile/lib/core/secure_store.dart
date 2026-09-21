@@ -15,6 +15,7 @@ class SecureStore {
   static const _kRefresh = 'refresh_token';
   static const _kBiometric = 'biometric_enabled';
   static const _kLocale = 'locale';
+  static const _kLocationAsked = 'location_asked';
 
   Future<Sacco?> readSacco() async {
     final raw = await _storage.read(key: _kSacco);
@@ -48,4 +49,7 @@ class SecureStore {
 
   Future<String?> readLocale() => _storage.read(key: _kLocale);
   Future<void> writeLocale(String code) => _storage.write(key: _kLocale, value: code);
+
+  Future<bool> readLocationAsked() async => (await _storage.read(key: _kLocationAsked)) == 'true';
+  Future<void> writeLocationAsked() => _storage.write(key: _kLocationAsked, value: 'true');
 }

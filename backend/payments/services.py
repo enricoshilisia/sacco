@@ -41,6 +41,14 @@ def initiate_collection(
         raise ValueError("Collection amount must be positive.")
     if purpose == CollectionPurpose.SAVINGS_DEPOSIT and savings_account is None:
         raise ValueError("savings_account is required for a savings deposit collection.")
+    if purpose == CollectionPurpose.REGISTRATION_FEE:
+        from members.admission import verification_status
+
+        outstanding = verification_status(member)["fee_outstanding"]
+        if outstanding <= 0:
+            raise ValueError("There is no registration fee outstanding.")
+        if amount > outstanding:
+            raise ValueError(f"Only {outstanding} of the registration fee is outstanding.")
 
     idempotency_key = idempotency_key or f"collect-{uuid.uuid4().hex}"
     existing = PaymentCollection.objects.filter(idempotency_key=idempotency_key).first()
@@ -134,6 +142,23 @@ def handle_collection_callback(
             collection.welfare_payment = payment
             update_fields = ["status", "provider_receipt", "welfare_payment", "raw_callback", "completed_at"]
             confirmation_target = "welfare contributions"
+        elif collection.purpose == CollectionPurpose.REGISTRATION_FEE:
+            # One-off, non-refundable: SACCO income (members.admission).
+            from members.admission import record_registration_fee
+            from members.models import PaymentMethod
+
+            fee = record_registration_fee(
+                member=collection.member,
+                amount=collection.amount,
+                method=PaymentMethod.MOBILE_MONEY,
+                paid_on=date.today(),
+                reference=receipt or provider_reference,
+                idempotency_key=f"collection-{collection.pk}",
+                recorded_by=collection.created_by,
+            )
+            collection.registration_fee = fee
+            update_fields = ["status", "provider_receipt", "registration_fee", "raw_callback", "completed_at"]
+            confirmation_target = "registration fee"
         elif collection.purpose == CollectionPurpose.SHARE_CONTRIBUTION:
             contribution = contribute_shares(
                 member=collection.member,

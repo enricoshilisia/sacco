@@ -49,9 +49,12 @@ class RegisterRow {
   final String fullName;
   String? status;
   final String apologyReason;
+  /// New members on probation attend but can't vote.
+  final bool isVerified;
 
   RegisterRow.fromJson(Map<String, dynamic> j)
-      : memberId = _str(j['member_id']),
+      : isVerified = j['is_verified'] != false,
+        memberId = _str(j['member_id']),
         memberNumber = _str(j['member_number']),
         fullName = _str(j['full_name']),
         status = j['status'] as String?,

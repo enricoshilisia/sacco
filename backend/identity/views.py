@@ -14,6 +14,37 @@ from .serializers import TenantAccessSerializer, TenantScopedTokenObtainPairSeri
 class TenantScopedTokenObtainPairView(TokenObtainPairView):
     serializer_class = TenantScopedTokenObtainPairSerializer
 
+    def post(self, request, *args, **kwargs):
+        try:
+            response = super().post(request, *args, **kwargs)
+        except Exception:
+            self._audit(request, ok=False)
+            raise
+        self._audit(request, ok=response.status_code == 200)
+        return response
+
+    @staticmethod
+    def _audit(request, *, ok):
+        """Every sign-in attempt goes in the SACCO's audit log - failures
+        included, with the phone number that was tried."""
+        from django.db import connection
+        from django_tenants.utils import get_public_schema_name
+
+        if connection.schema_name == get_public_schema_name():
+            return
+        from audit.models import AuditAction
+        from audit.services import record
+
+        phone = str(request.data.get("phone_number", ""))[:20]
+        user = User.objects.filter(phone_number=phone).first() if ok else None
+        record(
+            request=request, user=user, actor="" if ok else phone,
+            action=AuditAction.LOGIN if ok else AuditAction.LOGIN_FAILED,
+            event="auth.login" if ok else "auth.login_failed", area="auth",
+            summary="Signed in" if ok else f"Failed sign-in for {phone}",
+            method="POST", path=request.path, status_code=200 if ok else 401,
+        )
+
 
 def _tokens_for(user):
     refresh = RefreshToken.for_user(user)
@@ -87,9 +118,14 @@ class ChangePasswordView(APIView):
             return Response({"detail": "Current password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
         if len(new_password) < 8:
             return Response({"detail": "New password must be at least 8 characters."}, status=status.HTTP_400_BAD_REQUEST)
+        if new_password == current_password:
+            return Response({"detail": "Choose a password different from the current one."}, status=status.HTTP_400_BAD_REQUEST)
         request.user.set_password(new_password)
-        request.user.save(update_fields=["password"])
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        request.user.must_change_password = False
+        request.user.save(update_fields=["password", "must_change_password"])
+        # Changing the password signs out every other session (CHECK_REVOKE_TOKEN),
+        # so hand this device fresh tokens.
+        return Response(_tokens_for(request.user))
 
 
 class WebAuthnRegistrationOptionsView(APIView):

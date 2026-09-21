@@ -98,6 +98,10 @@ def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transac
             from members.activity import note_activity
 
             note_activity(savings_account.member, reason="made a monthly contribution", by=created_by)
+            # New members become verified after N consecutive monthly contributions.
+            from members.admission import check_verification
+
+            check_verification(savings_account.member)
         return txn
 
 

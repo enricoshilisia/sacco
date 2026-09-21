@@ -14,6 +14,11 @@ const treasurer = [
 ];
 const teller = ['loans.repay', 'members.view', 'savings.deposit', 'savings.view', 'welfare.record_payment'];
 const loanOfficer = ['loans.apply', 'loans.appraise', 'loans.view', 'members.view', 'reports.view'];
+const chair = [
+  'members.view', 'members.approve_admission', 'welfare.view', 'welfare.approve_case', 'governance.call_meeting',
+  'governance.take_attendance', 'reports.view', 'accounting.view_ledger', 'loans.view', 'distributions.view',
+];
+const itAdmin = ['members.view', 'users.view', 'users.reset_password', 'users.manage_access', 'audit.view'];
 
 void main() {
   test('ordinary member: their five money screens, no More', () {
@@ -53,5 +58,25 @@ void main() {
         expect(buildMenu(isMember: isMember, profile: profile(perms)).bar.length, lessThanOrEqualTo(5));
       }
     }
+  });
+
+  test('chairperson member: approvals right after home', () {
+    final menu = buildMenu(isMember: true, profile: profile(chair));
+    expect(menu.bar[1], AppTab.approvals);
+  });
+
+  test('IT administrator: admin tools, no money screens', () {
+    final menu = buildMenu(isMember: false, profile: profile(itAdmin));
+    expect(menu.bar, [AppTab.leaderHome, AppTab.admin, AppTab.members, AppTab.profile]);
+    expect(profile(itAdmin).hasStaffTools, isTrue);
+  });
+
+  test('temporary password flag is read from the profile', () {
+    final p = TenantProfile.fromJson({
+      'user': {'id': 'u1', 'must_change_password': true},
+      'permissions': <String>[],
+    });
+    expect(p.mustChangePassword, isTrue);
+    expect(p.userId, 'u1');
   });
 }

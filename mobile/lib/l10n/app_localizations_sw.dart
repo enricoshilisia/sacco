@@ -2206,4 +2206,499 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get ruleArchiveAfterMeetings => 'Kagua kusitisha baada ya (mikutano)';
+
+  @override
+  String get navAdmin => 'Utawala';
+
+  @override
+  String get adminTitle => 'Utawala na msaada';
+
+  @override
+  String get adminHelp => 'Watumiaji, nywila, nyadhifa, kumbukumbu';
+
+  @override
+  String get adminUsers => 'Watumiaji na msaada';
+
+  @override
+  String get adminUsersHelp =>
+      'Tafuta mtu, weka upya nywila, zima au washa kuingia';
+
+  @override
+  String get adminPositions => 'Nyadhifa na majukumu';
+
+  @override
+  String get adminPositionsHelp => 'Wape watu nyadhifa, waondoe, unda mpya';
+
+  @override
+  String get adminAudit => 'Kumbukumbu za ukaguzi';
+
+  @override
+  String get adminAuditHelp =>
+      'Nani alifanya au kuona nini, lini, wapi na kwa kifaa gani';
+
+  @override
+  String get adminSecurity => 'Kuingia na usalama';
+
+  @override
+  String get adminSecurityHelp =>
+      'Kuingia, majaribio yaliyoshindwa, kuweka nywila upya, mabadiliko ya majukumu';
+
+  @override
+  String get allow => 'Ruhusu';
+
+  @override
+  String get notNow => 'Si sasa';
+
+  @override
+  String get anyDate => 'Tarehe yoyote';
+
+  @override
+  String get copy => 'Nakili';
+
+  @override
+  String get copied => 'Imenakiliwa';
+
+  @override
+  String get share => 'Shiriki';
+
+  @override
+  String get remove => 'Ondoa';
+
+  @override
+  String get notes => 'Maelezo';
+
+  @override
+  String get downloadCsv => 'Pakua CSV';
+
+  @override
+  String get idScan => 'Changanua kitambulisho';
+
+  @override
+  String idScanRead(String number) {
+    return 'Nambari ya kitambulisho $number imesomwa';
+  }
+
+  @override
+  String get paymentMethodLabel => 'Imelipwa kwa';
+
+  @override
+  String get receiptReference => 'Risiti / kumbukumbu';
+
+  @override
+  String get taskApplicationsToApprove => 'Wanachama wapya wa kuidhinisha';
+
+  @override
+  String get profileChangesTab => 'Mabadiliko ya wasifu';
+
+  @override
+  String get applicationsTitle => 'Wanachama wapya';
+
+  @override
+  String get applicationsEmpty => 'Hakuna maombi yanayosubiri.';
+
+  @override
+  String applicationBy(String name, String date) {
+    return 'na $name, $date';
+  }
+
+  @override
+  String applicationDecidedBy(String name, String date) {
+    return 'Imeamuliwa na $name, $date';
+  }
+
+  @override
+  String get applicationSubmitted => 'Imetumwa kuidhinishwa';
+
+  @override
+  String applicationApproved(String number) {
+    return 'Imeidhinishwa - nambari $number';
+  }
+
+  @override
+  String get applicationCancelled => 'Imeghairiwa';
+
+  @override
+  String get approveApplication => 'Idhinisha mwanachama mpya';
+
+  @override
+  String approveApplicationBody(String name) {
+    return '$name atakuwa mwanachama wa majaribio na atapata kuingia kwa nywila ya muda.';
+  }
+
+  @override
+  String get cancelApplication => 'Ghairi ombi';
+
+  @override
+  String get cancelApplicationBody =>
+      'Ondoa ombi hili? Rudisha ada yoyote iliyokusanywa.';
+
+  @override
+  String get cantApproveOwnApplication =>
+      'Ulimsajili mwombaji huyu, kwa hiyo mtu mwingine lazima aidhinishe.';
+
+  @override
+  String get registerMember => 'Sajili mwanachama';
+
+  @override
+  String get registerMemberHelp =>
+      'Mwenyekiti (au mwidhinishaji mwingine) lazima aidhinishe kabla mwanachama hajaundwa. Nambari na kuingia hutolewa baada ya kuidhinishwa.';
+
+  @override
+  String get registrationFee => 'Ada ya usajili';
+
+  @override
+  String registrationFeeIs(String amount) {
+    return 'Ada ya usajili ni $amount.';
+  }
+
+  @override
+  String get registrationFeeZeroHelp => '0 = hakuna ada';
+
+  @override
+  String get feeCollectedNow => 'Ada imekusanywa sasa';
+
+  @override
+  String get feeCollectedHelp =>
+      'Huandikwa vitabuni baada ya kuidhinishwa tu; irudishe likikataliwa.';
+
+  @override
+  String get feeNotCollected => 'Haikukusanywa wakati wa usajili.';
+
+  @override
+  String memberNumberIs(String number) {
+    return 'Nambari ya mwanachama $number';
+  }
+
+  @override
+  String get recordRegistrationFee => 'Rekodi ada ya usajili';
+
+  @override
+  String get registrationFeeRecorded => 'Ada ya usajili imerekodiwa';
+
+  @override
+  String get payRegistrationFee => 'Lipa ada ya usajili';
+
+  @override
+  String get payTitleRegistrationFee => 'Lipa ada ya usajili';
+
+  @override
+  String get registrationFeePayHelp =>
+      'Mara moja na hairudishwi. Inahitajika kwa uanachama kamili.';
+
+  @override
+  String get membershipRules => 'Kanuni za uanachama';
+
+  @override
+  String membershipRulesSummary(String fee, int months) {
+    return 'Ada $fee · kuthibitishwa baada ya michango $months ya mwezi mfululizo';
+  }
+
+  @override
+  String get verificationMonthsLabel =>
+      'Michango ya mwezi mfululizo ili kuthibitishwa';
+
+  @override
+  String get probation => 'Majaribio';
+
+  @override
+  String get probationTitle => 'Mwanachama mpya - majaribio';
+
+  @override
+  String get probationBody =>
+      'Utakuwa mwanachama kamili haya yakikamilika. Hadi hapo huwezi kukopa, kudhamini, kulindwa na ustawi, kupiga kura au kushika wadhifa.';
+
+  @override
+  String probationFeePaid(String amount) {
+    return 'Ada ya usajili $amount imelipwa';
+  }
+
+  @override
+  String probationFeeDue(String amount) {
+    return 'Ada ya usajili: $amount ya kulipa';
+  }
+
+  @override
+  String probationMonths(int done, int total) {
+    return 'Michango ya mwezi mfululizo: $done kati ya $total';
+  }
+
+  @override
+  String get probationNoVote =>
+      'Mwanachama mpya wa majaribio - hawezi kupiga kura bado';
+
+  @override
+  String get tempPasswordTitle => 'Chagua nywila yako';
+
+  @override
+  String get tempPasswordHelp =>
+      'Umeingia kwa nywila ya muda. Chagua mpya unayoijua wewe tu.';
+
+  @override
+  String get tempPasswordCurrent => 'Nywila ya muda';
+
+  @override
+  String get tempPasswordIssued => 'Nywila ya muda';
+
+  @override
+  String get tempPasswordOnce =>
+      'Inaonyeshwa sasa tu. Watachagua yao wakiingia.';
+
+  @override
+  String tempPasswordShareText(String name, String phone, String password) {
+    return 'Inuka West: $name, ingia kwa simu yako $phone na nywila ya muda $password. Kisha utachagua yako.';
+  }
+
+  @override
+  String get temporaryPasswordPending => 'Nywila ya muda';
+
+  @override
+  String get pickPerson => 'Chagua mtu';
+
+  @override
+  String get searchPeopleHint => 'Jina, simu au nambari';
+
+  @override
+  String get noPeopleFound => 'Hakuna aliyepatikana.';
+
+  @override
+  String get disabledLogins => 'Kuingia kulikozimwa';
+
+  @override
+  String get loginActive => 'Kuingia kunafanya kazi';
+
+  @override
+  String get loginDisabled => 'Kuingia kumezimwa';
+
+  @override
+  String get loginEnabled => 'Kuingia kumewashwa tena';
+
+  @override
+  String get disableLogin => 'Zima kuingia';
+
+  @override
+  String get enableLogin => 'Washa kuingia';
+
+  @override
+  String disableLoginBody(String name) {
+    return '$name ataondolewa sasa na hataweza kuingia hadi kuwashwa. Kumbukumbu zake zinabaki.';
+  }
+
+  @override
+  String enableLoginBody(String name) {
+    return '$name ataweza kuingia tena.';
+  }
+
+  @override
+  String get resetPassword => 'Weka upya nywila';
+
+  @override
+  String resetPasswordBody(String name) {
+    return '$name atapata nywila ya muda ya kumpa, na ataondolewa kwenye kila simu.';
+  }
+
+  @override
+  String get supportActions => 'Msaada';
+
+  @override
+  String get viewActivity => 'Angalia shughuli';
+
+  @override
+  String get lastSignIn => 'Kuingia mara ya mwisho';
+
+  @override
+  String get lastActive => 'Mara ya mwisho kutumia';
+
+  @override
+  String get neverSeen => 'Kamwe';
+
+  @override
+  String get seenJustNow => 'Sasa hivi';
+
+  @override
+  String seenMinutesAgo(int count) {
+    return 'Dakika $count zilizopita';
+  }
+
+  @override
+  String seenHoursAgo(int count) {
+    return 'Saa $count zilizopita';
+  }
+
+  @override
+  String seenDaysAgo(int count) {
+    return 'Siku $count zilizopita';
+  }
+
+  @override
+  String get devicesAndPlaces => 'Vifaa na mahali';
+
+  @override
+  String get recentActivity => 'Shughuli za karibuni';
+
+  @override
+  String get positionsHeld => 'Nyadhifa';
+
+  @override
+  String get givePosition => 'Mpe wadhifa';
+
+  @override
+  String givePositionTo(String name) {
+    return 'Mpe $name wadhifa';
+  }
+
+  @override
+  String get positionsHelp =>
+      'Kila ofisi ina mshikaji na msaidizi, ili mmoja amkague mwingine. Wanachama wa majaribio hawawezi kushika wadhifa.';
+
+  @override
+  String get officesAndCommittees => 'Ofisi na kamati';
+
+  @override
+  String get staffRoles => 'Majukumu ya wafanyakazi';
+
+  @override
+  String holdersCount(int count) {
+    return '$count wanashikilia';
+  }
+
+  @override
+  String holdersOfMax(int count, int max) {
+    return '$count kati ya $max';
+  }
+
+  @override
+  String get positionFull => 'Imejaa';
+
+  @override
+  String get vacant => 'Wazi';
+
+  @override
+  String get assignPerson => 'Mweke mtu';
+
+  @override
+  String assistantTo(String name) {
+    return 'Msaidizi wa $name';
+  }
+
+  @override
+  String positionAssigned(String name, String position) {
+    return '$name sasa ni $position';
+  }
+
+  @override
+  String get positionRemoved => 'Ameondolewa kwenye wadhifa';
+
+  @override
+  String get removeFromPosition => 'Ondoa kwenye wadhifa';
+
+  @override
+  String removeFromPositionBody(String name, String position) {
+    return 'Ondoa $name kwenye $position? Atapoteza ruhusa zake sasa.';
+  }
+
+  @override
+  String get jobTitleOptional => 'Cheo (si lazima)';
+
+  @override
+  String get jobTitleHint => 'mfano Mweka hazina 2025-2027';
+
+  @override
+  String get newPosition => 'Wadhifa mpya';
+
+  @override
+  String get newPositionHelp =>
+      'Mfano Katibu wa Nidhamu au Mwakilishi wa Vijana. Msaidizi hupata ruhusa sawa na ofisi anayoisaidia.';
+
+  @override
+  String get positionName => 'Jina';
+
+  @override
+  String get positionNameHint => 'mfano Mwakilishi wa Vijana';
+
+  @override
+  String get positionDuties => 'Majukumu';
+
+  @override
+  String get assistantOfLabel => 'Msaidizi wa';
+
+  @override
+  String get assistantOfHelp => 'Hufanya huu kuwa msaidizi wa ofisi.';
+
+  @override
+  String get notAnAssistant => 'Si msaidizi';
+
+  @override
+  String get copyPermissionsFrom => 'Ruhusa sawa na';
+
+  @override
+  String get copyPermissionsHelp => 'Anza na ruhusa za jukumu lililopo.';
+
+  @override
+  String get noPermissionsYet => 'Hakuna bado';
+
+  @override
+  String get maxHoldersLabel => 'Watu wangapi wanaweza kuushika';
+
+  @override
+  String get noLimit => 'Bila kikomo';
+
+  @override
+  String get createPosition => 'Unda wadhifa';
+
+  @override
+  String get positionCreated => 'Wadhifa umeundwa';
+
+  @override
+  String get auditSearchHint => 'Tafuta nani, nini, wapi, kifaa au IP';
+
+  @override
+  String get auditSecurityOnly => 'Kuingia na usalama tu';
+
+  @override
+  String get auditEmpty => 'Hakuna kilichorekodiwa kwa kichujio hiki.';
+
+  @override
+  String get auditWho => 'Nani';
+
+  @override
+  String get auditWhen => 'Lini';
+
+  @override
+  String get auditAction => 'Kitendo';
+
+  @override
+  String get auditRecord => 'Kumbukumbu';
+
+  @override
+  String get auditResult => 'Matokeo';
+
+  @override
+  String get auditOk => 'Imeruhusiwa';
+
+  @override
+  String auditRefused(int code) {
+    return 'Imekataliwa ($code)';
+  }
+
+  @override
+  String get auditWhere => 'Wapi';
+
+  @override
+  String get auditCoordinates => 'Viwianishi';
+
+  @override
+  String get auditIp => 'Anwani ya IP';
+
+  @override
+  String get auditDevice => 'Kifaa';
+
+  @override
+  String get auditRequest => 'Ombi';
+
+  @override
+  String get locationAskTitle => 'Linda akaunti yako';
+
+  @override
+  String get locationAskBody =>
+      'Inuka West inaweza kurekodi eneo la takriban unapoingia, ili SACCO igundue mtu mwingine akitumia akaunti yako. Huhifadhiwa kwenye kumbukumbu za ukaguzi za SACCO tu. Unaweza kukataa.';
 }

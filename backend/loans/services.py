@@ -79,6 +79,9 @@ def apply_for_loan(
         raise ValueError("Loan amount must be positive.")
     if member.status != "ACTIVE":
         raise ValueError("Your membership is dormant. Contribute or attend a meeting to reactivate it, then apply.")
+    from members.admission import require_verified
+
+    require_verified(member, "borrow")
     if not (product.min_term_months <= term_months <= product.max_term_months):
         raise ValueError(
             f"Term must be between {product.min_term_months} and {product.max_term_months} months."
@@ -119,6 +122,9 @@ def add_guarantor(*, loan: Loan, guarantor, pledged_amount: Decimal) -> LoanGuar
         raise ValueError("A member cannot guarantee their own loan.")
     if guarantor.status != "ACTIVE":
         raise ValueError("That member's membership isn't active, so they can't guarantee loans.")
+    from members.admission import require_verified
+
+    require_verified(guarantor, "guarantee loans")
     if pledged_amount <= 0:
         raise ValueError("Pledged amount must be positive.")
     if loan.guarantors.filter(guarantor=guarantor).exists():
@@ -133,6 +139,9 @@ def respond_to_guarantee(*, loan_guarantor: LoanGuarantor, accept: bool) -> Loan
     if accept:
         if loan_guarantor.guarantor.status != "ACTIVE":
             raise ValueError("Your membership is dormant, so you can't guarantee loans until it's reactivated.")
+        from members.admission import require_verified
+
+        require_verified(loan_guarantor.guarantor, "guarantee loans")
         available = get_available_deposits(loan_guarantor.guarantor)
         if loan_guarantor.pledged_amount > available:
             raise ValueError(

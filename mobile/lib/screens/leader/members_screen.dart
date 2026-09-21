@@ -16,6 +16,11 @@ import '../../widgets/labels.dart';
 import '../../models/welfare.dart';
 import '../welfare/welfare_counter.dart';
 import 'loan_desk_screen.dart';
+import 'admission_screens.dart';
+import '../../core/admin_api.dart';
+import '../../models/admin.dart';
+import '../dashboard_screen.dart' show ProbationCard;
+import 'package:uuid/uuid.dart';
 import '../../widgets/inuka_app_bar.dart';
 
 /// Member directory for staff (members.view): search, open a member, and
@@ -44,8 +49,27 @@ class _MembersScreenState extends State<MembersScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final session = context.watch<Session>();
+    final admissions = session.can('members.register') || session.can('members.approve_admission');
     return Scaffold(
-      appBar: InukaAppBar(title: l10n.leaderMembers),
+      appBar: InukaAppBar(
+        title: l10n.leaderMembers,
+        actions: [
+          if (admissions)
+            IconButton(
+              tooltip: l10n.applicationsTitle,
+              icon: const Icon(Icons.how_to_reg_outlined),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ApplicationsView())),
+            ),
+        ],
+      ),
+      floatingActionButton: session.can('members.register')
+          ? FloatingActionButton.extended(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ApplicationFormScreen())),
+              icon: const Icon(Icons.person_add_alt_1),
+              label: Text(l10n.registerMember),
+            )
+          : null,
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -397,6 +421,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
                   },
                 ),
               ],
+              _VerificationSection(memberId: m.id),
               if (data.statement != null) ...[
                 SectionTitle(l10n.savingsTitle),
                 Card(
@@ -573,6 +598,110 @@ class _CounterSheetState extends State<_CounterSheet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+
+/// Probation status of a member, and recording a registration fee paid at
+/// the counter (members.record_fee). Hidden for verified members.
+class _VerificationSection extends StatefulWidget {
+  final String memberId;
+  const _VerificationSection({required this.memberId});
+
+  @override
+  State<_VerificationSection> createState() => _VerificationSectionState();
+}
+
+class _VerificationSectionState extends State<_VerificationSection> {
+  late Future<Verification> _future = context.read<Session>().api!.memberVerification(widget.memberId);
+
+  Future<void> _recordFee(Verification v) async {
+    final l10n = context.l10n;
+    final amount = TextEditingController(text: v.feeOutstanding.toString());
+    final reference = TextEditingController();
+    var method = 'CASH';
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(l10n.recordRegistrationFee),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            TextField(
+              controller: amount,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(labelText: l10n.amount),
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              initialValue: method,
+              decoration: InputDecoration(labelText: l10n.paymentMethodLabel),
+              items: [
+                for (final m in const ['CASH', 'BANK', 'MOBILE_MONEY'])
+                  DropdownMenuItem(value: m, child: Text(paymentMethod(l10n, m))),
+              ],
+              onChanged: (v) => setState(() => method = v ?? method),
+            ),
+            const SizedBox(height: 10),
+            TextField(controller: reference, decoration: InputDecoration(labelText: l10n.receiptReference)),
+          ]),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+            FilledButton(
+              style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l10n.save),
+            ),
+          ],
+        ),
+      ),
+    );
+    final value = Money.parseUserInput(amount.text);
+    final ref = reference.text.trim();
+    amount.dispose();
+    reference.dispose();
+    if (result != true || !mounted) return;
+    if (value == null || value <= Decimal.zero) {
+      showSnack(context, l10n.amountInvalid, error: true);
+      return;
+    }
+    final api = context.read<Session>().api!;
+    final key = const Uuid().v4();
+    if (await runAction(
+          context,
+          () => api.recordRegistrationFee(widget.memberId,
+              amount: value, method: method, paidOn: DateTime.now(), idempotencyKey: key, reference: ref),
+          done: l10n.registrationFeeRecorded,
+        ) &&
+        mounted) {
+      setState(() => _future = api.memberVerification(widget.memberId));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final session = context.watch<Session>();
+    return FutureBuilder<Verification>(
+      future: _future,
+      builder: (context, snap) {
+        final v = snap.data;
+        if (v == null || v.verified) return const SizedBox.shrink();
+        return Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            ProbationCard(verification: v),
+            if (!v.feeDone && session.can('members.record_fee')) ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.receipt_long_outlined),
+                label: Text(l10n.recordRegistrationFee),
+                onPressed: () => _recordFee(v),
+              ),
+            ],
+          ]),
+        );
+      },
     );
   }
 }

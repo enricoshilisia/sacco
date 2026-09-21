@@ -417,6 +417,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Row(children: [
                                 Expanded(child: Text(r.fullName, style: const TextStyle(fontWeight: FontWeight.w700))),
+                                if (!r.isVerified) ...[
+                                  Tooltip(message: l10n.probationNoVote, child: StatusChip(l10n.probation, tone: Tone.warn)),
+                                  const SizedBox(width: 6),
+                                ],
                                 Text(r.memberNumber, style: theme.textTheme.bodySmall),
                               ]),
                               if (r.apologyReason.isNotEmpty)

@@ -257,10 +257,17 @@ class SaccoApi {
           .map((y) => (y['year'] as num).toInt())
           .toSet();
 
-  Future<void> changePassword(String current, String next) => client.post<Object?>(
-        '/api/auth/me/change-password/',
-        data: {'current_password': current, 'new_password': next},
-      );
+  /// Changing the password signs out every session (the backend revokes
+  /// old tokens), so it hands back fresh tokens for this device.
+  Future<void> changePassword(String current, String next) async {
+    final data = await client.post<Object?>(
+      '/api/auth/me/change-password/',
+      data: {'current_password': current, 'new_password': next},
+    );
+    if (data is Map && data['access'] is String && data['refresh'] is String) {
+      await client.store.writeTokens(data['access'] as String, data['refresh'] as String);
+    }
+  }
 }
 
 String _isoDate(DateTime d) =>

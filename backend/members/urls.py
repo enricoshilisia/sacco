@@ -1,12 +1,21 @@
 from django.urls import path
 
-from . import activity_views, profile_views, views
+from . import activity_views, admission_views, profile_views, views
 
 app_name = "members"
 
 urlpatterns = [
     path("", views.MemberListCreateView.as_view(), name="member_list_create"),
     path("me/", views.MyMemberView.as_view(), name="my_member"),
+    path("me/verification/", admission_views.MyVerificationView.as_view(), name="my_verification"),
+    path("applications/", admission_views.ApplicationListCreateView.as_view(), name="application_list"),
+    path("applications/<uuid:pk>/", admission_views.ApplicationDetailView.as_view(), name="application_detail"),
+    path("applications/<uuid:pk>/approve/", admission_views.ApplicationDecisionView.as_view(approve=True),
+         name="application_approve"),
+    path("applications/<uuid:pk>/reject/", admission_views.ApplicationDecisionView.as_view(approve=False),
+         name="application_reject"),
+    path("applications/<uuid:pk>/cancel/", admission_views.ApplicationCancelView.as_view(), name="application_cancel"),
+    path("membership-settings/", admission_views.MembershipSettingsView.as_view(), name="membership_settings"),
     path("me/photo/", views.MyMemberPhotoUploadView.as_view(), name="my_member_photo_upload"),
     path("me/profile/", profile_views.MyProfileView.as_view(), name="my_profile"),
     path("me/activity/", activity_views.MyActivityView.as_view(), name="my_activity"),
@@ -48,6 +57,8 @@ urlpatterns = [
         name="portal_invite_accept",
     ),
     path("<uuid:pk>/", views.MemberDetailView.as_view(), name="member_detail"),
+    path("<uuid:pk>/verification/", admission_views.MemberVerificationView.as_view(), name="member_verification"),
+    path("<uuid:pk>/registration-fee/", admission_views.RegistrationFeeView.as_view(), name="member_registration_fee"),
     path("<uuid:pk>/verify-kyc/", views.MemberKycVerifyView.as_view(), name="member_kyc_verify"),
     path("<uuid:pk>/family/", profile_views.MemberFamilyView.as_view(), name="member_family"),
     path("<uuid:pk>/reactivate/", activity_views.ReactivateMemberView.as_view(), name="member_reactivate"),

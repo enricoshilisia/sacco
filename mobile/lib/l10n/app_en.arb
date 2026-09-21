@@ -1076,5 +1076,350 @@
   "ruleMeetings": "Missed meetings",
   "ruleMeetingsHelp": "General meetings in a row missed without apology.",
   "ruleWarnAfterMeetings": "SMS warning after (meetings)",
-  "ruleArchiveAfterMeetings": "Review for dormancy after (meetings)"
+  "ruleArchiveAfterMeetings": "Review for dormancy after (meetings)",
+  "navAdmin": "Admin",
+  "adminTitle": "Admin & support",
+  "adminHelp": "Users, passwords, positions, audit log",
+  "adminUsers": "Users & support",
+  "adminUsersHelp": "Find anyone, reset a password, switch a login off or on",
+  "adminPositions": "Positions & roles",
+  "adminPositionsHelp": "Give people positions, remove them, create new ones",
+  "adminAudit": "Audit log",
+  "adminAuditHelp": "Who did or viewed what, when, where and on which device",
+  "adminSecurity": "Sign-ins & security",
+  "adminSecurityHelp": "Sign-ins, failed attempts, password resets, role changes",
+  "allow": "Allow",
+  "notNow": "Not now",
+  "anyDate": "Any date",
+  "copy": "Copy",
+  "copied": "Copied",
+  "share": "Share",
+  "remove": "Remove",
+  "notes": "Notes",
+  "downloadCsv": "Download CSV",
+  "idScan": "Scan ID",
+  "idScanRead": "Read ID number {number}",
+  "@idScanRead": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentMethodLabel": "Paid by",
+  "receiptReference": "Receipt / reference",
+  "taskApplicationsToApprove": "New members to approve",
+  "profileChangesTab": "Profile changes",
+  "applicationsTitle": "New members",
+  "applicationsEmpty": "No applications waiting.",
+  "applicationBy": "by {name}, {date}",
+  "@applicationBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "applicationDecidedBy": "Decided by {name}, {date}",
+  "@applicationDecidedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "applicationSubmitted": "Sent for approval",
+  "applicationApproved": "Approved - member no. {number}",
+  "@applicationApproved": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "applicationCancelled": "Cancelled",
+  "approveApplication": "Approve new member",
+  "approveApplicationBody": "{name} becomes a member on probation and gets a login with a temporary password.",
+  "@approveApplicationBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelApplication": "Cancel application",
+  "cancelApplicationBody": "Withdraw this application? Return any fee collected.",
+  "cantApproveOwnApplication": "You registered this applicant, so someone else must approve.",
+  "registerMember": "Register member",
+  "registerMemberHelp": "The Chairperson (or another approver) must approve before the member is created. Their member number and login are issued on approval.",
+  "registrationFee": "Registration fee",
+  "registrationFeeIs": "The registration fee is {amount}.",
+  "@registrationFeeIs": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "registrationFeeZeroHelp": "0 = no fee",
+  "feeCollectedNow": "Fee collected now",
+  "feeCollectedHelp": "Recorded in the books only once approved; hand it back if rejected.",
+  "feeNotCollected": "Not collected at registration.",
+  "memberNumberIs": "Member no. {number}",
+  "@memberNumberIs": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "recordRegistrationFee": "Record registration fee",
+  "registrationFeeRecorded": "Registration fee recorded",
+  "payRegistrationFee": "Pay registration fee",
+  "payTitleRegistrationFee": "Pay registration fee",
+  "registrationFeePayHelp": "One-off and non-refundable. Needed for full membership.",
+  "membershipRules": "Membership rules",
+  "membershipRulesSummary": "Fee {fee} · verified after {months} monthly contributions in a row",
+  "@membershipRulesSummary": {
+    "placeholders": {
+      "fee": {
+        "type": "String"
+      },
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "verificationMonthsLabel": "Consecutive monthly contributions to be verified",
+  "probation": "Probation",
+  "probationTitle": "New member - on probation",
+  "probationBody": "You become a full member once these are done. Until then you can't borrow, guarantee, get welfare cover, vote or hold office.",
+  "probationFeePaid": "Registration fee {amount} paid",
+  "@probationFeePaid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "probationFeeDue": "Registration fee: {amount} to pay",
+  "@probationFeeDue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "probationMonths": "Monthly contributions in a row: {done} of {total}",
+  "@probationMonths": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "probationNoVote": "New member on probation - can't vote yet",
+  "tempPasswordTitle": "Choose your own password",
+  "tempPasswordHelp": "You signed in with a temporary password. Choose a new one only you know.",
+  "tempPasswordCurrent": "Temporary password",
+  "tempPasswordIssued": "Temporary password",
+  "tempPasswordOnce": "Shown only now. They'll choose their own when they sign in.",
+  "tempPasswordShareText": "Inuka West: {name}, sign in with your phone {phone} and temporary password {password}. You'll then choose your own.",
+  "@tempPasswordShareText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "phone": {
+        "type": "String"
+      },
+      "password": {
+        "type": "String"
+      }
+    }
+  },
+  "temporaryPasswordPending": "Temporary password",
+  "pickPerson": "Choose a person",
+  "searchPeopleHint": "Name, phone or member no.",
+  "noPeopleFound": "Nobody found.",
+  "disabledLogins": "Disabled logins",
+  "loginActive": "Login active",
+  "loginDisabled": "Login disabled",
+  "loginEnabled": "Login re-enabled",
+  "disableLogin": "Disable login",
+  "enableLogin": "Re-enable login",
+  "disableLoginBody": "{name} is signed out now and can't sign in until re-enabled. Their records stay.",
+  "@disableLoginBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "enableLoginBody": "{name} will be able to sign in again.",
+  "@enableLoginBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "resetPassword": "Reset password",
+  "resetPasswordBody": "{name} gets a temporary password to share with them, and is signed out on every phone.",
+  "@resetPasswordBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "supportActions": "Support",
+  "viewActivity": "View activity",
+  "lastSignIn": "Last sign-in",
+  "lastActive": "Last active",
+  "neverSeen": "Never",
+  "seenJustNow": "Just now",
+  "seenMinutesAgo": "{count} min ago",
+  "@seenMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "seenHoursAgo": "{count} h ago",
+  "@seenHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "seenDaysAgo": "{count} days ago",
+  "@seenDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesAndPlaces": "Devices & places",
+  "recentActivity": "Recent activity",
+  "positionsHeld": "Positions",
+  "givePosition": "Give a position",
+  "givePositionTo": "Give {name} a position",
+  "@givePositionTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "positionsHelp": "Each office has a holder and an assistant, so one can check the other. New members on probation can't hold office.",
+  "officesAndCommittees": "Offices & committees",
+  "staffRoles": "Staff roles",
+  "holdersCount": "{count} holding",
+  "@holdersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "holdersOfMax": "{count} of {max}",
+  "@holdersOfMax": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "positionFull": "Full",
+  "vacant": "Vacant",
+  "assignPerson": "Assign someone",
+  "assistantTo": "Assistant to {name}",
+  "@assistantTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "positionAssigned": "{name} is now {position}",
+  "@positionAssigned": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "position": {
+        "type": "String"
+      }
+    }
+  },
+  "positionRemoved": "Removed from the position",
+  "removeFromPosition": "Remove from position",
+  "removeFromPositionBody": "Remove {name} from {position}? They lose its access now.",
+  "@removeFromPositionBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "position": {
+        "type": "String"
+      }
+    }
+  },
+  "jobTitleOptional": "Title (optional)",
+  "jobTitleHint": "e.g. Treasurer 2025-2027",
+  "newPosition": "New position",
+  "newPositionHelp": "E.g. Disciplinary Secretary or Youth Representative. An assistant gets the same permissions as the office it assists.",
+  "positionName": "Name",
+  "positionNameHint": "e.g. Youth Representative",
+  "positionDuties": "Duties",
+  "assistantOfLabel": "Assistant to",
+  "assistantOfHelp": "Makes this the assistant of an office.",
+  "notAnAssistant": "Not an assistant",
+  "copyPermissionsFrom": "Same permissions as",
+  "copyPermissionsHelp": "Start from an existing role's permissions.",
+  "noPermissionsYet": "None yet",
+  "maxHoldersLabel": "How many people can hold it",
+  "noLimit": "No limit",
+  "createPosition": "Create position",
+  "positionCreated": "Position created",
+  "auditSearchHint": "Search who, what, where, device or IP",
+  "auditSecurityOnly": "Sign-ins & security only",
+  "auditEmpty": "Nothing recorded for this filter.",
+  "auditWho": "Who",
+  "auditWhen": "When",
+  "auditAction": "Action",
+  "auditRecord": "Record",
+  "auditResult": "Result",
+  "auditOk": "Allowed",
+  "auditRefused": "Refused ({code})",
+  "@auditRefused": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "auditWhere": "Where",
+  "auditCoordinates": "Coordinates",
+  "auditIp": "IP address",
+  "auditDevice": "Device",
+  "auditRequest": "Request",
+  "locationAskTitle": "Protect your account",
+  "locationAskBody": "Inuka West can note the approximate area you sign in from, so the SACCO can spot someone else using your account. It's only kept in the SACCO's audit log. You can say no."
 }

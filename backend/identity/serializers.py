@@ -17,8 +17,9 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "preferred_language",
             "is_phone_verified",
+            "must_change_password",
         ]
-        read_only_fields = ["id", "is_phone_verified"]
+        read_only_fields = ["id", "is_phone_verified", "must_change_password"]
 
 
 class TenantAccessSerializer(serializers.ModelSerializer):
@@ -62,4 +63,6 @@ class TenantScopedTokenObtainPairSerializer(TokenObtainPairSerializer):
                     "This SACCO's free trial has ended. Contact the platform "
                     "operator to activate a paid plan."
                 )
+        # The app sends them to "choose a new password" before anything else.
+        data["must_change_password"] = self.user.must_change_password
         return data

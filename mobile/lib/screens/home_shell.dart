@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../core/client_context.dart';
 import '../core/session.dart';
 import '../l10n/app_localizations.dart';
 import '../models/models.dart';
@@ -9,6 +10,7 @@ import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/glass.dart';
 import '../widgets/inuka_app_bar.dart';
+import 'admin/admin_screen.dart';
 import 'dashboard_screen.dart';
 import 'leader/activity_screen.dart';
 import 'leader/approvals_screen.dart';
@@ -40,6 +42,7 @@ enum AppTab {
   welfareAdmin,
   reports,
   distributions,
+  admin, // users & support, positions, audit log
   profile,
   more,
 }
@@ -71,6 +74,43 @@ class HomeShellState extends State<HomeShell> {
   };
 
   NavigatorState? get _currentNavigator => _navigators[_current]!.currentState;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _askLocationOnce());
+  }
+
+  /// Once per install: explain why, then ask for approximate location, used
+  /// only to show in the SACCO's audit log where sign-ins came from.
+  /// Declining changes nothing else.
+  Future<void> _askLocationOnce() async {
+    final store = context.read<Session>().store;
+    if (await store.readLocationAsked()) {
+      await ClientContext.instance.refreshLocation();
+      return;
+    }
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final allow = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.location_on_outlined, size: 32),
+        title: Text(l10n.locationAskTitle),
+        content: Text(l10n.locationAskBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.notNow)),
+          FilledButton(
+            style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.allow),
+          ),
+        ],
+      ),
+    );
+    await store.writeLocationAsked();
+    if (allow == true) await ClientContext.instance.refreshLocation(ask: true);
+  }
 
   bool get profileInBar => _bar.contains(AppTab.profile);
 
@@ -143,6 +183,7 @@ class HomeShellState extends State<HomeShell> {
       AppTab.welfareAdmin => WelfareScreen(key: key, staffMode: true),
       AppTab.reports => ReportsScreen(key: key),
       AppTab.distributions => DistributionRunsScreen(key: key),
+      AppTab.admin => AdminScreen(key: key),
       AppTab.profile => ProfileScreen(key: key),
       AppTab.more => _MoreScreen(key: key, items: _more),
     };
@@ -186,8 +227,9 @@ const maxBarItems = 5;
 ({List<AppTab> bar, List<AppTab> more}) buildMenu({required bool isMember, TenantProfile? profile}) {
   final p = profile;
   final staff = <AppTab>[
-    if (p?.hasFinance ?? false) AppTab.finance,
+    if (p?.hasAdmin ?? false) AppTab.admin,
     if (p?.hasApprovals ?? false) AppTab.approvals,
+    if (p?.hasFinance ?? false) AppTab.finance,
     if (p?.hasMeetings ?? false) AppTab.meetings,
     if (p?.hasLoanDesk ?? false) AppTab.loanDesk,
     if (p?.hasMembers ?? false) AppTab.members,
@@ -226,6 +268,7 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.welfareAdmin => GlassNavItem(Icons.volunteer_activism_outlined, Icons.volunteer_activism, l.navWelfare),
       AppTab.reports => GlassNavItem(Icons.assessment_outlined, Icons.assessment, l.navReports),
       AppTab.distributions => GlassNavItem(Icons.card_giftcard_outlined, Icons.card_giftcard, l.navDividends),
+      AppTab.admin => GlassNavItem(Icons.admin_panel_settings_outlined, Icons.admin_panel_settings, l.navAdmin),
       AppTab.profile => GlassNavItem(Icons.person_outline, Icons.person, l.navProfile),
       AppTab.more => GlassNavItem(Icons.grid_view_outlined, Icons.grid_view_rounded, l.navMore),
     };
@@ -243,6 +286,7 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.welfareAdmin => (l.leaderWelfare, l.leaderWelfareHelp),
       AppTab.reports => (l.leaderReports, l.leaderReportsHelp),
       AppTab.distributions => (l.leaderDistributions, l.leaderDistributionsHelp),
+      AppTab.admin => (l.adminTitle, l.adminHelp),
       AppTab.profile => (l.profileTitle, l.moreProfileHelp),
       _ => ('', ''),
     };

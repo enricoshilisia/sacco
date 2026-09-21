@@ -2205,4 +2205,500 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ruleArchiveAfterMeetings => 'Review for dormancy after (meetings)';
+
+  @override
+  String get navAdmin => 'Admin';
+
+  @override
+  String get adminTitle => 'Admin & support';
+
+  @override
+  String get adminHelp => 'Users, passwords, positions, audit log';
+
+  @override
+  String get adminUsers => 'Users & support';
+
+  @override
+  String get adminUsersHelp =>
+      'Find anyone, reset a password, switch a login off or on';
+
+  @override
+  String get adminPositions => 'Positions & roles';
+
+  @override
+  String get adminPositionsHelp =>
+      'Give people positions, remove them, create new ones';
+
+  @override
+  String get adminAudit => 'Audit log';
+
+  @override
+  String get adminAuditHelp =>
+      'Who did or viewed what, when, where and on which device';
+
+  @override
+  String get adminSecurity => 'Sign-ins & security';
+
+  @override
+  String get adminSecurityHelp =>
+      'Sign-ins, failed attempts, password resets, role changes';
+
+  @override
+  String get allow => 'Allow';
+
+  @override
+  String get notNow => 'Not now';
+
+  @override
+  String get anyDate => 'Any date';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get downloadCsv => 'Download CSV';
+
+  @override
+  String get idScan => 'Scan ID';
+
+  @override
+  String idScanRead(String number) {
+    return 'Read ID number $number';
+  }
+
+  @override
+  String get paymentMethodLabel => 'Paid by';
+
+  @override
+  String get receiptReference => 'Receipt / reference';
+
+  @override
+  String get taskApplicationsToApprove => 'New members to approve';
+
+  @override
+  String get profileChangesTab => 'Profile changes';
+
+  @override
+  String get applicationsTitle => 'New members';
+
+  @override
+  String get applicationsEmpty => 'No applications waiting.';
+
+  @override
+  String applicationBy(String name, String date) {
+    return 'by $name, $date';
+  }
+
+  @override
+  String applicationDecidedBy(String name, String date) {
+    return 'Decided by $name, $date';
+  }
+
+  @override
+  String get applicationSubmitted => 'Sent for approval';
+
+  @override
+  String applicationApproved(String number) {
+    return 'Approved - member no. $number';
+  }
+
+  @override
+  String get applicationCancelled => 'Cancelled';
+
+  @override
+  String get approveApplication => 'Approve new member';
+
+  @override
+  String approveApplicationBody(String name) {
+    return '$name becomes a member on probation and gets a login with a temporary password.';
+  }
+
+  @override
+  String get cancelApplication => 'Cancel application';
+
+  @override
+  String get cancelApplicationBody =>
+      'Withdraw this application? Return any fee collected.';
+
+  @override
+  String get cantApproveOwnApplication =>
+      'You registered this applicant, so someone else must approve.';
+
+  @override
+  String get registerMember => 'Register member';
+
+  @override
+  String get registerMemberHelp =>
+      'The Chairperson (or another approver) must approve before the member is created. Their member number and login are issued on approval.';
+
+  @override
+  String get registrationFee => 'Registration fee';
+
+  @override
+  String registrationFeeIs(String amount) {
+    return 'The registration fee is $amount.';
+  }
+
+  @override
+  String get registrationFeeZeroHelp => '0 = no fee';
+
+  @override
+  String get feeCollectedNow => 'Fee collected now';
+
+  @override
+  String get feeCollectedHelp =>
+      'Recorded in the books only once approved; hand it back if rejected.';
+
+  @override
+  String get feeNotCollected => 'Not collected at registration.';
+
+  @override
+  String memberNumberIs(String number) {
+    return 'Member no. $number';
+  }
+
+  @override
+  String get recordRegistrationFee => 'Record registration fee';
+
+  @override
+  String get registrationFeeRecorded => 'Registration fee recorded';
+
+  @override
+  String get payRegistrationFee => 'Pay registration fee';
+
+  @override
+  String get payTitleRegistrationFee => 'Pay registration fee';
+
+  @override
+  String get registrationFeePayHelp =>
+      'One-off and non-refundable. Needed for full membership.';
+
+  @override
+  String get membershipRules => 'Membership rules';
+
+  @override
+  String membershipRulesSummary(String fee, int months) {
+    return 'Fee $fee · verified after $months monthly contributions in a row';
+  }
+
+  @override
+  String get verificationMonthsLabel =>
+      'Consecutive monthly contributions to be verified';
+
+  @override
+  String get probation => 'Probation';
+
+  @override
+  String get probationTitle => 'New member - on probation';
+
+  @override
+  String get probationBody =>
+      'You become a full member once these are done. Until then you can\'t borrow, guarantee, get welfare cover, vote or hold office.';
+
+  @override
+  String probationFeePaid(String amount) {
+    return 'Registration fee $amount paid';
+  }
+
+  @override
+  String probationFeeDue(String amount) {
+    return 'Registration fee: $amount to pay';
+  }
+
+  @override
+  String probationMonths(int done, int total) {
+    return 'Monthly contributions in a row: $done of $total';
+  }
+
+  @override
+  String get probationNoVote => 'New member on probation - can\'t vote yet';
+
+  @override
+  String get tempPasswordTitle => 'Choose your own password';
+
+  @override
+  String get tempPasswordHelp =>
+      'You signed in with a temporary password. Choose a new one only you know.';
+
+  @override
+  String get tempPasswordCurrent => 'Temporary password';
+
+  @override
+  String get tempPasswordIssued => 'Temporary password';
+
+  @override
+  String get tempPasswordOnce =>
+      'Shown only now. They\'ll choose their own when they sign in.';
+
+  @override
+  String tempPasswordShareText(String name, String phone, String password) {
+    return 'Inuka West: $name, sign in with your phone $phone and temporary password $password. You\'ll then choose your own.';
+  }
+
+  @override
+  String get temporaryPasswordPending => 'Temporary password';
+
+  @override
+  String get pickPerson => 'Choose a person';
+
+  @override
+  String get searchPeopleHint => 'Name, phone or member no.';
+
+  @override
+  String get noPeopleFound => 'Nobody found.';
+
+  @override
+  String get disabledLogins => 'Disabled logins';
+
+  @override
+  String get loginActive => 'Login active';
+
+  @override
+  String get loginDisabled => 'Login disabled';
+
+  @override
+  String get loginEnabled => 'Login re-enabled';
+
+  @override
+  String get disableLogin => 'Disable login';
+
+  @override
+  String get enableLogin => 'Re-enable login';
+
+  @override
+  String disableLoginBody(String name) {
+    return '$name is signed out now and can\'t sign in until re-enabled. Their records stay.';
+  }
+
+  @override
+  String enableLoginBody(String name) {
+    return '$name will be able to sign in again.';
+  }
+
+  @override
+  String get resetPassword => 'Reset password';
+
+  @override
+  String resetPasswordBody(String name) {
+    return '$name gets a temporary password to share with them, and is signed out on every phone.';
+  }
+
+  @override
+  String get supportActions => 'Support';
+
+  @override
+  String get viewActivity => 'View activity';
+
+  @override
+  String get lastSignIn => 'Last sign-in';
+
+  @override
+  String get lastActive => 'Last active';
+
+  @override
+  String get neverSeen => 'Never';
+
+  @override
+  String get seenJustNow => 'Just now';
+
+  @override
+  String seenMinutesAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String seenHoursAgo(int count) {
+    return '$count h ago';
+  }
+
+  @override
+  String seenDaysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get devicesAndPlaces => 'Devices & places';
+
+  @override
+  String get recentActivity => 'Recent activity';
+
+  @override
+  String get positionsHeld => 'Positions';
+
+  @override
+  String get givePosition => 'Give a position';
+
+  @override
+  String givePositionTo(String name) {
+    return 'Give $name a position';
+  }
+
+  @override
+  String get positionsHelp =>
+      'Each office has a holder and an assistant, so one can check the other. New members on probation can\'t hold office.';
+
+  @override
+  String get officesAndCommittees => 'Offices & committees';
+
+  @override
+  String get staffRoles => 'Staff roles';
+
+  @override
+  String holdersCount(int count) {
+    return '$count holding';
+  }
+
+  @override
+  String holdersOfMax(int count, int max) {
+    return '$count of $max';
+  }
+
+  @override
+  String get positionFull => 'Full';
+
+  @override
+  String get vacant => 'Vacant';
+
+  @override
+  String get assignPerson => 'Assign someone';
+
+  @override
+  String assistantTo(String name) {
+    return 'Assistant to $name';
+  }
+
+  @override
+  String positionAssigned(String name, String position) {
+    return '$name is now $position';
+  }
+
+  @override
+  String get positionRemoved => 'Removed from the position';
+
+  @override
+  String get removeFromPosition => 'Remove from position';
+
+  @override
+  String removeFromPositionBody(String name, String position) {
+    return 'Remove $name from $position? They lose its access now.';
+  }
+
+  @override
+  String get jobTitleOptional => 'Title (optional)';
+
+  @override
+  String get jobTitleHint => 'e.g. Treasurer 2025-2027';
+
+  @override
+  String get newPosition => 'New position';
+
+  @override
+  String get newPositionHelp =>
+      'E.g. Disciplinary Secretary or Youth Representative. An assistant gets the same permissions as the office it assists.';
+
+  @override
+  String get positionName => 'Name';
+
+  @override
+  String get positionNameHint => 'e.g. Youth Representative';
+
+  @override
+  String get positionDuties => 'Duties';
+
+  @override
+  String get assistantOfLabel => 'Assistant to';
+
+  @override
+  String get assistantOfHelp => 'Makes this the assistant of an office.';
+
+  @override
+  String get notAnAssistant => 'Not an assistant';
+
+  @override
+  String get copyPermissionsFrom => 'Same permissions as';
+
+  @override
+  String get copyPermissionsHelp =>
+      'Start from an existing role\'s permissions.';
+
+  @override
+  String get noPermissionsYet => 'None yet';
+
+  @override
+  String get maxHoldersLabel => 'How many people can hold it';
+
+  @override
+  String get noLimit => 'No limit';
+
+  @override
+  String get createPosition => 'Create position';
+
+  @override
+  String get positionCreated => 'Position created';
+
+  @override
+  String get auditSearchHint => 'Search who, what, where, device or IP';
+
+  @override
+  String get auditSecurityOnly => 'Sign-ins & security only';
+
+  @override
+  String get auditEmpty => 'Nothing recorded for this filter.';
+
+  @override
+  String get auditWho => 'Who';
+
+  @override
+  String get auditWhen => 'When';
+
+  @override
+  String get auditAction => 'Action';
+
+  @override
+  String get auditRecord => 'Record';
+
+  @override
+  String get auditResult => 'Result';
+
+  @override
+  String get auditOk => 'Allowed';
+
+  @override
+  String auditRefused(int code) {
+    return 'Refused ($code)';
+  }
+
+  @override
+  String get auditWhere => 'Where';
+
+  @override
+  String get auditCoordinates => 'Coordinates';
+
+  @override
+  String get auditIp => 'IP address';
+
+  @override
+  String get auditDevice => 'Device';
+
+  @override
+  String get auditRequest => 'Request';
+
+  @override
+  String get locationAskTitle => 'Protect your account';
+
+  @override
+  String get locationAskBody =>
+      'Inuka West can note the approximate area you sign in from, so the SACCO can spot someone else using your account. It\'s only kept in the SACCO\'s audit log. You can say no.';
 }

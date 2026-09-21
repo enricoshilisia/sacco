@@ -11,7 +11,7 @@ import '../core/session.dart';
 import '../models/models.dart';
 import '../widgets/common.dart';
 
-enum PayPurpose { savingsDeposit, shareContribution, welfare }
+enum PayPurpose { savingsDeposit, shareContribution, welfare, registrationFee }
 
 /// Mobile-money payment (M-Pesa STK push / Selcom checkout - whichever
 /// provider this SACCO has configured). Returns true if anything was
@@ -137,6 +137,7 @@ class _PaySheetState extends State<_PaySheet> {
           PayPurpose.savingsDeposit => 'SAVINGS_DEPOSIT',
           PayPurpose.shareContribution => 'SHARE_CONTRIBUTION',
           PayPurpose.welfare => 'WELFARE_CONTRIBUTION',
+          PayPurpose.registrationFee => 'REGISTRATION_FEE',
         },
         productId: _isDeposit ? _productId : null,
         amount: amount,
@@ -249,6 +250,7 @@ class _PaySheetState extends State<_PaySheet> {
               PayPurpose.savingsDeposit => l10n.payTitleDeposit,
               PayPurpose.shareContribution => l10n.payTitleContribute,
               PayPurpose.welfare => l10n.payTitleWelfare,
+              PayPurpose.registrationFee => l10n.payTitleRegistrationFee,
             },
             style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
@@ -258,6 +260,7 @@ class _PaySheetState extends State<_PaySheet> {
               PayPurpose.savingsDeposit => l10n.savingsHelp,
               PayPurpose.shareContribution => l10n.shareCapitalHelp,
               PayPurpose.welfare => l10n.welfarePayHelp,
+              PayPurpose.registrationFee => l10n.registrationFeePayHelp,
             },
             style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
           ),

@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'core/client_context.dart';
 import 'core/secure_store.dart';
 import 'core/session.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/home_shell.dart';
 import 'screens/login_screen.dart';
+import 'screens/password_change_screen.dart';
 import 'screens/sacco_code_screen.dart';
 import 'screens/unlock_screen.dart';
 import 'theme.dart';
 import 'widgets/glass.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ClientContext.instance.init();
   final session = Session(SecureStore())..bootstrap();
   runApp(ChangeNotifierProvider.value(value: session, child: const SaccoApp()));
 }
@@ -62,6 +65,8 @@ class _SaccoAppState extends State<SaccoApp> {
         SessionStage.needsSacco => const SaccoCodeScreen(),
         SessionStage.needsLogin => const LoginScreen(),
         SessionStage.locked => const UnlockScreen(),
+        // A temporary password (new member, or an admin reset): choose your own first.
+        SessionStage.mustChangePassword => const PasswordChangeScreen(),
         // Keyed by SACCO so switching SACCOs rebuilds every tab from scratch
         // rather than showing the previous SACCO's cached data.
         SessionStage.ready => HomeShell(key: ValueKey(session.sacco?.code)),

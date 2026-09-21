@@ -15,6 +15,7 @@ class CollectionPurpose(models.TextChoices):
     SAVINGS_DEPOSIT = "SAVINGS_DEPOSIT", "Savings deposit"
     SHARE_CONTRIBUTION = "SHARE_CONTRIBUTION", "Share contribution"
     WELFARE_CONTRIBUTION = "WELFARE_CONTRIBUTION", "Welfare contribution"
+    REGISTRATION_FEE = "REGISTRATION_FEE", "Registration fee"
 
 
 class PaymentCollection(models.Model):
@@ -59,6 +60,13 @@ class PaymentCollection(models.Model):
     )
     welfare_payment = models.OneToOneField(
         "welfare.WelfarePayment",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="payment_collection",
+    )
+    registration_fee = models.OneToOneField(
+        "members.RegistrationFeePayment",
         null=True,
         blank=True,
         on_delete=models.PROTECT,

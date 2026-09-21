@@ -4069,6 +4069,864 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review for dormancy after (meetings)'**
   String get ruleArchiveAfterMeetings;
+
+  /// No description provided for @navAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get navAdmin;
+
+  /// No description provided for @adminTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin & support'**
+  String get adminTitle;
+
+  /// No description provided for @adminHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Users, passwords, positions, audit log'**
+  String get adminHelp;
+
+  /// No description provided for @adminUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Users & support'**
+  String get adminUsers;
+
+  /// No description provided for @adminUsersHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Find anyone, reset a password, switch a login off or on'**
+  String get adminUsersHelp;
+
+  /// No description provided for @adminPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Positions & roles'**
+  String get adminPositions;
+
+  /// No description provided for @adminPositionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Give people positions, remove them, create new ones'**
+  String get adminPositionsHelp;
+
+  /// No description provided for @adminAudit.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit log'**
+  String get adminAudit;
+
+  /// No description provided for @adminAuditHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Who did or viewed what, when, where and on which device'**
+  String get adminAuditHelp;
+
+  /// No description provided for @adminSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-ins & security'**
+  String get adminSecurity;
+
+  /// No description provided for @adminSecurityHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-ins, failed attempts, password resets, role changes'**
+  String get adminSecurityHelp;
+
+  /// No description provided for @allow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get allow;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNow;
+
+  /// No description provided for @anyDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Any date'**
+  String get anyDate;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copied;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notes;
+
+  /// No description provided for @downloadCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Download CSV'**
+  String get downloadCsv;
+
+  /// No description provided for @idScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan ID'**
+  String get idScan;
+
+  /// No description provided for @idScanRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read ID number {number}'**
+  String idScanRead(String number);
+
+  /// No description provided for @paymentMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by'**
+  String get paymentMethodLabel;
+
+  /// No description provided for @receiptReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt / reference'**
+  String get receiptReference;
+
+  /// No description provided for @taskApplicationsToApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'New members to approve'**
+  String get taskApplicationsToApprove;
+
+  /// No description provided for @profileChangesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile changes'**
+  String get profileChangesTab;
+
+  /// No description provided for @applicationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New members'**
+  String get applicationsTitle;
+
+  /// No description provided for @applicationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No applications waiting.'**
+  String get applicationsEmpty;
+
+  /// No description provided for @applicationBy.
+  ///
+  /// In en, this message translates to:
+  /// **'by {name}, {date}'**
+  String applicationBy(String name, String date);
+
+  /// No description provided for @applicationDecidedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Decided by {name}, {date}'**
+  String applicationDecidedBy(String name, String date);
+
+  /// No description provided for @applicationSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent for approval'**
+  String get applicationSubmitted;
+
+  /// No description provided for @applicationApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved - member no. {number}'**
+  String applicationApproved(String number);
+
+  /// No description provided for @applicationCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get applicationCancelled;
+
+  /// No description provided for @approveApplication.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve new member'**
+  String get approveApplication;
+
+  /// No description provided for @approveApplicationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} becomes a member on probation and gets a login with a temporary password.'**
+  String approveApplicationBody(String name);
+
+  /// No description provided for @cancelApplication.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel application'**
+  String get cancelApplication;
+
+  /// No description provided for @cancelApplicationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw this application? Return any fee collected.'**
+  String get cancelApplicationBody;
+
+  /// No description provided for @cantApproveOwnApplication.
+  ///
+  /// In en, this message translates to:
+  /// **'You registered this applicant, so someone else must approve.'**
+  String get cantApproveOwnApplication;
+
+  /// No description provided for @registerMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Register member'**
+  String get registerMember;
+
+  /// No description provided for @registerMemberHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The Chairperson (or another approver) must approve before the member is created. Their member number and login are issued on approval.'**
+  String get registerMemberHelp;
+
+  /// No description provided for @registrationFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration fee'**
+  String get registrationFee;
+
+  /// No description provided for @registrationFeeIs.
+  ///
+  /// In en, this message translates to:
+  /// **'The registration fee is {amount}.'**
+  String registrationFeeIs(String amount);
+
+  /// No description provided for @registrationFeeZeroHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'0 = no fee'**
+  String get registrationFeeZeroHelp;
+
+  /// No description provided for @feeCollectedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee collected now'**
+  String get feeCollectedNow;
+
+  /// No description provided for @feeCollectedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded in the books only once approved; hand it back if rejected.'**
+  String get feeCollectedHelp;
+
+  /// No description provided for @feeNotCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not collected at registration.'**
+  String get feeNotCollected;
+
+  /// No description provided for @memberNumberIs.
+  ///
+  /// In en, this message translates to:
+  /// **'Member no. {number}'**
+  String memberNumberIs(String number);
+
+  /// No description provided for @recordRegistrationFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Record registration fee'**
+  String get recordRegistrationFee;
+
+  /// No description provided for @registrationFeeRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration fee recorded'**
+  String get registrationFeeRecorded;
+
+  /// No description provided for @payRegistrationFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay registration fee'**
+  String get payRegistrationFee;
+
+  /// No description provided for @payTitleRegistrationFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay registration fee'**
+  String get payTitleRegistrationFee;
+
+  /// No description provided for @registrationFeePayHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'One-off and non-refundable. Needed for full membership.'**
+  String get registrationFeePayHelp;
+
+  /// No description provided for @membershipRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership rules'**
+  String get membershipRules;
+
+  /// No description provided for @membershipRulesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee {fee} · verified after {months} monthly contributions in a row'**
+  String membershipRulesSummary(String fee, int months);
+
+  /// No description provided for @verificationMonthsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Consecutive monthly contributions to be verified'**
+  String get verificationMonthsLabel;
+
+  /// No description provided for @probation.
+  ///
+  /// In en, this message translates to:
+  /// **'Probation'**
+  String get probation;
+
+  /// No description provided for @probationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New member - on probation'**
+  String get probationTitle;
+
+  /// No description provided for @probationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You become a full member once these are done. Until then you can\'t borrow, guarantee, get welfare cover, vote or hold office.'**
+  String get probationBody;
+
+  /// No description provided for @probationFeePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration fee {amount} paid'**
+  String probationFeePaid(String amount);
+
+  /// No description provided for @probationFeeDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration fee: {amount} to pay'**
+  String probationFeeDue(String amount);
+
+  /// No description provided for @probationMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly contributions in a row: {done} of {total}'**
+  String probationMonths(int done, int total);
+
+  /// No description provided for @probationNoVote.
+  ///
+  /// In en, this message translates to:
+  /// **'New member on probation - can\'t vote yet'**
+  String get probationNoVote;
+
+  /// No description provided for @tempPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your own password'**
+  String get tempPasswordTitle;
+
+  /// No description provided for @tempPasswordHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You signed in with a temporary password. Choose a new one only you know.'**
+  String get tempPasswordHelp;
+
+  /// No description provided for @tempPasswordCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary password'**
+  String get tempPasswordCurrent;
+
+  /// No description provided for @tempPasswordIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary password'**
+  String get tempPasswordIssued;
+
+  /// No description provided for @tempPasswordOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown only now. They\'ll choose their own when they sign in.'**
+  String get tempPasswordOnce;
+
+  /// No description provided for @tempPasswordShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'Inuka West: {name}, sign in with your phone {phone} and temporary password {password}. You\'ll then choose your own.'**
+  String tempPasswordShareText(String name, String phone, String password);
+
+  /// No description provided for @temporaryPasswordPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary password'**
+  String get temporaryPasswordPending;
+
+  /// No description provided for @pickPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a person'**
+  String get pickPerson;
+
+  /// No description provided for @searchPeopleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, phone or member no.'**
+  String get searchPeopleHint;
+
+  /// No description provided for @noPeopleFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody found.'**
+  String get noPeopleFound;
+
+  /// No description provided for @disabledLogins.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled logins'**
+  String get disabledLogins;
+
+  /// No description provided for @loginActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Login active'**
+  String get loginActive;
+
+  /// No description provided for @loginDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Login disabled'**
+  String get loginDisabled;
+
+  /// No description provided for @loginEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Login re-enabled'**
+  String get loginEnabled;
+
+  /// No description provided for @disableLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable login'**
+  String get disableLogin;
+
+  /// No description provided for @enableLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enable login'**
+  String get enableLogin;
+
+  /// No description provided for @disableLoginBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is signed out now and can\'t sign in until re-enabled. Their records stay.'**
+  String disableLoginBody(String name);
+
+  /// No description provided for @enableLoginBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will be able to sign in again.'**
+  String enableLoginBody(String name);
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetPassword;
+
+  /// No description provided for @resetPasswordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} gets a temporary password to share with them, and is signed out on every phone.'**
+  String resetPasswordBody(String name);
+
+  /// No description provided for @supportActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportActions;
+
+  /// No description provided for @viewActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'View activity'**
+  String get viewActivity;
+
+  /// No description provided for @lastSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sign-in'**
+  String get lastSignIn;
+
+  /// No description provided for @lastActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Last active'**
+  String get lastActive;
+
+  /// No description provided for @neverSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get neverSeen;
+
+  /// No description provided for @seenJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get seenJustNow;
+
+  /// No description provided for @seenMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String seenMinutesAgo(int count);
+
+  /// No description provided for @seenHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h ago'**
+  String seenHoursAgo(int count);
+
+  /// No description provided for @seenDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String seenDaysAgo(int count);
+
+  /// No description provided for @devicesAndPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Devices & places'**
+  String get devicesAndPlaces;
+
+  /// No description provided for @recentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent activity'**
+  String get recentActivity;
+
+  /// No description provided for @positionsHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Positions'**
+  String get positionsHeld;
+
+  /// No description provided for @givePosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Give a position'**
+  String get givePosition;
+
+  /// No description provided for @givePositionTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Give {name} a position'**
+  String givePositionTo(String name);
+
+  /// No description provided for @positionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Each office has a holder and an assistant, so one can check the other. New members on probation can\'t hold office.'**
+  String get positionsHelp;
+
+  /// No description provided for @officesAndCommittees.
+  ///
+  /// In en, this message translates to:
+  /// **'Offices & committees'**
+  String get officesAndCommittees;
+
+  /// No description provided for @staffRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff roles'**
+  String get staffRoles;
+
+  /// No description provided for @holdersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} holding'**
+  String holdersCount(int count);
+
+  /// No description provided for @holdersOfMax.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max}'**
+  String holdersOfMax(int count, int max);
+
+  /// No description provided for @positionFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get positionFull;
+
+  /// No description provided for @vacant.
+  ///
+  /// In en, this message translates to:
+  /// **'Vacant'**
+  String get vacant;
+
+  /// No description provided for @assignPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign someone'**
+  String get assignPerson;
+
+  /// No description provided for @assistantTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant to {name}'**
+  String assistantTo(String name);
+
+  /// No description provided for @positionAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is now {position}'**
+  String positionAssigned(String name, String position);
+
+  /// No description provided for @positionRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from the position'**
+  String get positionRemoved;
+
+  /// No description provided for @removeFromPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from position'**
+  String get removeFromPosition;
+
+  /// No description provided for @removeFromPositionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from {position}? They lose its access now.'**
+  String removeFromPositionBody(String name, String position);
+
+  /// No description provided for @jobTitleOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (optional)'**
+  String get jobTitleOptional;
+
+  /// No description provided for @jobTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Treasurer 2025-2027'**
+  String get jobTitleHint;
+
+  /// No description provided for @newPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'New position'**
+  String get newPosition;
+
+  /// No description provided for @newPositionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. Disciplinary Secretary or Youth Representative. An assistant gets the same permissions as the office it assists.'**
+  String get newPositionHelp;
+
+  /// No description provided for @positionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get positionName;
+
+  /// No description provided for @positionNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Youth Representative'**
+  String get positionNameHint;
+
+  /// No description provided for @positionDuties.
+  ///
+  /// In en, this message translates to:
+  /// **'Duties'**
+  String get positionDuties;
+
+  /// No description provided for @assistantOfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant to'**
+  String get assistantOfLabel;
+
+  /// No description provided for @assistantOfHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Makes this the assistant of an office.'**
+  String get assistantOfHelp;
+
+  /// No description provided for @notAnAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Not an assistant'**
+  String get notAnAssistant;
+
+  /// No description provided for @copyPermissionsFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Same permissions as'**
+  String get copyPermissionsFrom;
+
+  /// No description provided for @copyPermissionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from an existing role\'s permissions.'**
+  String get copyPermissionsHelp;
+
+  /// No description provided for @noPermissionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'None yet'**
+  String get noPermissionsYet;
+
+  /// No description provided for @maxHoldersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How many people can hold it'**
+  String get maxHoldersLabel;
+
+  /// No description provided for @noLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'No limit'**
+  String get noLimit;
+
+  /// No description provided for @createPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Create position'**
+  String get createPosition;
+
+  /// No description provided for @positionCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Position created'**
+  String get positionCreated;
+
+  /// No description provided for @auditSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search who, what, where, device or IP'**
+  String get auditSearchHint;
+
+  /// No description provided for @auditSecurityOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-ins & security only'**
+  String get auditSecurityOnly;
+
+  /// No description provided for @auditEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing recorded for this filter.'**
+  String get auditEmpty;
+
+  /// No description provided for @auditWho.
+  ///
+  /// In en, this message translates to:
+  /// **'Who'**
+  String get auditWho;
+
+  /// No description provided for @auditWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'When'**
+  String get auditWhen;
+
+  /// No description provided for @auditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get auditAction;
+
+  /// No description provided for @auditRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get auditRecord;
+
+  /// No description provided for @auditResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get auditResult;
+
+  /// No description provided for @auditOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get auditOk;
+
+  /// No description provided for @auditRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused ({code})'**
+  String auditRefused(int code);
+
+  /// No description provided for @auditWhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Where'**
+  String get auditWhere;
+
+  /// No description provided for @auditCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates'**
+  String get auditCoordinates;
+
+  /// No description provided for @auditIp.
+  ///
+  /// In en, this message translates to:
+  /// **'IP address'**
+  String get auditIp;
+
+  /// No description provided for @auditDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get auditDevice;
+
+  /// No description provided for @auditRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Request'**
+  String get auditRequest;
+
+  /// No description provided for @locationAskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect your account'**
+  String get locationAskTitle;
+
+  /// No description provided for @locationAskBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Inuka West can note the approximate area you sign in from, so the SACCO can spot someone else using your account. It\'s only kept in the SACCO\'s audit log. You can say no.'**
+  String get locationAskBody;
 }
 
 class _AppLocalizationsDelegate

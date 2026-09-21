@@ -65,6 +65,8 @@ class MeetingRegisterView(APIView):
         rows = [
             {
                 "member_id": m.pk, "member_number": m.member_number, "full_name": m.full_name,
+                # New members on probation attend but can't vote.
+                "is_verified": m.is_verified,
                 "status": marks[m.pk].status if m.pk in marks else None,
                 "apology_reason": marks[m.pk].apology_reason if m.pk in marks else "",
             }

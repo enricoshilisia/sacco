@@ -42,10 +42,23 @@ class Role(models.Model):
         default=False, help_text="Seeded default role; cannot be deleted from the UI."
     )
     permissions = models.ManyToManyField(Permission, through="RolePermission", related_name="roles")
+    # Elected offices / committee seats (Chairperson, Treasurer, Assistant
+    # Treasurer...) as opposed to staff jobs. Offices can cap how many people
+    # hold them at once, and an assistant office names the office it deputises
+    # for - so each office has two people (holder + assistant) and one can
+    # check the other's work.
+    is_position = models.BooleanField(default=False)
+    max_holders = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="How many people may hold this at once (blank = no limit)."
+    )
+    assistant_of = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="assistants"
+    )
+    sort_order = models.PositiveSmallIntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["sort_order", "name"]
 
     def __str__(self):
         return self.name

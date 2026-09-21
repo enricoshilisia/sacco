@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 
 import '../config.dart';
+import 'client_context.dart';
 import '../models/sacco.dart';
 import 'secure_store.dart';
 
@@ -75,6 +76,8 @@ class ApiClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          // Device and (if allowed) location, for the SACCO's audit log.
+          options.headers.addAll(ClientContext.instance.headers);
           if (options.extra['auth'] != false) {
             final token = await store.readAccess();
             if (token != null) options.headers['Authorization'] = 'Bearer $token';

@@ -43,6 +43,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     is_phone_verified = models.BooleanField(default=False)
+    # Set when an admin issues a temporary password (new member approved,
+    # or a reset); the app makes them choose their own before going on.
+    must_change_password = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)  # platform_admin staff, not tenant role
     date_joined = models.DateTimeField(default=timezone.now)

@@ -95,6 +95,14 @@ class Member(AuditMixin, models.Model):
     # Which inactivity warning was last sent (e.g. "m2-g0"), so the monthly
     # check doesn't repeat the same warning (members.activity).
     last_warning_key = models.CharField(max_length=20, blank=True)
+    # Full membership: registration fee paid plus N consecutive months of
+    # mandatory monthly contributions (members.admission). Until then the
+    # member is on probation: no borrowing, guaranteeing, welfare cover,
+    # voting or holding office. Defaults to "verified" for records loaded
+    # directly (imports of the existing register); both ways a NEW member
+    # joins - an approved application or staff registration - start them
+    # on probation (verified_at=None).
+    verified_at = models.DateTimeField(null=True, blank=True, default=timezone.now)
 
     is_kyc_verified = models.BooleanField(default=False)
     kyc_verified_at = models.DateTimeField(null=True, blank=True)
@@ -120,6 +128,10 @@ class Member(AuditMixin, models.Model):
     @property
     def full_name(self):
         return " ".join(filter(None, [self.first_name, self.other_names, self.last_name]))
+
+    @property
+    def is_verified(self) -> bool:
+        return self.verified_at is not None
 
 
 def _generate_portal_invite_token():
@@ -459,3 +471,110 @@ class MemberStatusChange(models.Model):
     class Meta:
         ordering = ["-changed_at"]
 
+
+
+class MembershipSettings(models.Model):
+    """Per-SACCO admission rules (CLAUDE.md rule 6). Singleton per tenant."""
+
+    registration_fee = models.DecimalField(
+        max_digits=18, decimal_places=2, default=0,
+        help_text="One-off, non-refundable fee; SACCO income. 0 = no fee required.",
+    )
+    verification_months = models.PositiveSmallIntegerField(
+        default=3, help_text="Consecutive months of mandatory monthly contributions needed to be verified.",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Membership settings"
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+
+class PaymentMethod(models.TextChoices):
+    CASH = "CASH", "Cash"
+    BANK = "BANK", "Bank"
+    MOBILE_MONEY = "MOBILE_MONEY", "Mobile money"
+
+
+class RegistrationFeePayment(models.Model):
+    """A registration fee received, posted to the ledger as SACCO income.
+    idempotency_key stops a retried request/callback posting it twice."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    member = models.ForeignKey(Member, on_delete=models.PROTECT, related_name="registration_fees")
+    amount = models.DecimalField(max_digits=18, decimal_places=2)
+    method = models.CharField(max_length=15, choices=PaymentMethod.choices)
+    reference = models.CharField(max_length=100, blank=True)
+    paid_on = models.DateField()
+    idempotency_key = models.CharField(max_length=64, unique=True)
+    journal_entry = models.OneToOneField("accounting.JournalEntry", on_delete=models.PROTECT, related_name="+")
+    recorded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class ApplicationStatus(models.TextChoices):
+    PENDING = "PENDING", "Awaiting approval"
+    APPROVED = "APPROVED", "Approved"
+    REJECTED = "REJECTED", "Rejected"
+    CANCELLED = "CANCELLED", "Cancelled"
+
+
+class MemberApplication(models.Model):
+    """
+    A new member, registered by the Secretary and waiting for a second
+    person (the Chairperson) to approve. No Member row exists until
+    approval - an applicant has no member number, login or ledger history.
+    If the fee was collected in cash at registration it is noted here and
+    posted to the ledger only on approval (on rejection the cash is handed
+    back and never touched the books).
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    status = models.CharField(max_length=10, choices=ApplicationStatus.choices, default=ApplicationStatus.PENDING)
+
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    other_names = models.CharField(max_length=150, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=Gender.choices, blank=True)
+    id_type = models.CharField(max_length=20, choices=IdType.choices)
+    id_number = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=20)
+    email = models.EmailField(blank=True)
+    physical_address = models.TextField(blank=True)
+    marital_status = models.CharField(max_length=10, choices=MaritalStatus.choices, blank=True)
+    occupation = models.CharField(max_length=120, blank=True)
+    employer = models.CharField(max_length=150, blank=True)
+    county = models.CharField(max_length=80, blank=True)
+    notes = models.TextField(blank=True)
+
+    fee_collected = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    fee_method = models.CharField(max_length=15, choices=PaymentMethod.choices, blank=True)
+    fee_reference = models.CharField(max_length=100, blank=True)
+
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    decided_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decision_notes = models.TextField(blank=True)
+    member = models.OneToOneField(Member, null=True, blank=True, on_delete=models.PROTECT, related_name="application")
+
+    class Meta:
+        ordering = ["-submitted_at"]
+
+    @property
+    def full_name(self):
+        return " ".join(filter(None, [self.first_name, self.other_names, self.last_name]))

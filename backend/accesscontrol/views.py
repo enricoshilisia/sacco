@@ -101,6 +101,15 @@ class StaffMembershipUpdateView(generics.UpdateAPIView):
                 {"detail": "This SACCO must always have at least one active SuperAdmin."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if "role" in request.data:
+            from .services import assert_can_hold
+
+            new_role = Role.objects.filter(pk=request.data["role"]).first()
+            if new_role is not None:
+                try:
+                    assert_can_hold(membership.user, new_role)
+                except ValueError as exc:
+                    return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return self.partial_update(request, *args, **kwargs)
 
 

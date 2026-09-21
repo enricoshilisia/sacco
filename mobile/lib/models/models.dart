@@ -21,9 +21,13 @@ class TenantProfile {
   final String phoneNumber;
   final List<String> roles;
   final Set<String> permissions;
+  final bool mustChangePassword;
+  final String userId;
 
   TenantProfile.fromJson(Map<String, dynamic> json)
-      : firstName = _str((json['user'] as Map?)?['first_name']),
+      : userId = _str((json['user'] as Map?)?['id']),
+        mustChangePassword = (json['user'] as Map?)?['must_change_password'] == true,
+        firstName = _str((json['user'] as Map?)?['first_name']),
         lastName = _str((json['user'] as Map?)?['last_name']),
         phoneNumber = _str((json['user'] as Map?)?['phone_number']),
         roles = _list(json['memberships']).map((m) => _str(m['role_name'])).toList(),
@@ -43,14 +47,15 @@ class TenantProfile {
   bool get hasLoanDesk => canAny(const ['loans.appraise', 'loans.approve', 'loans.reject', 'loans.disburse', 'loans.repay']);
   bool get hasMembers => can('members.view');
   bool get hasDistributions => can('distributions.view');
-  bool get hasApprovals => can('members.approve_changes');
+  bool get hasApprovals => canAny(const ['members.approve_changes', 'members.approve_admission']);
+  bool get hasAdmin => canAny(const ['users.view', 'audit.view', 'accesscontrol.assign_roles']);
   bool get hasMeetings => canAny(const ['governance.call_meeting', 'governance.take_attendance']);
   bool get hasActivity => can('members.approve_changes');
 
   /// Any leader module this app offers.
   bool get hasStaffTools =>
       hasWelfareTools || hasFinance || hasReports || hasLoanDesk || hasMembers || hasDistributions || hasApprovals ||
-      hasMeetings;
+      hasMeetings || hasAdmin;
 }
 
 /// GET /api/members/me/

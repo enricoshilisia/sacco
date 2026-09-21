@@ -10,16 +10,51 @@ import '../../widgets/glass.dart';
 import '../../widgets/inuka_app_bar.dart';
 import '../profile/document_view.dart';
 import '../profile/profile_labels.dart';
+import 'admission_screens.dart';
 
-/// The Secretary's queue: members' profile and family changes awaiting approval.
-class ApprovalsScreen extends StatefulWidget {
+/// Approvals: new member applications (Chairperson) and members' profile
+/// and family changes (Secretary). Tabs when someone does both.
+class ApprovalsScreen extends StatelessWidget {
   const ApprovalsScreen({super.key});
 
   @override
-  State<ApprovalsScreen> createState() => _ApprovalsScreenState();
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final session = context.watch<Session>();
+    final admissions = session.can('members.approve_admission') || session.can('members.register');
+    final changes = session.can('members.approve_changes');
+    if (!admissions) return const _ChangeRequestsView();
+    if (!changes) {
+      return Scaffold(
+        appBar: InukaAppBar(title: l10n.approvalsTitle, subtitle: l10n.applicationsTitle),
+        body: const ApplicationsView(embedded: true),
+      );
+    }
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: InukaAppBar(
+          title: l10n.approvalsTitle,
+          bottom: TabBar(tabs: [Tab(text: l10n.applicationsTitle), Tab(text: l10n.profileChangesTab)]),
+        ),
+        body: const TabBarView(children: [
+          ApplicationsView(embedded: true),
+          _ChangeRequestsView(embedded: true),
+        ]),
+      ),
+    );
+  }
 }
 
-class _ApprovalsScreenState extends State<ApprovalsScreen> {
+class _ChangeRequestsView extends StatefulWidget {
+  final bool embedded;
+  const _ChangeRequestsView({this.embedded = false});
+
+  @override
+  State<_ChangeRequestsView> createState() => _ApprovalsScreenState();
+}
+
+class _ApprovalsScreenState extends State<_ChangeRequestsView> {
   String _status = 'PENDING';
   int _version = 0;
 
@@ -28,7 +63,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     final l10n = context.l10n;
     final api = context.read<Session>().api!;
     return Scaffold(
-      appBar: InukaAppBar(title: l10n.approvalsTitle),
+      appBar: widget.embedded ? null : InukaAppBar(title: l10n.approvalsTitle),
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),

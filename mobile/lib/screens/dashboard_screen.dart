@@ -18,6 +18,8 @@ import '../models/governance.dart';
 import 'leader/meetings_screen.dart' show meetingWhen;
 import 'my_meetings_screen.dart';
 import 'pay_sheet.dart';
+import '../core/admin_api.dart';
+import '../models/admin.dart';
 import 'profile/my_profile_screen.dart';
 import '../widgets/inuka_app_bar.dart';
 
@@ -29,8 +31,9 @@ class _DashboardData {
   final WelfareSummary? welfare;
   final MyActivity? activity;
   final MeetingItem? nextMeeting;
+  final Verification? verification;
   _DashboardData(this.statement, this.loans, this.pendingGuarantees, this.recentCollections, this.welfare,
-      this.activity, this.nextMeeting);
+      this.activity, this.nextMeeting, this.verification);
 }
 
 class DashboardScreen extends StatelessWidget {
@@ -48,6 +51,7 @@ class DashboardScreen extends StatelessWidget {
       api.myWelfare().then<MemberWelfare?>((w) => w, onError: (_) => null),
       api.myActivity().then<MyActivity?>((a) => a, onError: (_) => null),
       api.meetings(when: 'upcoming').then<List<MeetingItem>?>((m) => m, onError: (_) => null),
+      api.myVerification().then<Verification?>((v) => v, onError: (_) => null),
     ]);
     return _DashboardData(
       results[0] as Statement,
@@ -57,6 +61,7 @@ class DashboardScreen extends StatelessWidget {
       (results[4] as MemberWelfare?)?.summary,
       results[5] as MyActivity?,
       (results[6] as List<MeetingItem>?)?.firstOrNull,
+      results[7] as Verification?,
     );
   }
 
@@ -109,6 +114,14 @@ class _DashboardBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
+        if (data.verification != null && !data.verification!.verified)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: ProbationCard(
+              verification: data.verification!,
+              onPayFee: () => pay(PayPurpose.registrationFee),
+            ),
+          ),
         if (data.activity?.isDormant ?? false)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -425,6 +438,72 @@ class _QuickAction extends StatelessWidget {
           Text(label, textAlign: TextAlign.center, maxLines: 2, style: const TextStyle(fontSize: 12)),
         ],
       ),
+    );
+  }
+}
+
+
+/// A new member's road to full membership: registration fee plus N
+/// consecutive monthly contributions. Until then they can't borrow,
+/// guarantee, get welfare cover, vote or hold office.
+class ProbationCard extends StatelessWidget {
+  final Verification verification;
+  final VoidCallback? onPayFee;
+  const ProbationCard({super.key, required this.verification, this.onPayFee});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final v = verification;
+    const white = TextStyle(color: Colors.white);
+    Widget step(bool done, String text) => Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Row(children: [
+            Icon(done ? Icons.check_circle_rounded : Icons.radio_button_unchecked, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Expanded(child: Text(text, style: white)),
+          ]),
+        );
+    return GlassCard(
+      tint: LinearGradient(colors: [
+        const Color(0xFFF28A1E).withValues(alpha: 0.92),
+        const Color(0xFFD62C2C).withValues(alpha: 0.88),
+      ]),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.hourglass_top_rounded, color: Colors.white, size: 28),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(l10n.probationTitle,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16)),
+          ),
+        ]),
+        const SizedBox(height: 4),
+        Text(l10n.probationBody, style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: 13)),
+        if (v.registrationFee > Decimal.zero)
+          step(v.feeDone, v.feeDone
+              ? l10n.probationFeePaid(money(context, v.registrationFee))
+              : l10n.probationFeeDue(money(context, v.feeOutstanding))),
+        step(v.monthsDone >= v.monthsRequired, l10n.probationMonths(v.monthsDone, v.monthsRequired)),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: LinearProgressIndicator(
+            value: v.monthsRequired == 0 ? 1 : v.monthsDone / v.monthsRequired,
+            minHeight: 8,
+            backgroundColor: Colors.white.withValues(alpha: 0.3),
+            color: Colors.white,
+          ),
+        ),
+        if (!v.feeDone && onPayFee != null) ...[
+          const SizedBox(height: 12),
+          FilledButton.tonalIcon(
+            onPressed: onPayFee,
+            icon: const Icon(Icons.phone_android_rounded),
+            label: Text(l10n.payRegistrationFee),
+          ),
+        ],
+      ]),
     );
   }
 }

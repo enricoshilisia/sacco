@@ -39,14 +39,12 @@ def _previous_month(d: date) -> date:
     return (d.replace(day=1) - timezone.timedelta(days=1)).replace(day=1)
 
 
-def missed_contribution_months(member: Member, *, today: date | None = None, settings=None) -> int:
-    """Consecutive completed months, most recent first, with no qualifying
-    mandatory-savings deposit. The current (incomplete) month never counts."""
+def contributed_months(member: Member, *, settings=None) -> set[tuple[int, int]]:
+    """(year, month) pairs in which the member's mandatory monthly savings
+    deposits reached the minimum monthly contribution."""
     from savings.models import SavingsProductType, SavingsTransaction, SavingsTransactionType
 
     settings = settings or MemberActivitySettings.get_solo()
-    today = today or date.today()
-    joined = _month_start(member.date_joined)
     deposits = (
         SavingsTransaction.objects.filter(
             savings_account__member=member,
@@ -56,11 +54,19 @@ def missed_contribution_months(member: Member, *, today: date | None = None, set
         .values("transaction_date__year", "transaction_date__month")
         .annotate(total=Sum("amount"))
     )
-    paid = {
+    return {
         (row["transaction_date__year"], row["transaction_date__month"])
         for row in deposits
         if row["total"] >= settings.min_monthly_contribution
     }
+
+
+def missed_contribution_months(member: Member, *, today: date | None = None, settings=None) -> int:
+    """Consecutive completed months, most recent first, with no qualifying
+    mandatory-savings deposit. The current (incomplete) month never counts."""
+    today = today or date.today()
+    joined = _month_start(member.date_joined)
+    paid = contributed_months(member, settings=settings)
     missed = 0
     month = _previous_month(today)
     # Cap the look-back: the streak only matters up to the archive limit.

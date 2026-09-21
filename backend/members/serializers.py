@@ -44,6 +44,7 @@ class MemberSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         relations_data = validated_data.pop("relations", [])
         validated_data["member_number"] = generate_member_number()
+        validated_data["verified_at"] = None  # a new member starts on probation (members.admission)
         request = self.context.get("request")
         if request is not None:
             validated_data["created_by"] = request.user

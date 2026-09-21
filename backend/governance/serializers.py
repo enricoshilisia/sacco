@@ -45,6 +45,7 @@ class AttendanceRowSerializer(serializers.Serializer):
     member_id = serializers.UUIDField()
     member_number = serializers.CharField()
     full_name = serializers.CharField()
+    is_verified = serializers.BooleanField()
     status = serializers.CharField(allow_null=True)
     apology_reason = serializers.CharField(allow_blank=True)
 

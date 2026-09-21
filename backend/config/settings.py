@@ -62,6 +62,7 @@ TENANT_APPS = [
     "welfare",
     "reports",
     "governance",
+    "audit",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
@@ -82,6 +83,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "audit.middleware.AuditMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -209,7 +211,7 @@ AWS_QUERYSTRING_AUTH = True
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "identity.authentication.TenantJWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
@@ -224,6 +226,10 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+    # Tokens carry a hash of the password: a reset or change signs the
+    # person out everywhere (e.g. a lost phone after an admin reset).
+    "CHECK_REVOKE_TOKEN": True,
+    "UPDATE_LAST_LOGIN": True,
 }
 
 CORS_ALLOWED_ORIGINS = env.list(
@@ -339,3 +345,10 @@ SELCOM_API_KEY = env("SELCOM_API_KEY", default="")
 SELCOM_API_SECRET = env("SELCOM_API_SECRET", default="")
 SELCOM_VENDOR_ID = env("SELCOM_VENDOR_ID", default="")
 SELCOM_ENV = env("SELCOM_ENV", default="sandbox")
+
+
+# Audit log (audit app). Only trust X-Forwarded-For once the API sits behind
+# a proxy we run; GEOIP_CITY_DB optionally points at a GeoLite2-City.mmdb for
+# location-by-IP when the app didn't send the phone's location.
+AUDIT_TRUST_X_FORWARDED_FOR = env.bool("AUDIT_TRUST_X_FORWARDED_FOR", default=False)
+GEOIP_CITY_DB = env("GEOIP_CITY_DB", default="")

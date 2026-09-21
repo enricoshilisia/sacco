@@ -4,10 +4,11 @@ import 'package:local_auth/local_auth.dart';
 import '../models/models.dart';
 import '../models/sacco.dart';
 import 'api_client.dart';
+import 'client_context.dart';
 import 'sacco_api.dart';
 import 'secure_store.dart';
 
-enum SessionStage { loading, needsSacco, needsLogin, locked, ready }
+enum SessionStage { loading, needsSacco, needsLogin, locked, mustChangePassword, ready }
 
 /// App-wide auth state: which SACCO, whether we hold tokens, and whether
 /// the biometric gate has been passed this launch.
@@ -80,6 +81,8 @@ class Session extends ChangeNotifier {
   }
 
   Future<void> login(String phone, String password) async {
+    // Location (if already allowed) goes with the sign-in for the audit log.
+    await ClientContext.instance.refreshLocation();
     final tokens = await api!.login(phone, password);
     await store.writeTokens(tokens.access, tokens.refresh);
     sessionExpired = false;
@@ -94,6 +97,10 @@ class Session extends ChangeNotifier {
   Future<void> _enter() async {
     try {
       profile = await api!.tenantProfile();
+      if (profile!.mustChangePassword) {
+        _go(SessionStage.mustChangePassword);
+        return;
+      }
       try {
         member = await api!.myMember();
       } on ApiException catch (e) {
@@ -119,6 +126,9 @@ class Session extends ChangeNotifier {
   bool get isMember => member != null || profile == null;
 
   bool can(String permission) => profile?.can(permission) ?? false;
+
+  /// Leaving the temporary-password screen: fresh tokens are already stored.
+  Future<void> passwordChanged() => _enter();
 
   Future<void> reloadMember() async {
     if (member == null) return;

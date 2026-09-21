@@ -554,7 +554,16 @@ def my_tasks(user) -> list[dict]:
     add("welfare_to_approve", "welfare.approve_case",
         WelfareCase.objects.filter(status=WelfareCaseStatus.PENDING_APPROVAL).exclude(created_by=user).count())
 
-    from members.models import ChangeRequestStatus, InactivityFlag, ProfileChangeRequest
+    from members.models import (
+        ApplicationStatus,
+        ChangeRequestStatus,
+        InactivityFlag,
+        MemberApplication,
+        ProfileChangeRequest,
+    )
+
+    add("applications_to_approve", "members.approve_admission",
+        MemberApplication.objects.filter(status=ApplicationStatus.PENDING).exclude(submitted_by=user).count())
 
     add("profile_changes_to_approve", "members.approve_changes",
         ProfileChangeRequest.objects.filter(status=ChangeRequestStatus.PENDING).exclude(member__user=user).count())
