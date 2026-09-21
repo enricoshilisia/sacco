@@ -18,13 +18,31 @@ void main() {
   runApp(ChangeNotifierProvider.value(value: session, child: const SaccoApp()));
 }
 
-class SaccoApp extends StatelessWidget {
+class SaccoApp extends StatefulWidget {
   const SaccoApp({super.key});
+
+  @override
+  State<SaccoApp> createState() => _SaccoAppState();
+}
+
+class _SaccoAppState extends State<SaccoApp> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  SessionStage? _lastStage;
 
   @override
   Widget build(BuildContext context) {
     final session = context.watch<Session>();
+    // Leaving the signed-in app (log out, session expired, change SACCO):
+    // close every screen opened on top of it (e.g. Profile) so the login
+    // screen is actually what's showing, not left underneath them.
+    if (_lastStage == SessionStage.ready && session.stage != SessionStage.ready) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+      });
+    }
+    _lastStage = session.stage;
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: buildTheme(Brightness.light),
