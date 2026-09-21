@@ -9,11 +9,13 @@ import '../widgets/common.dart';
 import '../widgets/glass.dart';
 import '../widgets/inuka_app_bar.dart';
 import 'dashboard_screen.dart';
+import 'leader/activity_screen.dart';
 import 'leader/approvals_screen.dart';
 import 'leader/distribution_runs_screen.dart';
 import 'leader/finance_screen.dart';
 import 'leader/leader_hub.dart';
 import 'leader/loan_desk_screen.dart';
+import 'leader/meetings_screen.dart';
 import 'leader/members_screen.dart';
 import 'leader/reports_screen.dart';
 import 'loans_screen.dart';
@@ -30,8 +32,10 @@ enum AppTab {
   welfare, // member's own welfare
   finance,
   approvals,
+  meetings,
   loanDesk,
   members,
+  activity,
   welfareAdmin,
   reports,
   distributions,
@@ -98,6 +102,8 @@ class HomeShellState extends State<HomeShell> {
       AppTab.welfare => WelfareScreen(key: key),
       AppTab.finance => FinanceScreen(key: key),
       AppTab.approvals => ApprovalsScreen(key: key),
+      AppTab.meetings => MeetingsScreen(key: key),
+      AppTab.activity => ActivityScreen(key: key),
       AppTab.loanDesk => LoanDeskScreen(key: key),
       AppTab.members => MembersScreen(key: key),
       AppTab.welfareAdmin => WelfareScreen(key: key, staffMode: true),
@@ -134,8 +140,10 @@ const maxBarItems = 5;
   final staff = <AppTab>[
     if (p?.hasFinance ?? false) AppTab.finance,
     if (p?.hasApprovals ?? false) AppTab.approvals,
+    if (p?.hasMeetings ?? false) AppTab.meetings,
     if (p?.hasLoanDesk ?? false) AppTab.loanDesk,
     if (p?.hasMembers ?? false) AppTab.members,
+    if (p?.hasActivity ?? false) AppTab.activity,
     if (p?.hasWelfareTools ?? false) AppTab.welfareAdmin,
     if (p?.hasReports ?? false) AppTab.reports,
     if (p?.hasDistributions ?? false) AppTab.distributions,
@@ -163,6 +171,8 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.welfare => GlassNavItem(Icons.volunteer_activism_outlined, Icons.volunteer_activism, l.navWelfare),
       AppTab.finance => GlassNavItem(Icons.account_balance_outlined, Icons.account_balance, l.navFinance),
       AppTab.approvals => GlassNavItem(Icons.task_alt_outlined, Icons.task_alt, l.navApprovals),
+      AppTab.meetings => GlassNavItem(Icons.event_outlined, Icons.event, l.navMeetings),
+      AppTab.activity => GlassNavItem(Icons.person_off_outlined, Icons.person_off, l.navActivity),
       AppTab.loanDesk => GlassNavItem(Icons.fact_check_outlined, Icons.fact_check, l.navLoanDesk),
       AppTab.members => GlassNavItem(Icons.groups_outlined, Icons.groups, l.navMembers),
       AppTab.welfareAdmin => GlassNavItem(Icons.volunteer_activism_outlined, Icons.volunteer_activism, l.navWelfare),
@@ -178,6 +188,8 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.welfare => (l.welfareMine, l.welfareBalanceHelp),
       AppTab.finance => (l.leaderFinance, l.leaderFinanceHelp),
       AppTab.approvals => (l.approvalsTitle, l.approvalsHelp),
+      AppTab.meetings => (l.meetingsTitle, l.meetingsHelp),
+      AppTab.activity => (l.activityTitle, l.activityHelp),
       AppTab.loanDesk => (l.leaderLoanDesk, l.leaderLoanDeskHelp),
       AppTab.members => (l.leaderMembers, l.leaderMembersHelp),
       AppTab.welfareAdmin => (l.leaderWelfare, l.leaderWelfareHelp),

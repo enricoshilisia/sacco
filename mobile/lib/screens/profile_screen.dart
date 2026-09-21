@@ -8,6 +8,7 @@ import '../widgets/common.dart';
 import 'distributions_screen.dart';
 import '../widgets/inuka_app_bar.dart';
 import '../widgets/member_avatar.dart';
+import 'my_meetings_screen.dart';
 import 'profile/my_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -125,6 +126,16 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ],
+          if (member != null)
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.event),
+                title: Text(l10n.meetingsTitle),
+                subtitle: Text(l10n.myMeetingsHelp),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyMeetingsScreen())),
+              ),
+            ),
           if (member == null && session.profile != null) ...[
             Card(
               child: ListTile(

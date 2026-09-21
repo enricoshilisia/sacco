@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import profile_views, views
+from . import activity_views, profile_views, views
 
 app_name = "members"
 
@@ -9,6 +9,13 @@ urlpatterns = [
     path("me/", views.MyMemberView.as_view(), name="my_member"),
     path("me/photo/", views.MyMemberPhotoUploadView.as_view(), name="my_member_photo_upload"),
     path("me/profile/", profile_views.MyProfileView.as_view(), name="my_profile"),
+    path("me/activity/", activity_views.MyActivityView.as_view(), name="my_activity"),
+    path("activity/settings/", activity_views.ActivitySettingsView.as_view(), name="activity_settings"),
+    path("activity/run/", activity_views.RunActivityCheckView.as_view(), name="activity_run"),
+    path("activity/flags/", activity_views.FlagListView.as_view(), name="activity_flags"),
+    path("activity/flags/<uuid:pk>/confirm/", activity_views.FlagDecisionView.as_view(confirm=True), name="flag_confirm"),
+    path("activity/flags/<uuid:pk>/dismiss/", activity_views.FlagDecisionView.as_view(confirm=False), name="flag_dismiss"),
+    path("activity/dormant/", activity_views.DormantMembersView.as_view(), name="activity_dormant"),
     path("me/profile/changes/", profile_views.MyProfileChangeView.as_view(), name="my_profile_changes"),
     path("me/family/", profile_views.MyFamilyView.as_view(), name="my_family"),
     path("me/family/<uuid:pk>/", profile_views.MyFamilyDetailView.as_view(), name="my_family_detail"),
@@ -43,6 +50,7 @@ urlpatterns = [
     path("<uuid:pk>/", views.MemberDetailView.as_view(), name="member_detail"),
     path("<uuid:pk>/verify-kyc/", views.MemberKycVerifyView.as_view(), name="member_kyc_verify"),
     path("<uuid:pk>/family/", profile_views.MemberFamilyView.as_view(), name="member_family"),
+    path("<uuid:pk>/reactivate/", activity_views.ReactivateMemberView.as_view(), name="member_reactivate"),
     path("<uuid:pk>/documents/", profile_views.MemberDocumentListView.as_view(), name="member_documents"),
     path("<uuid:pk>/photo/", views.MemberPhotoUploadView.as_view(), name="member_photo_upload"),
     path("<uuid:member_id>/portal-invite/", views.InvitePortalAccessView.as_view(), name="invite_portal_access"),

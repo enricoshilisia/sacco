@@ -13,6 +13,10 @@ import '../widgets/labels.dart';
 import 'apply_loan_screen.dart';
 import 'home_shell.dart';
 import 'leader/tasks_list.dart';
+import '../core/governance_api.dart';
+import '../models/governance.dart';
+import 'leader/meetings_screen.dart' show meetingWhen;
+import 'my_meetings_screen.dart';
 import 'pay_sheet.dart';
 import 'profile/my_profile_screen.dart';
 import '../widgets/inuka_app_bar.dart';
@@ -23,7 +27,10 @@ class _DashboardData {
   final List<LoanGuarantor> pendingGuarantees;
   final List<Collection> recentCollections;
   final WelfareSummary? welfare;
-  _DashboardData(this.statement, this.loans, this.pendingGuarantees, this.recentCollections, this.welfare);
+  final MyActivity? activity;
+  final MeetingItem? nextMeeting;
+  _DashboardData(this.statement, this.loans, this.pendingGuarantees, this.recentCollections, this.welfare,
+      this.activity, this.nextMeeting);
 }
 
 class DashboardScreen extends StatelessWidget {
@@ -39,6 +46,8 @@ class DashboardScreen extends StatelessWidget {
       // Welfare is optional on the dashboard - a failure here shouldn't
       // blank the whole screen.
       api.myWelfare().then<MemberWelfare?>((w) => w, onError: (_) => null),
+      api.myActivity().then<MyActivity?>((a) => a, onError: (_) => null),
+      api.meetings(when: 'upcoming').then<List<MeetingItem>?>((m) => m, onError: (_) => null),
     ]);
     return _DashboardData(
       results[0] as Statement,
@@ -46,6 +55,8 @@ class DashboardScreen extends StatelessWidget {
       (results[2] as List<LoanGuarantor>).where((g) => g.status == 'PENDING').toList(),
       (results[3] as List<Collection>).take(3).toList(),
       (results[4] as MemberWelfare?)?.summary,
+      results[5] as MyActivity?,
+      (results[6] as List<MeetingItem>?)?.firstOrNull,
     );
   }
 
@@ -98,6 +109,60 @@ class _DashboardBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
+        if (data.activity?.isDormant ?? false)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: GlassCard(
+              tint: LinearGradient(colors: [Colors.blueGrey.shade700.withValues(alpha: 0.92), Colors.blueGrey.shade500.withValues(alpha: 0.88)]),
+              child: Row(children: [
+                const Icon(Icons.pause_circle_outline, color: Colors.white, size: 30),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(l10n.dormantTitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+                    Text(l10n.dormantBody, style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 13)),
+                  ]),
+                ),
+              ]),
+            ),
+          )
+        else if (data.activity?.atRisk ?? false)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Card(
+              color: theme.colorScheme.errorContainer,
+              child: ListTile(
+                leading: Icon(Icons.warning_amber, color: theme.colorScheme.onErrorContainer),
+                title: Text(l10n.atRiskTitle, style: TextStyle(color: theme.colorScheme.onErrorContainer, fontWeight: FontWeight.w700)),
+                subtitle: Text(
+                  [
+                    if (data.activity!.missedMonths > 0) l10n.atRiskMonths(data.activity!.missedMonths),
+                    if (data.activity!.missedMeetings > 0) l10n.atRiskMeetings(data.activity!.missedMeetings),
+                  ].join(' · '),
+                  style: TextStyle(color: theme.colorScheme.onErrorContainer),
+                ),
+              ),
+            ),
+          ),
+        if (data.nextMeeting != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Card(
+              child: ListTile(
+                leading: Icon(Icons.event, color: theme.colorScheme.primary),
+                title: Text(data.nextMeeting!.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                subtitle: Text([
+                  meetingWhen(context, data.nextMeeting!.scheduledAt),
+                  if (data.nextMeeting!.myStatus == 'APOLOGY') l10n.apologySent,
+                ].join(' · ')),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyMeetingsScreen()));
+                  if (context.mounted) homeShellOf(context)?.refreshAll();
+                },
+              ),
+            ),
+          ),
         // Until the member's details and family register are approved, nudge them.
         if (context.read<Session>().member != null && !context.read<Session>().member!.profileApproved)
           Padding(

@@ -8,6 +8,7 @@ from accounting.services import LineInput, post_journal_entry
 
 from .models import (
     SavingsAccount,
+    SavingsProductType,
     SavingsTransaction,
     SavingsTransactionType,
     ShareAccount,
@@ -47,7 +48,7 @@ def contribute_shares(*, member, amount: Decimal, transaction_date: date, create
 
     with transaction.atomic():
         entry = post_journal_entry(
-            description=description or f"Share contribution - {member.full_name()}",
+            description=description or f"Share contribution - {member.full_name}",
             entry_date=transaction_date,
             lines=[
                 LineInput(account=cash, debit=amount, description="Share contribution received"),
@@ -74,7 +75,7 @@ def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transac
 
     with transaction.atomic():
         entry = post_journal_entry(
-            description=description or f"Savings deposit - {member.full_name()}",
+            description=description or f"Savings deposit - {member.full_name}",
             entry_date=transaction_date,
             lines=[
                 LineInput(account=cash, debit=amount, description="Savings deposit received"),
@@ -82,7 +83,7 @@ def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transac
             ],
             created_by=created_by,
         )
-        return SavingsTransaction.objects.create(
+        txn = SavingsTransaction.objects.create(
             savings_account=savings_account,
             transaction_type=SavingsTransactionType.DEPOSIT,
             amount=amount,
@@ -90,6 +91,14 @@ def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transac
             journal_entry=entry,
             created_by=created_by,
         )
+        # A mandatory monthly contribution keeps a member active - and brings
+        # back one archived for inactivity (members.activity). Imported lazily:
+        # members doesn't depend on savings at import time.
+        if savings_account.product.product_type == SavingsProductType.MANDATORY_MONTHLY:
+            from members.activity import note_activity
+
+            note_activity(savings_account.member, reason="made a monthly contribution", by=created_by)
+        return txn
 
 
 def withdraw_savings(*, savings_account: SavingsAccount, amount: Decimal, transaction_date: date, created_by=None, description: str = "") -> SavingsTransaction:
@@ -131,7 +140,7 @@ def withdraw_savings(*, savings_account: SavingsAccount, amount: Decimal, transa
             )
 
         entry = post_journal_entry(
-            description=description or f"Savings withdrawal - {member.full_name()}",
+            description=description or f"Savings withdrawal - {member.full_name}",
             entry_date=transaction_date,
             lines=[
                 LineInput(account=savings_control, debit=amount, member=member, description="Savings withdrawal"),

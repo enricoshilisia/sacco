@@ -919,5 +919,162 @@
   "welfarePickAffected": "Choose who the case is for.",
   "welfareNobodyCovered": "Nobody on this member's register is covered by this case type.",
   "welfareNobodyCoveredHelp": "The member must add the person to their family register and have it approved first.",
-  "welfareRegisterOnlyHelp": "Only approved family-register entries are covered."
+  "welfareRegisterOnlyHelp": "Only approved family-register entries are covered.",
+  "navMeetings": "Meetings",
+  "navActivity": "Inactive",
+  "meetingsTitle": "Meetings",
+  "meetingsHelp": "Schedule meetings and take the register",
+  "myMeetingsHelp": "Upcoming meetings, apologies, my attendance",
+  "meetingsUpcoming": "Upcoming",
+  "meetingsPast": "Past",
+  "meetingsNoneUpcoming": "No upcoming meetings.",
+  "meetingsNonePast": "No past meetings yet.",
+  "meetingSchedule": "Schedule meeting",
+  "meetingType": "Meeting type",
+  "meetingAgm": "Annual general meeting",
+  "meetingSgm": "Special general meeting",
+  "meetingMonthly": "Monthly members' meeting",
+  "meetingCommittee": "Committee meeting",
+  "meetingBoard": "Board meeting",
+  "meetingTitleLabel": "Title",
+  "meetingTitleHint": "e.g. October monthly meeting",
+  "meetingTime": "Time",
+  "meetingVenue": "Venue",
+  "meetingAgenda": "Agenda",
+  "meetingSendNotice": "SMS notice to all members",
+  "meetingSendNoticeHelp": "Members can send an apology in the app.",
+  "meetingNotCounted": "Committee and board meetings don't count towards the attendance rule.",
+  "meetingScheduled": "Meeting scheduled",
+  "meetingScheduledNotified": "Meeting scheduled and members notified",
+  "meetingCancel": "Cancel meeting",
+  "meetingCancelBody": "Cancel this meeting? It won't count for attendance.",
+  "meetingCancelled": "Cancelled",
+  "meetingApologiesIn": "{count} apologies",
+  "@meetingApologiesIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "attPresent": "Present",
+  "attLate": "Late",
+  "attApology": "Apology",
+  "attAbsent": "Absent",
+  "attNotMarked": "Not marked",
+  "registerSaved": "Register saved",
+  "registerClose": "Close register",
+  "registerCloseBody": "{count, plural, =0{Everyone is marked. Close the register?} =1{1 member isn't marked and will be recorded absent without apology.} other{{count} members aren't marked and will be recorded absent without apology.}}",
+  "@registerCloseBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "registerClosed": "Register closed",
+  "registerHeldHelp": "This register is closed. You can still correct a mark.",
+  "apologyReasonShown": "Apology: {reason}",
+  "@apologyReasonShown": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "sendApology": "Send apology",
+  "apologyReason": "Reason",
+  "apologyHelp": "An apology means this absence won't count against you.",
+  "apologySent": "Apology sent",
+  "myAttendance": "My attendance",
+  "missedMeetingsStreak": "{count} meetings missed in a row without apology (limit {limit})",
+  "@missedMeetingsStreak": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "missedMeetingsHelp": "Attend the next meeting or send an apology to stay active.",
+  "atRiskTitle": "Your membership may become dormant",
+  "atRiskMonths": "{count} months without a monthly contribution",
+  "@atRiskMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "atRiskMeetings": "{count} meetings missed without apology",
+  "@atRiskMeetings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dormantTitle": "Your membership is dormant",
+  "dormantBody": "You can view and pay, but not borrow or guarantee, and welfare doesn't cover you. Make your monthly contribution or attend a meeting to reactivate.",
+  "taskProfileChanges": "Profile changes to approve",
+  "taskMembersToArchive": "Inactive members to review",
+  "activityTitle": "Inactive members",
+  "activityHelp": "Archive or reactivate members; inactivity rules",
+  "activityFlagged": "To review",
+  "activityDormant": "Dormant",
+  "activityRules": "Rules",
+  "activityFlaggedHelp": "Members the monthly check found past a limit. They were warned by SMS one step before.",
+  "activityNoneFlagged": "Nobody to review.",
+  "activityKeepActive": "Keep active",
+  "activityKeepActiveHelp": "E.g. they've agreed a payment plan.",
+  "activityKept": "Kept active",
+  "activityArchive": "Make dormant",
+  "activityArchiveBody": "{name} will be dormant: they can view and pay, but can't borrow or guarantee, and aren't levied or covered for welfare. They come back automatically when they contribute or attend.",
+  "@activityArchiveBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityArchived": "Member made dormant",
+  "activityDormantHelp": "They return automatically when they contribute to monthly savings or attend a meeting.",
+  "activityNoneDormant": "No dormant members.",
+  "activityReactivate": "Reactivate",
+  "activityReactivated": "Member reactivated",
+  "activityRunNow": "Run the check now",
+  "activityCheckDone": "Check done: {flagged} flagged, {warned} warned by SMS",
+  "@activityCheckDone": {
+    "placeholders": {
+      "flagged": {
+        "type": "int"
+      },
+      "warned": {
+        "type": "int"
+      }
+    }
+  },
+  "activityLastRun": "Last run: {date}",
+  "@activityLastRun": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNeverRun": "Not run yet.",
+  "activityScheduleHelp": "It also runs automatically on the 1st of each month.",
+  "activityWarnBeforeLimit": "The warning must come before the limit.",
+  "ruleContributions": "Missed monthly contributions",
+  "ruleContributionsHelp": "Months in a row with no deposit into mandatory monthly savings.",
+  "ruleWarnAfterMonths": "SMS warning after (months)",
+  "ruleArchiveAfterMonths": "Review for dormancy after (months)",
+  "ruleMinAmount": "Minimum monthly amount",
+  "ruleMinAmountHelp": "0 = any amount counts.",
+  "ruleMeetings": "Missed meetings",
+  "ruleMeetingsHelp": "General meetings in a row missed without apology.",
+  "ruleWarnAfterMeetings": "SMS warning after (meetings)",
+  "ruleArchiveAfterMeetings": "Review for dormancy after (meetings)"
 }

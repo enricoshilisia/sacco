@@ -220,7 +220,7 @@ class PortalInviteAcceptView(APIView):
         existing_account = User.objects.filter(phone_number=invite.member.phone_number).exists()
         return Response(
             {
-                "member_name": invite.member.full_name(),
+                "member_name": invite.member.full_name,
                 "member_number": invite.member.member_number,
                 "existing_account": existing_account,
             }

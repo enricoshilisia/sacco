@@ -92,6 +92,9 @@ class Member(AuditMixin, models.Model):
     employer = models.CharField(max_length=150, blank=True)
     county = models.CharField(max_length=80, blank=True, help_text="County / region of residence.")
     profile_status = models.CharField(max_length=10, choices=ProfileStatus.choices, default=ProfileStatus.DRAFT)
+    # Which inactivity warning was last sent (e.g. "m2-g0"), so the monthly
+    # check doesn't repeat the same warning (members.activity).
+    last_warning_key = models.CharField(max_length=20, blank=True)
 
     is_kyc_verified = models.BooleanField(default=False)
     kyc_verified_at = models.DateTimeField(null=True, blank=True)
@@ -114,6 +117,7 @@ class Member(AuditMixin, models.Model):
     def __str__(self):
         return f"{self.member_number} - {self.first_name} {self.last_name}"
 
+    @property
     def full_name(self):
         return " ".join(filter(None, [self.first_name, self.other_names, self.last_name]))
 
@@ -382,3 +386,76 @@ class ProfileChangeRequest(models.Model):
 
     class Meta:
         ordering = ["-submitted_at"]
+
+
+class MemberActivitySettings(models.Model):
+    """Per-SACCO inactivity rules (CLAUDE.md rule 6: config, not code).
+    Singleton per tenant schema. See members.activity."""
+
+    contribution_rule_enabled = models.BooleanField(default=True)
+    warn_after_months = models.PositiveSmallIntegerField(default=2)
+    inactive_after_months = models.PositiveSmallIntegerField(default=3)
+    min_monthly_contribution = models.DecimalField(
+        max_digits=18, decimal_places=2, default=0,
+        help_text="A month only counts as contributed if mandatory savings deposits reach this (0 = any amount).",
+    )
+    meeting_rule_enabled = models.BooleanField(default=True)
+    warn_after_meetings = models.PositiveSmallIntegerField(default=2)
+    inactive_after_meetings = models.PositiveSmallIntegerField(default=3)
+    last_run_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Member activity settings"
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+
+class InactivityFlag(models.Model):
+    """A member the monthly check found past an inactivity limit, waiting
+    for the Secretary to confirm (archive as dormant) or dismiss."""
+
+    CONTRIBUTIONS = "CONTRIBUTIONS"
+    MEETINGS = "MEETINGS"
+    REASON_CHOICES = [(CONTRIBUTIONS, "Missed monthly contributions"), (MEETINGS, "Missed meetings without apology")]
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    DISMISSED = "DISMISSED"
+    STATUS_CHOICES = [(PENDING, "Awaiting decision"), (CONFIRMED, "Archived"), (DISMISSED, "Dismissed")]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="inactivity_flags")
+    reason = models.CharField(max_length=15, choices=REASON_CHOICES)
+    detail = models.CharField(max_length=255)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    decided_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    decided_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class MemberStatusChange(models.Model):
+    """Every change to a member's status (active / dormant / exited), who
+    made it and why - the audit trail for archiving and reactivation."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="status_changes")
+    from_status = models.CharField(max_length=20, choices=MemberStatus.choices)
+    to_status = models.CharField(max_length=20, choices=MemberStatus.choices)
+    reason = models.CharField(max_length=255)
+    changed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    changed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-changed_at"]
+

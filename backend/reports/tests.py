@@ -110,6 +110,7 @@ class ReconciliationTests(ReportsTestBase):
         report = services.loan_portfolio(as_of=TODAY)
         self.assertTrue(report["checks"][0]["ok"], report["checks"])
         self.assertEqual(report["sections"][1]["rows"][0][0], "M-00001")
+        self.assertEqual(report["sections"][1]["rows"][0][1], "Mem M-00001")  # a real name, not a method
         par = next(s["value"] for s in report["summary"] if s["kind"] == "percent")
         self.assertEqual(D(par), D("0"))
 

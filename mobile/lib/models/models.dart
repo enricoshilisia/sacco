@@ -44,10 +44,13 @@ class TenantProfile {
   bool get hasMembers => can('members.view');
   bool get hasDistributions => can('distributions.view');
   bool get hasApprovals => can('members.approve_changes');
+  bool get hasMeetings => canAny(const ['governance.call_meeting', 'governance.take_attendance']);
+  bool get hasActivity => can('members.approve_changes');
 
   /// Any leader module this app offers.
   bool get hasStaffTools =>
-      hasWelfareTools || hasFinance || hasReports || hasLoanDesk || hasMembers || hasDistributions || hasApprovals;
+      hasWelfareTools || hasFinance || hasReports || hasLoanDesk || hasMembers || hasDistributions || hasApprovals ||
+      hasMeetings;
 }
 
 /// GET /api/members/me/

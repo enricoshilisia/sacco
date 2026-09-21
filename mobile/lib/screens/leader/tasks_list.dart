@@ -6,6 +6,8 @@ import '../../core/session.dart';
 import '../../models/leader.dart';
 import '../../widgets/common.dart';
 import '../welfare/welfare_screen.dart';
+import 'activity_screen.dart';
+import 'approvals_screen.dart';
 import 'distribution_runs_screen.dart';
 import 'loan_desk_screen.dart';
 
@@ -84,6 +86,8 @@ String taskLabel(BuildContext context, String key) {
     'loans_to_disburse' => l10n.taskLoansToDisburse,
     'distributions_to_approve' => l10n.taskDistributionsToApprove,
     'welfare_to_approve' => l10n.taskWelfareToApprove,
+    'profile_changes_to_approve' => l10n.taskProfileChanges,
+    'members_to_archive' => l10n.taskMembersToArchive,
     _ => key,
   };
 }
@@ -94,5 +98,7 @@ Widget? taskScreen(String key) => switch (key) {
       'loans_to_disburse' => const LoanDeskScreen(initialQueue: LoanQueue.disburse),
       'distributions_to_approve' => const DistributionRunsScreen(),
       'welfare_to_approve' => const WelfareScreen(staffMode: true),
+      'profile_changes_to_approve' => const ApprovalsScreen(),
+      'members_to_archive' => const ActivityScreen(),
       _ => null,
     };

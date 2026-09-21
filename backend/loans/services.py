@@ -77,6 +77,8 @@ def apply_for_loan(
 ) -> Loan:
     if amount_requested <= 0:
         raise ValueError("Loan amount must be positive.")
+    if member.status != "ACTIVE":
+        raise ValueError("Your membership is dormant. Contribute or attend a meeting to reactivate it, then apply.")
     if not (product.min_term_months <= term_months <= product.max_term_months):
         raise ValueError(
             f"Term must be between {product.min_term_months} and {product.max_term_months} months."
@@ -115,6 +117,8 @@ def add_guarantor(*, loan: Loan, guarantor, pledged_amount: Decimal) -> LoanGuar
         raise ValueError("Guarantors can only be added while this loan is awaiting guarantors.")
     if guarantor.id == loan.member_id:
         raise ValueError("A member cannot guarantee their own loan.")
+    if guarantor.status != "ACTIVE":
+        raise ValueError("That member's membership isn't active, so they can't guarantee loans.")
     if pledged_amount <= 0:
         raise ValueError("Pledged amount must be positive.")
     if loan.guarantors.filter(guarantor=guarantor).exists():
@@ -127,6 +131,8 @@ def respond_to_guarantee(*, loan_guarantor: LoanGuarantor, accept: bool) -> Loan
         raise ValueError("This guarantee request has already been responded to.")
 
     if accept:
+        if loan_guarantor.guarantor.status != "ACTIVE":
+            raise ValueError("Your membership is dormant, so you can't guarantee loans until it's reactivated.")
         available = get_available_deposits(loan_guarantor.guarantor)
         if loan_guarantor.pledged_amount > available:
             raise ValueError(
@@ -542,7 +548,7 @@ def record_loan_repayment(
             )
 
         entry = post_journal_entry(
-            description=description or f"Loan repayment - {loan.member.full_name()}",
+            description=description or f"Loan repayment - {loan.member.full_name}",
             entry_date=transaction_date,
             lines=lines,
             created_by=created_by,

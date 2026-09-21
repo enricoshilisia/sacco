@@ -1901,4 +1901,308 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get welfareRegisterOnlyHelp =>
       'Only approved family-register entries are covered.';
+
+  @override
+  String get navMeetings => 'Meetings';
+
+  @override
+  String get navActivity => 'Inactive';
+
+  @override
+  String get meetingsTitle => 'Meetings';
+
+  @override
+  String get meetingsHelp => 'Schedule meetings and take the register';
+
+  @override
+  String get myMeetingsHelp => 'Upcoming meetings, apologies, my attendance';
+
+  @override
+  String get meetingsUpcoming => 'Upcoming';
+
+  @override
+  String get meetingsPast => 'Past';
+
+  @override
+  String get meetingsNoneUpcoming => 'No upcoming meetings.';
+
+  @override
+  String get meetingsNonePast => 'No past meetings yet.';
+
+  @override
+  String get meetingSchedule => 'Schedule meeting';
+
+  @override
+  String get meetingType => 'Meeting type';
+
+  @override
+  String get meetingAgm => 'Annual general meeting';
+
+  @override
+  String get meetingSgm => 'Special general meeting';
+
+  @override
+  String get meetingMonthly => 'Monthly members\' meeting';
+
+  @override
+  String get meetingCommittee => 'Committee meeting';
+
+  @override
+  String get meetingBoard => 'Board meeting';
+
+  @override
+  String get meetingTitleLabel => 'Title';
+
+  @override
+  String get meetingTitleHint => 'e.g. October monthly meeting';
+
+  @override
+  String get meetingTime => 'Time';
+
+  @override
+  String get meetingVenue => 'Venue';
+
+  @override
+  String get meetingAgenda => 'Agenda';
+
+  @override
+  String get meetingSendNotice => 'SMS notice to all members';
+
+  @override
+  String get meetingSendNoticeHelp => 'Members can send an apology in the app.';
+
+  @override
+  String get meetingNotCounted =>
+      'Committee and board meetings don\'t count towards the attendance rule.';
+
+  @override
+  String get meetingScheduled => 'Meeting scheduled';
+
+  @override
+  String get meetingScheduledNotified =>
+      'Meeting scheduled and members notified';
+
+  @override
+  String get meetingCancel => 'Cancel meeting';
+
+  @override
+  String get meetingCancelBody =>
+      'Cancel this meeting? It won\'t count for attendance.';
+
+  @override
+  String get meetingCancelled => 'Cancelled';
+
+  @override
+  String meetingApologiesIn(int count) {
+    return '$count apologies';
+  }
+
+  @override
+  String get attPresent => 'Present';
+
+  @override
+  String get attLate => 'Late';
+
+  @override
+  String get attApology => 'Apology';
+
+  @override
+  String get attAbsent => 'Absent';
+
+  @override
+  String get attNotMarked => 'Not marked';
+
+  @override
+  String get registerSaved => 'Register saved';
+
+  @override
+  String get registerClose => 'Close register';
+
+  @override
+  String registerCloseBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count members aren\'t marked and will be recorded absent without apology.',
+      one:
+          '1 member isn\'t marked and will be recorded absent without apology.',
+      zero: 'Everyone is marked. Close the register?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get registerClosed => 'Register closed';
+
+  @override
+  String get registerHeldHelp =>
+      'This register is closed. You can still correct a mark.';
+
+  @override
+  String apologyReasonShown(String reason) {
+    return 'Apology: $reason';
+  }
+
+  @override
+  String get sendApology => 'Send apology';
+
+  @override
+  String get apologyReason => 'Reason';
+
+  @override
+  String get apologyHelp =>
+      'An apology means this absence won\'t count against you.';
+
+  @override
+  String get apologySent => 'Apology sent';
+
+  @override
+  String get myAttendance => 'My attendance';
+
+  @override
+  String missedMeetingsStreak(int count, int limit) {
+    return '$count meetings missed in a row without apology (limit $limit)';
+  }
+
+  @override
+  String get missedMeetingsHelp =>
+      'Attend the next meeting or send an apology to stay active.';
+
+  @override
+  String get atRiskTitle => 'Your membership may become dormant';
+
+  @override
+  String atRiskMonths(int count) {
+    return '$count months without a monthly contribution';
+  }
+
+  @override
+  String atRiskMeetings(int count) {
+    return '$count meetings missed without apology';
+  }
+
+  @override
+  String get dormantTitle => 'Your membership is dormant';
+
+  @override
+  String get dormantBody =>
+      'You can view and pay, but not borrow or guarantee, and welfare doesn\'t cover you. Make your monthly contribution or attend a meeting to reactivate.';
+
+  @override
+  String get taskProfileChanges => 'Profile changes to approve';
+
+  @override
+  String get taskMembersToArchive => 'Inactive members to review';
+
+  @override
+  String get activityTitle => 'Inactive members';
+
+  @override
+  String get activityHelp => 'Archive or reactivate members; inactivity rules';
+
+  @override
+  String get activityFlagged => 'To review';
+
+  @override
+  String get activityDormant => 'Dormant';
+
+  @override
+  String get activityRules => 'Rules';
+
+  @override
+  String get activityFlaggedHelp =>
+      'Members the monthly check found past a limit. They were warned by SMS one step before.';
+
+  @override
+  String get activityNoneFlagged => 'Nobody to review.';
+
+  @override
+  String get activityKeepActive => 'Keep active';
+
+  @override
+  String get activityKeepActiveHelp => 'E.g. they\'ve agreed a payment plan.';
+
+  @override
+  String get activityKept => 'Kept active';
+
+  @override
+  String get activityArchive => 'Make dormant';
+
+  @override
+  String activityArchiveBody(String name) {
+    return '$name will be dormant: they can view and pay, but can\'t borrow or guarantee, and aren\'t levied or covered for welfare. They come back automatically when they contribute or attend.';
+  }
+
+  @override
+  String get activityArchived => 'Member made dormant';
+
+  @override
+  String get activityDormantHelp =>
+      'They return automatically when they contribute to monthly savings or attend a meeting.';
+
+  @override
+  String get activityNoneDormant => 'No dormant members.';
+
+  @override
+  String get activityReactivate => 'Reactivate';
+
+  @override
+  String get activityReactivated => 'Member reactivated';
+
+  @override
+  String get activityRunNow => 'Run the check now';
+
+  @override
+  String activityCheckDone(int flagged, int warned) {
+    return 'Check done: $flagged flagged, $warned warned by SMS';
+  }
+
+  @override
+  String activityLastRun(String date) {
+    return 'Last run: $date';
+  }
+
+  @override
+  String get activityNeverRun => 'Not run yet.';
+
+  @override
+  String get activityScheduleHelp =>
+      'It also runs automatically on the 1st of each month.';
+
+  @override
+  String get activityWarnBeforeLimit =>
+      'The warning must come before the limit.';
+
+  @override
+  String get ruleContributions => 'Missed monthly contributions';
+
+  @override
+  String get ruleContributionsHelp =>
+      'Months in a row with no deposit into mandatory monthly savings.';
+
+  @override
+  String get ruleWarnAfterMonths => 'SMS warning after (months)';
+
+  @override
+  String get ruleArchiveAfterMonths => 'Review for dormancy after (months)';
+
+  @override
+  String get ruleMinAmount => 'Minimum monthly amount';
+
+  @override
+  String get ruleMinAmountHelp => '0 = any amount counts.';
+
+  @override
+  String get ruleMeetings => 'Missed meetings';
+
+  @override
+  String get ruleMeetingsHelp =>
+      'General meetings in a row missed without apology.';
+
+  @override
+  String get ruleWarnAfterMeetings => 'SMS warning after (meetings)';
+
+  @override
+  String get ruleArchiveAfterMeetings => 'Review for dormancy after (meetings)';
 }

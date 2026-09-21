@@ -1904,4 +1904,306 @@ class AppLocalizationsSw extends AppLocalizations {
   @override
   String get welfareRegisterOnlyHelp =>
       'Ni walioidhinishwa kwenye rejista tu wanaolindwa.';
+
+  @override
+  String get navMeetings => 'Mikutano';
+
+  @override
+  String get navActivity => 'Wasiofanya';
+
+  @override
+  String get meetingsTitle => 'Mikutano';
+
+  @override
+  String get meetingsHelp => 'Panga mikutano na chukua mahudhurio';
+
+  @override
+  String get myMeetingsHelp => 'Mikutano ijayo, udhuru, mahudhurio yangu';
+
+  @override
+  String get meetingsUpcoming => 'Ijayo';
+
+  @override
+  String get meetingsPast => 'Iliyopita';
+
+  @override
+  String get meetingsNoneUpcoming => 'Hakuna mikutano ijayo.';
+
+  @override
+  String get meetingsNonePast => 'Hakuna mikutano iliyopita bado.';
+
+  @override
+  String get meetingSchedule => 'Panga mkutano';
+
+  @override
+  String get meetingType => 'Aina ya mkutano';
+
+  @override
+  String get meetingAgm => 'Mkutano mkuu wa mwaka';
+
+  @override
+  String get meetingSgm => 'Mkutano mkuu maalum';
+
+  @override
+  String get meetingMonthly => 'Mkutano wa kila mwezi';
+
+  @override
+  String get meetingCommittee => 'Mkutano wa kamati';
+
+  @override
+  String get meetingBoard => 'Mkutano wa bodi';
+
+  @override
+  String get meetingTitleLabel => 'Kichwa';
+
+  @override
+  String get meetingTitleHint => 'mfano Mkutano wa Oktoba';
+
+  @override
+  String get meetingTime => 'Saa';
+
+  @override
+  String get meetingVenue => 'Mahali';
+
+  @override
+  String get meetingAgenda => 'Ajenda';
+
+  @override
+  String get meetingSendNotice => 'Tuma ujumbe kwa wanachama wote';
+
+  @override
+  String get meetingSendNoticeHelp =>
+      'Wanachama wanaweza kutuma udhuru kwenye programu.';
+
+  @override
+  String get meetingNotCounted =>
+      'Mikutano ya kamati na bodi haihesabiwi kwenye kanuni ya mahudhurio.';
+
+  @override
+  String get meetingScheduled => 'Mkutano umepangwa';
+
+  @override
+  String get meetingScheduledNotified =>
+      'Mkutano umepangwa na wanachama wamearifiwa';
+
+  @override
+  String get meetingCancel => 'Ghairi mkutano';
+
+  @override
+  String get meetingCancelBody =>
+      'Ghairi mkutano huu? Hautahesabiwa kwa mahudhurio.';
+
+  @override
+  String get meetingCancelled => 'Umeghairiwa';
+
+  @override
+  String meetingApologiesIn(int count) {
+    return 'udhuru $count';
+  }
+
+  @override
+  String get attPresent => 'Alihudhuria';
+
+  @override
+  String get attLate => 'Alichelewa';
+
+  @override
+  String get attApology => 'Udhuru';
+
+  @override
+  String get attAbsent => 'Hakuhudhuria';
+
+  @override
+  String get attNotMarked => 'Haijawekwa';
+
+  @override
+  String get registerSaved => 'Mahudhurio yamehifadhiwa';
+
+  @override
+  String get registerClose => 'Funga mahudhurio';
+
+  @override
+  String registerCloseBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Wanachama $count hawajawekwa na wataandikwa hawakuhudhuria bila udhuru.',
+      one: 'Mwanachama 1 hajawekwa na ataandikwa hakuhudhuria bila udhuru.',
+      zero: 'Wote wamewekwa. Funga mahudhurio?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get registerClosed => 'Mahudhurio yamefungwa';
+
+  @override
+  String get registerHeldHelp =>
+      'Mahudhurio haya yamefungwa. Bado unaweza kusahihisha.';
+
+  @override
+  String apologyReasonShown(String reason) {
+    return 'Udhuru: $reason';
+  }
+
+  @override
+  String get sendApology => 'Tuma udhuru';
+
+  @override
+  String get apologyReason => 'Sababu';
+
+  @override
+  String get apologyHelp =>
+      'Udhuru unamaanisha kutokuwepo huku hakutahesabiwa dhidi yako.';
+
+  @override
+  String get apologySent => 'Udhuru umetumwa';
+
+  @override
+  String get myAttendance => 'Mahudhurio yangu';
+
+  @override
+  String missedMeetingsStreak(int count, int limit) {
+    return 'Mikutano $count mfululizo bila udhuru (kikomo $limit)';
+  }
+
+  @override
+  String get missedMeetingsHelp =>
+      'Hudhuria mkutano ujao au tuma udhuru ili ubaki hai.';
+
+  @override
+  String get atRiskTitle => 'Uanachama wako unaweza kusitishwa';
+
+  @override
+  String atRiskMonths(int count) {
+    return 'Miezi $count bila mchango wa kila mwezi';
+  }
+
+  @override
+  String atRiskMeetings(int count) {
+    return 'Mikutano $count bila udhuru';
+  }
+
+  @override
+  String get dormantTitle => 'Uanachama wako umesitishwa';
+
+  @override
+  String get dormantBody =>
+      'Unaweza kuona na kulipa, lakini si kukopa wala kudhamini, na ustawi haukulindi. Toa mchango wa mwezi au hudhuria mkutano ili urejeshwe.';
+
+  @override
+  String get taskProfileChanges => 'Mabadiliko ya wasifu ya kuidhinisha';
+
+  @override
+  String get taskMembersToArchive => 'Wanachama wasiofanya kazi wa kukagua';
+
+  @override
+  String get activityTitle => 'Wanachama wasiofanya kazi';
+
+  @override
+  String get activityHelp => 'Sitisha au rejesha wanachama; kanuni';
+
+  @override
+  String get activityFlagged => 'Wa kukagua';
+
+  @override
+  String get activityDormant => 'Waliositishwa';
+
+  @override
+  String get activityRules => 'Kanuni';
+
+  @override
+  String get activityFlaggedHelp =>
+      'Wanachama waliovuka kikomo katika ukaguzi wa mwezi. Walionywa kwa SMS hatua moja kabla.';
+
+  @override
+  String get activityNoneFlagged => 'Hakuna wa kukagua.';
+
+  @override
+  String get activityKeepActive => 'Mbakize hai';
+
+  @override
+  String get activityKeepActiveHelp => 'Mfano amekubali mpango wa malipo.';
+
+  @override
+  String get activityKept => 'Amebakizwa hai';
+
+  @override
+  String get activityArchive => 'Sitisha';
+
+  @override
+  String activityArchiveBody(String name) {
+    return '$name atasitishwa: anaweza kuona na kulipa, lakini si kukopa wala kudhamini, na hatatozwa wala kulindwa na ustawi. Atarejeshwa moja kwa moja akichangia au kuhudhuria.';
+  }
+
+  @override
+  String get activityArchived => 'Mwanachama amesitishwa';
+
+  @override
+  String get activityDormantHelp =>
+      'Hurejeshwa moja kwa moja wakichangia akiba ya mwezi au kuhudhuria mkutano.';
+
+  @override
+  String get activityNoneDormant => 'Hakuna waliositishwa.';
+
+  @override
+  String get activityReactivate => 'Rejesha';
+
+  @override
+  String get activityReactivated => 'Mwanachama amerejeshwa';
+
+  @override
+  String get activityRunNow => 'Fanya ukaguzi sasa';
+
+  @override
+  String activityCheckDone(int flagged, int warned) {
+    return 'Ukaguzi umekamilika: $flagged wamewekwa alama, $warned wameonywa';
+  }
+
+  @override
+  String activityLastRun(String date) {
+    return 'Mara ya mwisho: $date';
+  }
+
+  @override
+  String get activityNeverRun => 'Bado haujafanywa.';
+
+  @override
+  String get activityScheduleHelp =>
+      'Pia hufanyika moja kwa moja tarehe 1 kila mwezi.';
+
+  @override
+  String get activityWarnBeforeLimit => 'Onyo lazima liwe kabla ya kikomo.';
+
+  @override
+  String get ruleContributions => 'Michango ya mwezi iliyokosekana';
+
+  @override
+  String get ruleContributionsHelp =>
+      'Miezi mfululizo bila amana kwenye akiba ya lazima ya kila mwezi.';
+
+  @override
+  String get ruleWarnAfterMonths => 'Onyo la SMS baada ya (miezi)';
+
+  @override
+  String get ruleArchiveAfterMonths => 'Kagua kusitisha baada ya (miezi)';
+
+  @override
+  String get ruleMinAmount => 'Kiasi cha chini kwa mwezi';
+
+  @override
+  String get ruleMinAmountHelp => '0 = kiasi chochote kinahesabiwa.';
+
+  @override
+  String get ruleMeetings => 'Mikutano iliyokosekana';
+
+  @override
+  String get ruleMeetingsHelp => 'Mikutano mikuu mfululizo bila udhuru.';
+
+  @override
+  String get ruleWarnAfterMeetings => 'Onyo la SMS baada ya (mikutano)';
+
+  @override
+  String get ruleArchiveAfterMeetings => 'Kagua kusitisha baada ya (mikutano)';
 }

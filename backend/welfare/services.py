@@ -106,6 +106,8 @@ def create_case(
         raise ValueError("This welfare case type is no longer active.")
     if beneficiary.status == MemberStatus.EXITED:
         raise ValueError("Welfare cases can't be opened for a member who has exited.")
+    if beneficiary.status == MemberStatus.DORMANT:
+        raise ValueError("This member is dormant, so welfare doesn't cover them until they're reactivated.")
     label = check_cover(case_type, beneficiary, affected_family_member)
     return WelfareCase.objects.create(
         case_type=case_type,

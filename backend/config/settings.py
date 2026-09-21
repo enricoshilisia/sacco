@@ -61,6 +61,7 @@ TENANT_APPS = [
     "distributions",
     "welfare",
     "reports",
+    "governance",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
@@ -254,6 +255,16 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=False)
+
+from celery.schedules import crontab  # noqa: E402
+
+CELERY_BEAT_SCHEDULE = {
+    # Member inactivity rules (members.activity): warn, then flag for the Secretary.
+    "monthly-member-activity-check": {
+        "task": "members.tasks.run_activity_check_all_tenants",
+        "schedule": crontab(day_of_month="1", hour="6", minute="0"),
+    },
+}
 
 # ---------------------------------------------------------------------------
 # Notification / payment provider credentials (Phase 3)

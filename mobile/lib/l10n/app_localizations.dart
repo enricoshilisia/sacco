@@ -3541,6 +3541,534 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only approved family-register entries are covered.'**
   String get welfareRegisterOnlyHelp;
+
+  /// No description provided for @navMeetings.
+  ///
+  /// In en, this message translates to:
+  /// **'Meetings'**
+  String get navMeetings;
+
+  /// No description provided for @navActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get navActivity;
+
+  /// No description provided for @meetingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Meetings'**
+  String get meetingsTitle;
+
+  /// No description provided for @meetingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule meetings and take the register'**
+  String get meetingsHelp;
+
+  /// No description provided for @myMeetingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming meetings, apologies, my attendance'**
+  String get myMeetingsHelp;
+
+  /// No description provided for @meetingsUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get meetingsUpcoming;
+
+  /// No description provided for @meetingsPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get meetingsPast;
+
+  /// No description provided for @meetingsNoneUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming meetings.'**
+  String get meetingsNoneUpcoming;
+
+  /// No description provided for @meetingsNonePast.
+  ///
+  /// In en, this message translates to:
+  /// **'No past meetings yet.'**
+  String get meetingsNonePast;
+
+  /// No description provided for @meetingSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule meeting'**
+  String get meetingSchedule;
+
+  /// No description provided for @meetingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting type'**
+  String get meetingType;
+
+  /// No description provided for @meetingAgm.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual general meeting'**
+  String get meetingAgm;
+
+  /// No description provided for @meetingSgm.
+  ///
+  /// In en, this message translates to:
+  /// **'Special general meeting'**
+  String get meetingSgm;
+
+  /// No description provided for @meetingMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly members\' meeting'**
+  String get meetingMonthly;
+
+  /// No description provided for @meetingCommittee.
+  ///
+  /// In en, this message translates to:
+  /// **'Committee meeting'**
+  String get meetingCommittee;
+
+  /// No description provided for @meetingBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board meeting'**
+  String get meetingBoard;
+
+  /// No description provided for @meetingTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get meetingTitleLabel;
+
+  /// No description provided for @meetingTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. October monthly meeting'**
+  String get meetingTitleHint;
+
+  /// No description provided for @meetingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get meetingTime;
+
+  /// No description provided for @meetingVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get meetingVenue;
+
+  /// No description provided for @meetingAgenda.
+  ///
+  /// In en, this message translates to:
+  /// **'Agenda'**
+  String get meetingAgenda;
+
+  /// No description provided for @meetingSendNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS notice to all members'**
+  String get meetingSendNotice;
+
+  /// No description provided for @meetingSendNoticeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Members can send an apology in the app.'**
+  String get meetingSendNoticeHelp;
+
+  /// No description provided for @meetingNotCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'Committee and board meetings don\'t count towards the attendance rule.'**
+  String get meetingNotCounted;
+
+  /// No description provided for @meetingScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting scheduled'**
+  String get meetingScheduled;
+
+  /// No description provided for @meetingScheduledNotified.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting scheduled and members notified'**
+  String get meetingScheduledNotified;
+
+  /// No description provided for @meetingCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel meeting'**
+  String get meetingCancel;
+
+  /// No description provided for @meetingCancelBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this meeting? It won\'t count for attendance.'**
+  String get meetingCancelBody;
+
+  /// No description provided for @meetingCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get meetingCancelled;
+
+  /// No description provided for @meetingApologiesIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} apologies'**
+  String meetingApologiesIn(int count);
+
+  /// No description provided for @attPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get attPresent;
+
+  /// No description provided for @attLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Late'**
+  String get attLate;
+
+  /// No description provided for @attApology.
+  ///
+  /// In en, this message translates to:
+  /// **'Apology'**
+  String get attApology;
+
+  /// No description provided for @attAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get attAbsent;
+
+  /// No description provided for @attNotMarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not marked'**
+  String get attNotMarked;
+
+  /// No description provided for @registerSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Register saved'**
+  String get registerSaved;
+
+  /// No description provided for @registerClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close register'**
+  String get registerClose;
+
+  /// No description provided for @registerCloseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Everyone is marked. Close the register?} =1{1 member isn\'t marked and will be recorded absent without apology.} other{{count} members aren\'t marked and will be recorded absent without apology.}}'**
+  String registerCloseBody(int count);
+
+  /// No description provided for @registerClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Register closed'**
+  String get registerClosed;
+
+  /// No description provided for @registerHeldHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This register is closed. You can still correct a mark.'**
+  String get registerHeldHelp;
+
+  /// No description provided for @apologyReasonShown.
+  ///
+  /// In en, this message translates to:
+  /// **'Apology: {reason}'**
+  String apologyReasonShown(String reason);
+
+  /// No description provided for @sendApology.
+  ///
+  /// In en, this message translates to:
+  /// **'Send apology'**
+  String get sendApology;
+
+  /// No description provided for @apologyReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get apologyReason;
+
+  /// No description provided for @apologyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'An apology means this absence won\'t count against you.'**
+  String get apologyHelp;
+
+  /// No description provided for @apologySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Apology sent'**
+  String get apologySent;
+
+  /// No description provided for @myAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'My attendance'**
+  String get myAttendance;
+
+  /// No description provided for @missedMeetingsStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} meetings missed in a row without apology (limit {limit})'**
+  String missedMeetingsStreak(int count, int limit);
+
+  /// No description provided for @missedMeetingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend the next meeting or send an apology to stay active.'**
+  String get missedMeetingsHelp;
+
+  /// No description provided for @atRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your membership may become dormant'**
+  String get atRiskTitle;
+
+  /// No description provided for @atRiskMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} months without a monthly contribution'**
+  String atRiskMonths(int count);
+
+  /// No description provided for @atRiskMeetings.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} meetings missed without apology'**
+  String atRiskMeetings(int count);
+
+  /// No description provided for @dormantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your membership is dormant'**
+  String get dormantTitle;
+
+  /// No description provided for @dormantBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can view and pay, but not borrow or guarantee, and welfare doesn\'t cover you. Make your monthly contribution or attend a meeting to reactivate.'**
+  String get dormantBody;
+
+  /// No description provided for @taskProfileChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile changes to approve'**
+  String get taskProfileChanges;
+
+  /// No description provided for @taskMembersToArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive members to review'**
+  String get taskMembersToArchive;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive members'**
+  String get activityTitle;
+
+  /// No description provided for @activityHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive or reactivate members; inactivity rules'**
+  String get activityHelp;
+
+  /// No description provided for @activityFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'To review'**
+  String get activityFlagged;
+
+  /// No description provided for @activityDormant.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormant'**
+  String get activityDormant;
+
+  /// No description provided for @activityRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Rules'**
+  String get activityRules;
+
+  /// No description provided for @activityFlaggedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Members the monthly check found past a limit. They were warned by SMS one step before.'**
+  String get activityFlaggedHelp;
+
+  /// No description provided for @activityNoneFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody to review.'**
+  String get activityNoneFlagged;
+
+  /// No description provided for @activityKeepActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep active'**
+  String get activityKeepActive;
+
+  /// No description provided for @activityKeepActiveHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. they\'ve agreed a payment plan.'**
+  String get activityKeepActiveHelp;
+
+  /// No description provided for @activityKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept active'**
+  String get activityKept;
+
+  /// No description provided for @activityArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Make dormant'**
+  String get activityArchive;
+
+  /// No description provided for @activityArchiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will be dormant: they can view and pay, but can\'t borrow or guarantee, and aren\'t levied or covered for welfare. They come back automatically when they contribute or attend.'**
+  String activityArchiveBody(String name);
+
+  /// No description provided for @activityArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Member made dormant'**
+  String get activityArchived;
+
+  /// No description provided for @activityDormantHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'They return automatically when they contribute to monthly savings or attend a meeting.'**
+  String get activityDormantHelp;
+
+  /// No description provided for @activityNoneDormant.
+  ///
+  /// In en, this message translates to:
+  /// **'No dormant members.'**
+  String get activityNoneDormant;
+
+  /// No description provided for @activityReactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get activityReactivate;
+
+  /// No description provided for @activityReactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Member reactivated'**
+  String get activityReactivated;
+
+  /// No description provided for @activityRunNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Run the check now'**
+  String get activityRunNow;
+
+  /// No description provided for @activityCheckDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Check done: {flagged} flagged, {warned} warned by SMS'**
+  String activityCheckDone(int flagged, int warned);
+
+  /// No description provided for @activityLastRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Last run: {date}'**
+  String activityLastRun(String date);
+
+  /// No description provided for @activityNeverRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Not run yet.'**
+  String get activityNeverRun;
+
+  /// No description provided for @activityScheduleHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'It also runs automatically on the 1st of each month.'**
+  String get activityScheduleHelp;
+
+  /// No description provided for @activityWarnBeforeLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'The warning must come before the limit.'**
+  String get activityWarnBeforeLimit;
+
+  /// No description provided for @ruleContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed monthly contributions'**
+  String get ruleContributions;
+
+  /// No description provided for @ruleContributionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Months in a row with no deposit into mandatory monthly savings.'**
+  String get ruleContributionsHelp;
+
+  /// No description provided for @ruleWarnAfterMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS warning after (months)'**
+  String get ruleWarnAfterMonths;
+
+  /// No description provided for @ruleArchiveAfterMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Review for dormancy after (months)'**
+  String get ruleArchiveAfterMonths;
+
+  /// No description provided for @ruleMinAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum monthly amount'**
+  String get ruleMinAmount;
+
+  /// No description provided for @ruleMinAmountHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'0 = any amount counts.'**
+  String get ruleMinAmountHelp;
+
+  /// No description provided for @ruleMeetings.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed meetings'**
+  String get ruleMeetings;
+
+  /// No description provided for @ruleMeetingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'General meetings in a row missed without apology.'**
+  String get ruleMeetingsHelp;
+
+  /// No description provided for @ruleWarnAfterMeetings.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS warning after (meetings)'**
+  String get ruleWarnAfterMeetings;
+
+  /// No description provided for @ruleArchiveAfterMeetings.
+  ///
+  /// In en, this message translates to:
+  /// **'Review for dormancy after (meetings)'**
+  String get ruleArchiveAfterMeetings;
 }
 
 class _AppLocalizationsDelegate
