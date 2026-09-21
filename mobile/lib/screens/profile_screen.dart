@@ -6,6 +6,8 @@ import '../core/session.dart';
 import '../models/models.dart';
 import '../widgets/common.dart';
 import 'distributions_screen.dart';
+import '../widgets/inuka_app_bar.dart';
+import '../widgets/member_avatar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -18,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.profileTitle)),
+      appBar: InukaAppBar(title: l10n.profileTitle, showProfile: false),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
@@ -28,13 +30,28 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      foregroundImage: member.photo != null ? NetworkImage(member.photo!) : null,
-                      child: Text(
-                        member.firstName.isEmpty ? '?' : member.firstName[0].toUpperCase(),
-                        style: TextStyle(fontSize: 24, color: theme.colorScheme.onPrimaryContainer),
+                    // Tap to change: camera or gallery, any image type.
+                    GestureDetector(
+                      onTap: session.can('members.edit_own') ? () => changeProfilePhoto(context) : null,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          const MemberAvatar(size: 76),
+                          if (session.can('members.edit_own'))
+                            Positioned(
+                              right: -2,
+                              bottom: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
+                                child: const Icon(Icons.photo_camera, size: 14, color: Colors.white),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -93,7 +110,7 @@ class ProfileScreen extends StatelessWidget {
           if (member == null && session.profile != null) ...[
             Card(
               child: ListTile(
-                leading: CircleAvatar(child: Text(session.profile!.firstName.isEmpty ? '?' : session.profile!.firstName[0])),
+                leading: const MemberAvatar(size: 44),
                 title: Text('${session.profile!.firstName} ${session.profile!.lastName}'.trim()),
                 subtitle: Text(session.profile!.phoneNumber),
               ),

@@ -7,6 +7,7 @@ import '../widgets/common.dart';
 import '../widgets/labels.dart';
 import 'apply_loan_screen.dart';
 import 'loan_detail_screen.dart';
+import '../widgets/inuka_app_bar.dart';
 
 class _LoansData {
   final List<Loan> loans;
@@ -39,7 +40,7 @@ class _LoansScreenState extends State<LoansScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.loansTitle)),
+      appBar: InukaAppBar(title: l10n.loansTitle),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _apply,
         icon: const Icon(Icons.add),

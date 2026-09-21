@@ -7,6 +7,7 @@ import '../models/models.dart';
 import '../widgets/common.dart';
 import '../widgets/labels.dart';
 import 'loan_detail_screen.dart';
+import '../widgets/inuka_app_bar.dart';
 
 /// Eligibility (multiplier on deposits, guarantors, rules engine) is
 /// decided by the backend - the app never pre-computes a limit, it just
@@ -66,7 +67,7 @@ class _ApplyLoanScreenState extends State<ApplyLoanScreen> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.applyTitle)),
+      appBar: InukaAppBar(title: l10n.applyTitle),
       body: AsyncView<List<LoanProduct>>(
         load: () => context.read<Session>().api!.loanProducts(),
         builder: (context, products, reload) => Form(

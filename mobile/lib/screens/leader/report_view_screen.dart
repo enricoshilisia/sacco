@@ -12,6 +12,7 @@ import '../../models/leader.dart';
 import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
 import 'reports_screen.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 /// Renders any report (they all share one shape) with its date controls,
 /// reconciliation checks, and CSV export for auditors.
@@ -86,8 +87,8 @@ class _ReportViewScreenState extends State<ReportViewScreen> {
     final (title, _, _) = reportInfo(l10n, widget.reportKey);
     final canExport = widget.canExport || session.can('reports.export');
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
+      appBar: InukaAppBar(
+        title: title,
         actions: [
           if (canExport)
             IconButton(

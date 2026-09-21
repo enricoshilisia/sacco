@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/leader.dart';
 import '../../widgets/common.dart';
 import 'report_view_screen.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 (String, String, IconData) reportInfo(AppLocalizations l, String key) => switch (key) {
       'trial_balance' => (l.reportTrialBalance, l.reportTrialBalanceHelp, Icons.balance),
@@ -30,7 +31,7 @@ class ReportsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.leaderReports)),
+      appBar: InukaAppBar(title: l10n.leaderReports),
       body: AsyncView<ReportCatalog>(
         load: () => context.read<Session>().api!.reportCatalog(),
         builder: (context, catalog, reload) => ListView(

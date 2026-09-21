@@ -2695,6 +2695,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connecting…'**
   String get connecting;
+
+  /// No description provided for @navFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get navFinance;
+
+  /// No description provided for @navLoanDesk.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan desk'**
+  String get navLoanDesk;
+
+  /// No description provided for @navMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get navMembers;
+
+  /// No description provided for @navReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navReports;
+
+  /// No description provided for @navDividends.
+  ///
+  /// In en, this message translates to:
+  /// **'Dividends'**
+  String get navDividends;
+
+  /// No description provided for @navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navMore;
+
+  /// No description provided for @moreProfileHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo, password, language'**
+  String get moreProfileHelp;
+
+  /// No description provided for @photoTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get photoTake;
+
+  /// No description provided for @photoChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get photoChoose;
+
+  /// No description provided for @photoPickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open that photo. Try another one.'**
+  String get photoPickFailed;
+
+  /// No description provided for @photoUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading photo…'**
+  String get photoUploading;
+
+  /// No description provided for @photoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo updated'**
+  String get photoUpdated;
 }
 
 class _AppLocalizationsDelegate

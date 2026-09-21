@@ -8,6 +8,7 @@ import '../../core/session.dart';
 import '../../models/leader.dart';
 import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 /// The journal, newest first, loaded a page at a time. Entries are never
 /// edited or deleted - a mistake is corrected with a reversing entry.
@@ -66,7 +67,7 @@ class _JournalScreenState extends State<JournalScreen> {
     final l10n = context.l10n;
     final session = context.watch<Session>();
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.financeJournal)),
+      appBar: InukaAppBar(title: l10n.financeJournal),
       floatingActionButton: session.can('accounting.post_journal')
           ? FloatingActionButton.extended(
               icon: const Icon(Icons.add),
@@ -138,7 +139,7 @@ class _JournalEntryScreen extends StatelessWidget {
     final session = context.watch<Session>();
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(entry.reference)),
+      appBar: InukaAppBar(title: entry.reference),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -270,7 +271,7 @@ class _NewJournalEntryScreenState extends State<NewJournalEntryScreen> {
     final theme = Theme.of(context);
     final balanced = _totalDebit == _totalCredit && _totalDebit > Decimal.zero;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.financeNewEntry)),
+      appBar: InukaAppBar(title: l10n.financeNewEntry),
       body: AsyncView<List<LedgerAccount>>(
         load: () => context.read<Session>().api!.accounts(),
         builder: (context, accounts, reload) {
@@ -421,7 +422,7 @@ class _ChartOfAccountsScreenState extends State<ChartOfAccountsScreen> {
     final l10n = context.l10n;
     final session = context.watch<Session>();
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.financeChart)),
+      appBar: InukaAppBar(title: l10n.financeChart),
       floatingActionButton: session.can('accounting.manage_chart')
           ? FloatingActionButton(onPressed: _add, child: const Icon(Icons.add))
           : null,

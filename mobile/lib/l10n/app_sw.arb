@@ -431,5 +431,17 @@
   "counterPledged": "Imefungwa kama dhamana",
   "counterLimitedView": "Jukumu lako linaonyesha taarifa za mwanachama tu.",
   "brandTagline": "Kikundi cha Uwezeshaji",
-  "connecting": "Inaunganisha…"
+  "connecting": "Inaunganisha…",
+  "navFinance": "Fedha",
+  "navLoanDesk": "Mikopo",
+  "navMembers": "Wanachama",
+  "navReports": "Ripoti",
+  "navDividends": "Gawio",
+  "navMore": "Zaidi",
+  "moreProfileHelp": "Picha, nenosiri, lugha",
+  "photoTake": "Piga picha",
+  "photoChoose": "Chagua kutoka picha",
+  "photoPickFailed": "Imeshindikana kufungua picha hiyo. Jaribu nyingine.",
+  "photoUploading": "Inapakia picha…",
+  "photoUpdated": "Picha ya wasifu imesasishwa"
 }

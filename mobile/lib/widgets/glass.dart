@@ -156,6 +156,118 @@ class GlassCard extends StatelessWidget {
   }
 }
 
+class GlassNavItem {
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+  const GlassNavItem(this.icon, this.selectedIcon, this.label);
+}
+
+/// The app's bottom menu: a floating frosted-glass pill. The selected item
+/// sits on a sunrise-gradient capsule; changes animate smoothly.
+class GlassNavBar extends StatelessWidget {
+  final List<GlassNavItem> items;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+  const GlassNavBar({super.key, required this.items, required this.selectedIndex, required this.onSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(12, 0, 12, 10 + bottomInset),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          child: Container(
+            height: 70,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: (dark ? const Color(0xFF1C1720) : Colors.white).withValues(alpha: dark ? 0.62 : 0.72),
+              border: Border.all(color: Colors.white.withValues(alpha: dark ? 0.14 : 0.85), width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: (dark ? Colors.black : InukaColors.red).withValues(alpha: dark ? 0.35 : 0.12),
+                  blurRadius: 30,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                for (var i = 0; i < items.length; i++)
+                  Expanded(
+                    child: _NavButton(item: items[i], selected: i == selectedIndex, onTap: () => onSelected(i)),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavButton extends StatelessWidget {
+  final GlassNavItem item;
+  final bool selected;
+  final VoidCallback onTap;
+  const _NavButton({required this.item, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    return Semantics(
+      selected: selected,
+      button: true,
+      label: item.label,
+      child: InkResponse(
+        onTap: onTap,
+        radius: 36,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 260),
+              curve: Curves.easeOutCubic,
+              padding: EdgeInsets.symmetric(horizontal: selected ? 16 : 10, vertical: 5),
+              decoration: BoxDecoration(
+                gradient: selected ? InukaColors.sunrise : null,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: selected
+                    ? [BoxShadow(color: InukaColors.orange.withValues(alpha: 0.45), blurRadius: 12, offset: const Offset(0, 4))]
+                    : null,
+              ),
+              child: AnimatedScale(
+                scale: selected ? 1.08 : 1.0,
+                duration: const Duration(milliseconds: 260),
+                child: Icon(selected ? item.selectedIcon : item.icon, size: 22, color: selected ? Colors.white : muted),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              item.label,
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+              softWrap: false,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: selected ? theme.colorScheme.primary : muted,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Wraps a bottom NavigationBar in frosted glass.
 class GlassBar extends StatelessWidget {
   final Widget child;

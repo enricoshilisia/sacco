@@ -8,6 +8,7 @@ import '../widgets/common.dart';
 import '../widgets/labels.dart';
 import 'home_shell.dart';
 import 'pay_sheet.dart';
+import '../widgets/inuka_app_bar.dart';
 
 class SavingsScreen extends StatelessWidget {
   const SavingsScreen({super.key});
@@ -16,7 +17,7 @@ class SavingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final session = context.read<Session>();
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.savingsTitle)),
+      appBar: InukaAppBar(title: context.l10n.savingsTitle),
       body: AsyncView<Statement>(
         load: () => session.api!.myStatement(),
         builder: (context, statement, reload) => _SavingsBody(statement: statement),

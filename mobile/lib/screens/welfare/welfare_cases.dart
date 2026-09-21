@@ -8,6 +8,7 @@ import '../../models/welfare.dart';
 import '../../widgets/common.dart';
 import '../../widgets/labels.dart';
 import 'member_picker.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 class WelfareCasesTab extends StatefulWidget {
   const WelfareCasesTab({super.key});
@@ -188,7 +189,7 @@ class _OpenCaseScreenState extends State<OpenCaseScreen> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.welfareNewCase)),
+      appBar: InukaAppBar(title: l10n.welfareNewCase),
       body: AsyncView<List<WelfareCaseType>>(
         load: () => context.read<Session>().api!.welfareCaseTypes(activeOnly: true),
         builder: (context, types, reload) => Form(
@@ -318,7 +319,7 @@ class _WelfareCaseScreenState extends State<WelfareCaseScreen> {
     final session = context.watch<Session>();
     final api = session.api!;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.welfareCase)),
+      appBar: InukaAppBar(title: l10n.welfareCase),
       body: AsyncView<WelfareCase>(
         key: _view,
         load: () => api.welfareCase(widget.caseId),

@@ -8,6 +8,10 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Inuka West</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a profile photo for your Inuka West account.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a profile photo for your Inuka West account.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Unlock your Inuka West account with Face ID.</string>
 	<key>CFBundleExecutable</key>

@@ -1444,4 +1444,41 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get connecting => 'Inaunganisha…';
+
+  @override
+  String get navFinance => 'Fedha';
+
+  @override
+  String get navLoanDesk => 'Mikopo';
+
+  @override
+  String get navMembers => 'Wanachama';
+
+  @override
+  String get navReports => 'Ripoti';
+
+  @override
+  String get navDividends => 'Gawio';
+
+  @override
+  String get navMore => 'Zaidi';
+
+  @override
+  String get moreProfileHelp => 'Picha, nenosiri, lugha';
+
+  @override
+  String get photoTake => 'Piga picha';
+
+  @override
+  String get photoChoose => 'Chagua kutoka picha';
+
+  @override
+  String get photoPickFailed =>
+      'Imeshindikana kufungua picha hiyo. Jaribu nyingine.';
+
+  @override
+  String get photoUploading => 'Inapakia picha…';
+
+  @override
+  String get photoUpdated => 'Picha ya wasifu imesasishwa';
 }

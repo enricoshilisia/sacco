@@ -10,6 +10,7 @@ import 'distribution_runs_screen.dart';
 import 'journal_screen.dart';
 import 'report_view_screen.dart';
 import 'reports_screen.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 /// Treasurer / accountant home: the group's financial position at a glance,
 /// and the tools to run the books.
@@ -25,7 +26,7 @@ class FinanceScreen extends StatelessWidget {
     void open(Widget screen) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.leaderFinance)),
+      appBar: InukaAppBar(title: l10n.leaderFinance),
       body: AsyncView<FinanceSummary>(
         load: api.financeSummary,
         builder: (context, s, reload) {

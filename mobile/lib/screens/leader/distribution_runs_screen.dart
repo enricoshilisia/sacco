@@ -8,6 +8,7 @@ import '../../models/leader.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 /// Dividend (on share capital) and interest (on deposits) runs: propose,
 /// review, approve or reject, and pay out. The proposer can't approve their
@@ -33,7 +34,7 @@ class _DistributionRunsScreenState extends State<DistributionRunsScreen> {
     final session = context.watch<Session>();
     final canPropose = session.profile?.canAny(const ['distributions.run_dividend', 'distributions.run_interest']) ?? false;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.leaderDistributions)),
+      appBar: InukaAppBar(title: l10n.leaderDistributions),
       floatingActionButton: canPropose
           ? FloatingActionButton.extended(onPressed: _propose, icon: const Icon(Icons.add), label: Text(l10n.runPropose))
           : null,
@@ -92,7 +93,7 @@ class _RunScreen extends StatelessWidget {
     final session = context.watch<Session>();
     final api = session.api!;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.leaderDistributions)),
+      appBar: InukaAppBar(title: l10n.leaderDistributions),
       body: AsyncView<DistributionRunItem>(
         load: () => api.distributionRun(runId),
         builder: (context, r, reload) {
@@ -232,7 +233,7 @@ class _ProposeRunScreenState extends State<_ProposeRunScreen> {
     final l10n = context.l10n;
     final session = context.watch<Session>();
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.runPropose)),
+      appBar: InukaAppBar(title: l10n.runPropose),
       body: AsyncView<List<SavingsProduct>>(
         load: () => session.api!.savingsProducts(),
         builder: (context, products, reload) => ListView(

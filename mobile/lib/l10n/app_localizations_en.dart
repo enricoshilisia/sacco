@@ -1442,4 +1442,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connecting => 'Connecting…';
+
+  @override
+  String get navFinance => 'Finance';
+
+  @override
+  String get navLoanDesk => 'Loan desk';
+
+  @override
+  String get navMembers => 'Members';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get navDividends => 'Dividends';
+
+  @override
+  String get navMore => 'More';
+
+  @override
+  String get moreProfileHelp => 'Photo, password, language';
+
+  @override
+  String get photoTake => 'Take a photo';
+
+  @override
+  String get photoChoose => 'Choose from gallery';
+
+  @override
+  String get photoPickFailed => 'Couldn\'t open that photo. Try another one.';
+
+  @override
+  String get photoUploading => 'Uploading photo…';
+
+  @override
+  String get photoUpdated => 'Profile photo updated';
 }

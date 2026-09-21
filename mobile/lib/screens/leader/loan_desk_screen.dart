@@ -10,6 +10,7 @@ import '../../models/models.dart';
 import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/labels.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 enum LoanQueue { appraise, decide, disburse, active }
 
@@ -36,8 +37,8 @@ class LoanDeskScreen extends StatelessWidget {
       length: queues.length,
       initialIndex: initial < 0 ? 0 : initial,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l10n.leaderLoanDesk),
+        appBar: InukaAppBar(
+          title: l10n.leaderLoanDesk,
           bottom: TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [for (final q in queues) Tab(text: q.$2)]),
         ),
         body: TabBarView(children: [for (final q in queues) _Queue(statuses: q.$3)]),
@@ -102,7 +103,7 @@ class StaffLoanScreen extends StatelessWidget {
     final session = context.watch<Session>();
     final api = session.api!;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.loanDetail)),
+      appBar: InukaAppBar(title: l10n.loanDetail),
       body: AsyncView<Loan>(
         load: () => api.loan(loanId),
         builder: (context, loan, reload) {

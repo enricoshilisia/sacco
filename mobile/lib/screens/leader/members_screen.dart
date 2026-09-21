@@ -15,6 +15,7 @@ import '../../widgets/labels.dart';
 import '../../models/welfare.dart';
 import '../welfare/welfare_counter.dart';
 import 'loan_desk_screen.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 /// Member directory for staff (members.view): search, open a member, and
 /// do counter work their role allows.
@@ -43,7 +44,7 @@ class _MembersScreenState extends State<MembersScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.leaderMembers)),
+      appBar: InukaAppBar(title: l10n.leaderMembers),
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -138,7 +139,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
     final l10n = context.l10n;
     final session = context.watch<Session>();
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.leaderMember)),
+      appBar: InukaAppBar(title: l10n.leaderMember),
       body: AsyncView<_MemberData>(
         key: _view,
         load: _load,
@@ -162,7 +163,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
                 });
                 await Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => Scaffold(
-                    appBar: AppBar(title: Text(l10n.welfareRecordPayment)),
+                    appBar: InukaAppBar(title: l10n.welfareRecordPayment),
                     body: WelfareCounterTab(initialMember: brief),
                   ),
                 ));

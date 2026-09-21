@@ -1,3 +1,5 @@
+import uuid
+
 from rest_framework import serializers
 
 from .models import GuarantorConsent, Member, MemberPortalInvite, MemberRelation
@@ -93,9 +95,23 @@ class MyMemberSerializer(MemberSerializer):
 
 
 class MemberPhotoSerializer(serializers.ModelSerializer):
+    # A plain FileField, not ImageField: ImageField rejects formats Pillow
+    # can't open by default (e.g. iPhone HEIC). core.images.normalize_image
+    # accepts any photo and stores a resized, correctly-rotated JPEG.
+    photo = serializers.FileField()
+
     class Meta:
         model = Member
         fields = ["photo"]
+
+    def validate_photo(self, uploaded):
+        from core.images import InvalidImage, normalize_image
+
+        try:
+            # A fresh name per upload so phones don't keep showing a cached old photo.
+            return normalize_image(uploaded, name=f"photo-{uuid.uuid4().hex[:10]}.jpg")
+        except InvalidImage as exc:
+            raise serializers.ValidationError(str(exc))
 
 
 class GuarantorConsentSerializer(serializers.ModelSerializer):

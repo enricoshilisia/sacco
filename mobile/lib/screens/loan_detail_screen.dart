@@ -6,6 +6,7 @@ import '../core/session.dart';
 import '../models/models.dart';
 import '../widgets/common.dart';
 import '../widgets/labels.dart';
+import '../widgets/inuka_app_bar.dart';
 
 class LoanDetailScreen extends StatelessWidget {
   final String loanId;
@@ -15,7 +16,7 @@ class LoanDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final api = context.read<Session>().api!;
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.loanDetail)),
+      appBar: InukaAppBar(title: context.l10n.loanDetail),
       body: AsyncView<(Loan, List<LoanProduct>)>(
         load: () async {
           final results = await Future.wait([api.loan(loanId), api.loanProducts()]);

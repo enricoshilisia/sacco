@@ -5,6 +5,7 @@ import '../core/session.dart';
 import '../models/models.dart';
 import '../widgets/common.dart';
 import '../widgets/labels.dart';
+import '../widgets/inuka_app_bar.dart';
 
 /// Dividends on share capital and interest on savings - two different
 /// things (CLAUDE.md rule 5), shown with their withholding tax.
@@ -15,7 +16,7 @@ class DistributionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.dividendsTitle)),
+      appBar: InukaAppBar(title: l10n.dividendsTitle),
       body: AsyncView<List<DistributionEntry>>(
         load: () => context.read<Session>().api!.myDistributions(),
         builder: (context, entries, reload) => ListView(

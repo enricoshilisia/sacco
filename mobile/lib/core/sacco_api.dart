@@ -47,6 +47,13 @@ class SaccoApi {
         data: {'phone_number': phone, 'email': email, 'physical_address': address},
       ));
 
+  /// Uploads a profile photo (already shrunk on the phone; the server also
+  /// accepts any format and resizes, so HEIC or huge files still work).
+  Future<Member> uploadMyPhoto(String filePath) async {
+    final form = FormData.fromMap({'photo': await MultipartFile.fromFile(filePath, filename: 'photo.jpg')});
+    return Member.fromJson(await client.post<Map<String, dynamic>>('/api/members/me/photo/', data: form));
+  }
+
   Future<Statement> myStatement() async =>
       Statement.fromJson(await client.get<Map<String, dynamic>>('/api/savings/me/statement/'));
 

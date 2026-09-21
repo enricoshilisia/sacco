@@ -130,7 +130,7 @@ class MyMemberView(APIView):
         member = self._my_member(request)
         if member is None:
             return Response({"detail": "No member record is linked to this account."}, status=status.HTTP_404_NOT_FOUND)
-        return Response(MemberSerializer(member).data)
+        return Response(MemberSerializer(member, context={"request": request}).data)
 
     def patch(self, request):
         member = self._my_member(request)
@@ -158,7 +158,7 @@ class MyMemberPhotoUploadView(APIView):
         serializer = MemberPhotoSerializer(member, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save(updated_by=request.user)
-        return Response(MemberSerializer(member).data)
+        return Response(MemberSerializer(member, context={"request": request}).data)
 
 
 class InvitePortalAccessView(APIView):

@@ -1,5 +1,7 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.conf import settings
+from django.urls import include, path, re_path
+from django.views.static import serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -18,3 +20,8 @@ urlpatterns = [
     path("api/reports/", include("reports.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
 ]
+
+if settings.FILE_STORAGE == "local":
+    # Uploaded files on local disk (see FILE_STORAGE in settings.py). Paths
+    # include the member's random UUID, so they can't be guessed.
+    urlpatterns.append(re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}))

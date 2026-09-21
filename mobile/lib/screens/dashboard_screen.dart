@@ -12,8 +12,9 @@ import '../widgets/glass.dart';
 import '../widgets/labels.dart';
 import 'apply_loan_screen.dart';
 import 'home_shell.dart';
-import 'leader/leader_hub.dart';
+import 'leader/tasks_list.dart';
 import 'pay_sheet.dart';
+import '../widgets/inuka_app_bar.dart';
 
 class _DashboardData {
   final Statement statement;
@@ -53,19 +54,12 @@ class DashboardScreen extends StatelessWidget {
     final l10n = context.l10n;
     final member = session.member;
     return Scaffold(
-      appBar: AppBar(
-        actions: const [ProfileButton()],
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l10n.welcome(member?.firstName ?? session.profile?.firstName ?? '')),
-            if (member != null)
-              Text(
-                '${session.sacco?.name ?? ''} · ${l10n.memberNumber(member.memberNumber)}',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-          ],
-        ),
+      appBar: InukaAppBar(
+        title: l10n.navHome,
+        subtitle: [
+          l10n.welcome(member?.firstName ?? session.profile?.firstName ?? ''),
+          if (member != null) l10n.memberNumber(member.memberNumber),
+        ].join(' · '),
       ),
       body: AsyncView<_DashboardData>(
         load: () => _load(session),
@@ -103,6 +97,8 @@ class _DashboardBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
+        // Leaders who are also members see what's waiting on them here.
+        if (context.read<Session>().profile?.hasStaffTools ?? false) const LeaderTasksList(showAllClear: false),
         if (data.pendingGuarantees.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),

@@ -181,6 +181,15 @@ STORAGES = {
     },
 }
 
+# FILE_STORAGE=local keeps uploads (photos, logos, documents) on this
+# server's disk instead of MinIO/S3 - for a single-machine install without
+# MinIO. Files are served from MEDIA_URL by Django itself (config/urls.py).
+FILE_STORAGE = env("FILE_STORAGE", default="s3")
+MEDIA_URL = "/media/"
+MEDIA_ROOT = env("MEDIA_ROOT", default=str(BASE_DIR / "media"))
+if FILE_STORAGE == "local":
+    STORAGES["default"] = {"BACKEND": "django.core.files.storage.FileSystemStorage"}
+
 AWS_ACCESS_KEY_ID = env("MINIO_ROOT_USER", default="sacco_minio")
 AWS_SECRET_ACCESS_KEY = env("MINIO_ROOT_PASSWORD", default="change-me-locally")
 AWS_STORAGE_BUCKET_NAME = env("MINIO_BUCKET", default="sacco-documents")

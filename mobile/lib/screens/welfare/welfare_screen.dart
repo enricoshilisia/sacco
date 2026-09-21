@@ -9,6 +9,7 @@ import '../../widgets/common.dart';
 import '../pay_sheet.dart';
 import 'welfare_cases.dart';
 import 'welfare_counter.dart';
+import '../../widgets/inuka_app_bar.dart';
 
 /// Welfare. [staffMode] false (the member's Welfare tab): their own welfare
 /// and the rules. [staffMode] true (opened from the Leader hub): the tools
@@ -30,8 +31,8 @@ class WelfareScreen extends StatelessWidget {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(staffMode ? l10n.leaderWelfare : l10n.welfareTitle),
+        appBar: InukaAppBar(
+          title: staffMode ? l10n.leaderWelfare : l10n.welfareTitle,
           bottom: TabBar(
             isScrollable: tabs.length > 3,
             tabAlignment: tabs.length > 3 ? TabAlignment.start : null,

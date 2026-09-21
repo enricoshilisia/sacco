@@ -726,5 +726,17 @@
   "counterPledged": "Locked as guarantor",
   "counterLimitedView": "Your role shows member details only.",
   "brandTagline": "Empowerment Group",
-  "connecting": "Connecting…"
+  "connecting": "Connecting…",
+  "navFinance": "Finance",
+  "navLoanDesk": "Loan desk",
+  "navMembers": "Members",
+  "navReports": "Reports",
+  "navDividends": "Dividends",
+  "navMore": "More",
+  "moreProfileHelp": "Photo, password, language",
+  "photoTake": "Take a photo",
+  "photoChoose": "Choose from gallery",
+  "photoPickFailed": "Couldn't open that photo. Try another one.",
+  "photoUploading": "Uploading photo…",
+  "photoUpdated": "Profile photo updated"
 }
