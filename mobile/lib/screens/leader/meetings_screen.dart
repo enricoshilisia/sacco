@@ -10,6 +10,7 @@ import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/glass.dart';
 import '../../widgets/inuka_app_bar.dart';
+import '../meetings/meeting_papers.dart';
 
 String meetingTypeLabel(AppLocalizations l, String type) => switch (type) {
       'AGM' => l.meetingAgm,
@@ -92,12 +93,10 @@ class _MeetingList extends StatelessWidget {
               index: i,
               child: _MeetingCard(
                 meeting: m,
-                onTap: session.can('governance.take_attendance')
-                    ? () async {
-                        await Navigator.of(context).push(MaterialPageRoute(builder: (_) => RegisterScreen(meetingId: m.id)));
-                        reload();
-                      }
-                    : null,
+                onTap: () async {
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (_) => MeetingPapersScreen(meeting: m)));
+                  reload();
+                },
               ),
             ),
             const SizedBox(height: 10),
@@ -155,6 +154,12 @@ class _MeetingCard extends StatelessWidget {
               ],
               if (m.isScheduled && (m.counts['APOLOGY'] ?? 0) > 0)
                 StatusChip(l10n.meetingApologiesIn(m.counts['APOLOGY']!)),
+              if (m.documentCount > 0) StatusChip(l10n.documentsCount(m.documentCount)),
+              if (m.minutesStatus != null)
+                Builder(builder: (context) {
+                  final (text, tone) = minutesStatusInfo(context, m.minutesStatus);
+                  return StatusChip(text, tone: tone);
+                }),
             ]),
           ]),
         ),

@@ -8,12 +8,16 @@ class MeetingSerializer(serializers.ModelSerializer):
     status_label = serializers.CharField(source="get_status_display", read_only=True)
     counts = serializers.SerializerMethodField()
     my_attendance = serializers.SerializerMethodField()
+    document_count = serializers.SerializerMethodField()
+    minutes_status = serializers.SerializerMethodField()
+    confidential = serializers.SerializerMethodField()
 
     class Meta:
         model = Meeting
         fields = [
             "id", "meeting_type", "meeting_type_label", "title", "scheduled_at", "venue", "agenda",
             "counts_for_attendance", "status", "status_label", "notice_sent_at", "closed_at", "counts", "my_attendance",
+            "document_count", "minutes_status", "confidential",
         ]
 
     def get_counts(self, meeting):
@@ -21,6 +25,18 @@ class MeetingSerializer(serializers.ModelSerializer):
         for status in meeting.attendance.values_list("status", flat=True):
             counts[status] += 1
         return counts
+
+    def get_document_count(self, meeting):
+        return sum(1 for d in meeting.documents.all() if d.withdrawn_at is None)
+
+    def get_minutes_status(self, meeting):
+        minutes = getattr(meeting, "minutes", None)
+        return minutes.status if minutes is not None else None
+
+    def get_confidential(self, meeting):
+        from .models import GENERAL_MEETINGS
+
+        return meeting.meeting_type not in GENERAL_MEETINGS
 
     def get_my_attendance(self, meeting):
         member = self.context.get("member")

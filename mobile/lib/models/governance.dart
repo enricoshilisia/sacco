@@ -24,9 +24,15 @@ class MeetingItem {
   final Map<String, int> counts;
   final String? myStatus;
   final String myApologyReason;
+  final int documentCount;
+  final String? minutesStatus; // DRAFT / SUBMITTED / APPROVED, null = none yet
+  final bool confidential; // committee/board: leaders only
 
   MeetingItem.fromJson(Map<String, dynamic> j)
-      : id = _str(j['id']),
+      : documentCount = (j['document_count'] as num?)?.toInt() ?? 0,
+        minutesStatus = j['minutes_status'] as String?,
+        confidential = j['confidential'] == true,
+        id = _str(j['id']),
         meetingType = _str(j['meeting_type']),
         meetingTypeLabel = _str(j['meeting_type_label']),
         title = _str(j['title']),
@@ -146,4 +152,109 @@ class MyActivity {
       !isDormant &&
       ((inactiveAfterMonths != null && missedMonths >= inactiveAfterMonths! - 1 && missedMonths > 0) ||
           (inactiveAfterMeetings != null && missedMeetings >= inactiveAfterMeetings! - 1 && missedMeetings > 0));
+}
+
+
+class MeetingDocumentItem {
+  final String id;
+  final String kind;
+  final String kindLabel;
+  final String title;
+  final String originalName;
+  final String contentType;
+  final int size;
+  final String uploadedByName;
+  final DateTime? uploadedAt;
+  final bool withdrawn;
+  final String withdrawnReason;
+  final String downloadPath;
+
+  MeetingDocumentItem.fromJson(Map<String, dynamic> j)
+      : id = _str(j['id']),
+        kind = _str(j['kind']),
+        kindLabel = _str(j['kind_label']),
+        title = _str(j['title']),
+        originalName = _str(j['original_name']),
+        contentType = _str(j['content_type']),
+        size = (j['size'] as num?)?.toInt() ?? 0,
+        uploadedByName = _str(j['uploaded_by_name']),
+        uploadedAt = _date(j['uploaded_at']),
+        withdrawn = j['withdrawn'] == true,
+        withdrawnReason = _str(j['withdrawn_reason']),
+        downloadPath = _str(j['download_path']);
+
+  bool get isImage => contentType.startsWith('image/');
+  bool get isPdf => contentType == 'application/pdf';
+
+  String get sizeText {
+    if (size >= 1024 * 1024) return '${(size / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (size >= 1024) return '${(size / 1024).round()} KB';
+    return '$size B';
+  }
+}
+
+class MinutesAddendumItem {
+  final String text;
+  final String addedByName;
+  final DateTime? addedAt;
+  MinutesAddendumItem.fromJson(Map<String, dynamic> j)
+      : text = _str(j['text']),
+        addedByName = _str(j['added_by_name']),
+        addedAt = _date(j['added_at']);
+}
+
+class MinutesData {
+  final String meetingId;
+  final String meetingTitle;
+  final bool exists;
+  final String? status; // DRAFT / SUBMITTED / APPROVED
+  final String body;
+  final String returnComment;
+  final String submittedBy;
+  final String submittedByName;
+  final DateTime? submittedAt;
+  final String approvedByName;
+  final DateTime? approvedAt;
+  final bool canWrite;
+  final bool canApprove;
+  final bool confidential;
+  final List<MinutesAddendumItem> addenda;
+
+  MinutesData.fromJson(Map<String, dynamic> j)
+      : meetingId = _str(j['meeting']),
+        meetingTitle = _str(j['meeting_title']),
+        exists = j['exists'] == true,
+        status = j['status'] as String?,
+        body = _str(j['body']),
+        returnComment = _str(j['return_comment']),
+        submittedBy = _str(j['submitted_by']),
+        submittedByName = _str(j['submitted_by_name']),
+        submittedAt = _date(j['submitted_at']),
+        approvedByName = _str(j['approved_by_name']),
+        approvedAt = _date(j['approved_at']),
+        canWrite = j['can_write'] == true,
+        canApprove = j['can_approve'] == true,
+        confidential = j['confidential'] == true,
+        addenda = ((j['addenda'] as List?) ?? const [])
+            .whereType<Map<String, dynamic>>()
+            .map(MinutesAddendumItem.fromJson)
+            .toList();
+
+  bool get isDraft => !exists || status == 'DRAFT';
+  bool get isSubmitted => status == 'SUBMITTED';
+  bool get isApproved => status == 'APPROVED';
+}
+
+class PendingMinutes {
+  final String meetingId;
+  final String meetingTitle;
+  final DateTime? scheduledAt;
+  final String submittedByName;
+  final bool mine;
+  PendingMinutes.fromJson(Map<String, dynamic> j)
+      : meetingId = _str(j['meeting']),
+        meetingTitle = _str(j['meeting_title']),
+        scheduledAt = _date(j['scheduled_at']),
+        submittedByName = _str(j['submitted_by_name']),
+        mine = j['mine'] == true;
 }

@@ -76,3 +76,95 @@ class MeetingAttendance(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["meeting", "member"], name="one_attendance_per_member")]
+
+
+# --- Meeting documents and minutes ------------------------------------------
+
+
+def meeting_document_path(instance, filename):
+    return f"meetings/{instance.meeting_id}/{uuid.uuid4().hex}-{filename}"
+
+
+class DocumentKind(models.TextChoices):
+    AGENDA = "AGENDA", "Agenda"
+    NOTICE = "NOTICE", "Notice"
+    REPORT = "REPORT", "Report"
+    FINANCIALS = "FINANCIALS", "Financial statements"
+    SIGNED_MINUTES = "SIGNED_MINUTES", "Signed minutes"
+    ATTACHMENT = "ATTACHMENT", "Attachment"
+
+
+class MeetingDocument(models.Model):
+    """A paper for a meeting (agenda, report, financials, signed minutes...).
+    Who can open it follows the meeting: general meetings - every member;
+    committee/board meetings - leaders with governance.view_confidential.
+    Never deleted: a wrong upload is withdrawn with a reason (audit trail)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    meeting = models.ForeignKey(Meeting, on_delete=models.PROTECT, related_name="documents")
+    kind = models.CharField(max_length=15, choices=DocumentKind.choices, default=DocumentKind.ATTACHMENT)
+    title = models.CharField(max_length=200)
+    file = models.FileField(upload_to=meeting_document_path)
+    original_name = models.CharField(max_length=200, blank=True)
+    content_type = models.CharField(max_length=100, blank=True)
+    size = models.PositiveIntegerField(default=0)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    withdrawn_at = models.DateTimeField(null=True, blank=True)
+    withdrawn_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    withdrawn_reason = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ["kind", "uploaded_at"]
+
+
+class MinutesStatus(models.TextChoices):
+    DRAFT = "DRAFT", "Draft"
+    SUBMITTED = "SUBMITTED", "Awaiting approval"
+    APPROVED = "APPROVED", "Approved"
+
+
+class MeetingMinutes(models.Model):
+    """
+    The minutes of one meeting. The Secretary drafts and submits them; a
+    second person (the Chairperson) approves - never the one who submitted.
+    The approver can send them back with a comment. Approved minutes are
+    locked; later corrections are added as addenda, never by editing.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    meeting = models.OneToOneField(Meeting, on_delete=models.PROTECT, related_name="minutes")
+    body = models.TextField(blank=True)
+    status = models.CharField(max_length=10, choices=MinutesStatus.choices, default=MinutesStatus.DRAFT)
+    return_comment = models.TextField(blank=True, help_text="Why the approver sent them back.")
+    drafted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+
+class MinutesAddendum(models.Model):
+    """A correction or note added to approved minutes (append-only)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    minutes = models.ForeignKey(MeetingMinutes, on_delete=models.PROTECT, related_name="addenda")
+    text = models.TextField()
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["added_at"]

@@ -2731,4 +2731,201 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginIdHint => '0712 345 678 or IW-26-00123';
+
+  @override
+  String get meetingDocuments => 'Documents';
+
+  @override
+  String get meetingMinutes => 'Minutes';
+
+  @override
+  String get meetingRegister => 'Register';
+
+  @override
+  String get docAgenda => 'Agenda';
+
+  @override
+  String get docNotice => 'Notice';
+
+  @override
+  String get docReport => 'Report';
+
+  @override
+  String get docFinancials => 'Financial statements';
+
+  @override
+  String get docSignedMinutes => 'Signed minutes';
+
+  @override
+  String get docAttachment => 'Attachment';
+
+  @override
+  String get addDocument => 'Add document';
+
+  @override
+  String get chooseFile => 'Choose a file';
+
+  @override
+  String get chooseFileHelp => 'PDF, Word, Excel, PowerPoint or a photo';
+
+  @override
+  String get photoOfPaper => 'Photo of a printed paper';
+
+  @override
+  String get documentTitle => 'Title';
+
+  @override
+  String get documentType => 'Type';
+
+  @override
+  String get documentAdded => 'Document added';
+
+  @override
+  String get noDocuments => 'No documents yet.';
+
+  @override
+  String documentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count documents',
+      one: '1 document',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get withdrawDocument => 'Withdraw document';
+
+  @override
+  String get withdrawDocumentHelp =>
+      'It stays on record (for the audit trail) but members no longer see it.';
+
+  @override
+  String get withdrawReason => 'Reason';
+
+  @override
+  String get documentWithdrawn => 'Document withdrawn';
+
+  @override
+  String withdrawnBecause(String reason) {
+    return 'Withdrawn: $reason';
+  }
+
+  @override
+  String get confidentialPapers => 'Committee/board papers - leaders only.';
+
+  @override
+  String get minutesDraft => 'Draft';
+
+  @override
+  String get minutesAwaitingApproval => 'Awaiting approval';
+
+  @override
+  String get minutesApproved => 'Minutes approved';
+
+  @override
+  String get minutesNone => 'Not written yet';
+
+  @override
+  String get minutesAvailable => 'Minutes available';
+
+  @override
+  String minutesSubmittedBy(String name, String date) {
+    return 'Written by $name, $date';
+  }
+
+  @override
+  String minutesApprovedBy(String name, String date) {
+    return 'Approved by $name, $date';
+  }
+
+  @override
+  String minutesSentBack(String comment) {
+    return 'Sent back: $comment';
+  }
+
+  @override
+  String get minutesAfterMeeting => 'Minutes are written after the meeting.';
+
+  @override
+  String get minutesNotYetApproved => 'The minutes aren\'t approved yet.';
+
+  @override
+  String get writeMinutes => 'Write minutes';
+
+  @override
+  String get editMinutes => 'Edit minutes';
+
+  @override
+  String get submitMinutes => 'Send for approval';
+
+  @override
+  String get submitMinutesBody =>
+      'The Chairperson (or another approver) will review them. You can\'t edit while they\'re waiting.';
+
+  @override
+  String get minutesSubmitted => 'Minutes sent for approval';
+
+  @override
+  String get cantApproveOwnMinutes =>
+      'You sent these minutes, so someone else must approve them.';
+
+  @override
+  String get sendBackMinutes => 'Send back';
+
+  @override
+  String get whatNeedsChanging => 'What needs changing?';
+
+  @override
+  String get minutesReturned => 'Sent back to the Secretary';
+
+  @override
+  String get approveMinutes => 'Approve';
+
+  @override
+  String get approveMinutesBody =>
+      'Approved minutes are locked and shared with members (general meetings). Corrections are then added as addenda.';
+
+  @override
+  String get minutesPdf => 'PDF';
+
+  @override
+  String get addAddendum => 'Add addendum';
+
+  @override
+  String get addendumText => 'Correction or note';
+
+  @override
+  String get addendumHelp =>
+      'Approved minutes can\'t be edited; an addendum is added below them with your name and the date.';
+
+  @override
+  String get addendumAdded => 'Addendum added';
+
+  @override
+  String addendumBy(String name, String date) {
+    return 'Addendum - $name, $date';
+  }
+
+  @override
+  String get minutesSaved => 'Draft saved';
+
+  @override
+  String get saveDraft => 'Save draft';
+
+  @override
+  String get addMinuteItem => 'Add numbered minute';
+
+  @override
+  String get minutesHint => 'Write the minutes...';
+
+  @override
+  String get unsavedMinutes => 'Save your changes?';
+
+  @override
+  String get unsavedMinutesBody => 'You have changes that aren\'t saved.';
+
+  @override
+  String get taskMinutesToApprove => 'Minutes to approve';
 }

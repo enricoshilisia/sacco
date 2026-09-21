@@ -8,6 +8,7 @@ import '../widgets/common.dart';
 import '../widgets/forms.dart';
 import '../widgets/glass.dart';
 import '../widgets/inuka_app_bar.dart';
+import 'meetings/meeting_papers.dart';
 import 'leader/meetings_screen.dart';
 
 /// A member's meetings: what's coming (with "send apology") and their own
@@ -54,6 +55,15 @@ class MyMeetingsScreen extends StatelessWidget {
                       Text(m.agenda, style: theme.textTheme.bodySmall),
                     ],
                     const SizedBox(height: 10),
+                    if (m.documentCount > 0 && !m.confidential) ...[
+                      TextButton.icon(
+                        icon: const Icon(Icons.folder_open_rounded),
+                        label: Text(l10n.documentsCount(m.documentCount)),
+                        onPressed: () => Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) => MeetingPapersScreen(meeting: m))),
+                      ),
+                      const SizedBox(height: 4),
+                    ],
                     if (m.myStatus == 'APOLOGY')
                       StatusChip(l10n.apologySent, tone: Tone.good)
                     else if (m.countsForAttendance)
@@ -81,7 +91,15 @@ class MyMeetingsScreen extends StatelessWidget {
                     ListTile(
                       dense: true,
                       title: Text(m.title),
-                      subtitle: Text(meetingWhen(context, m.scheduledAt)),
+                      subtitle: Text([
+                        meetingWhen(context, m.scheduledAt),
+                        if (m.minutesStatus == 'APPROVED') l10n.minutesAvailable,
+                        if (m.documentCount > 0) l10n.documentsCount(m.documentCount),
+                      ].join(' · ')),
+                      onTap: m.confidential
+                          ? null
+                          : () => Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (_) => MeetingPapersScreen(meeting: m))),
                       trailing: Builder(builder: (context) {
                         final (label, tone, _) = attendanceInfo(l10n, m.myStatus);
                         return StatusChip(label, tone: tone);

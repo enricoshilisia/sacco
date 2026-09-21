@@ -2731,4 +2731,201 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get loginIdHint => '0712 345 678 au IW-26-00123';
+
+  @override
+  String get meetingDocuments => 'Nyaraka';
+
+  @override
+  String get meetingMinutes => 'Kumbukumbu';
+
+  @override
+  String get meetingRegister => 'Mahudhurio';
+
+  @override
+  String get docAgenda => 'Ajenda';
+
+  @override
+  String get docNotice => 'Tangazo';
+
+  @override
+  String get docReport => 'Ripoti';
+
+  @override
+  String get docFinancials => 'Taarifa za fedha';
+
+  @override
+  String get docSignedMinutes => 'Kumbukumbu zilizotiwa saini';
+
+  @override
+  String get docAttachment => 'Kiambatisho';
+
+  @override
+  String get addDocument => 'Ongeza hati';
+
+  @override
+  String get chooseFile => 'Chagua faili';
+
+  @override
+  String get chooseFileHelp => 'PDF, Word, Excel, PowerPoint au picha';
+
+  @override
+  String get photoOfPaper => 'Picha ya karatasi';
+
+  @override
+  String get documentTitle => 'Kichwa';
+
+  @override
+  String get documentType => 'Aina';
+
+  @override
+  String get documentAdded => 'Hati imeongezwa';
+
+  @override
+  String get noDocuments => 'Hakuna nyaraka bado.';
+
+  @override
+  String documentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Nyaraka $count',
+      one: 'Hati 1',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get withdrawDocument => 'Ondoa hati';
+
+  @override
+  String get withdrawDocumentHelp =>
+      'Inabaki kwenye kumbukumbu (kwa ukaguzi) lakini wanachama hawataiona.';
+
+  @override
+  String get withdrawReason => 'Sababu';
+
+  @override
+  String get documentWithdrawn => 'Hati imeondolewa';
+
+  @override
+  String withdrawnBecause(String reason) {
+    return 'Imeondolewa: $reason';
+  }
+
+  @override
+  String get confidentialPapers => 'Nyaraka za kamati/bodi - viongozi tu.';
+
+  @override
+  String get minutesDraft => 'Rasimu';
+
+  @override
+  String get minutesAwaitingApproval => 'Inasubiri idhini';
+
+  @override
+  String get minutesApproved => 'Kumbukumbu zimeidhinishwa';
+
+  @override
+  String get minutesNone => 'Bado hazijaandikwa';
+
+  @override
+  String get minutesAvailable => 'Kumbukumbu zipo';
+
+  @override
+  String minutesSubmittedBy(String name, String date) {
+    return 'Imeandikwa na $name, $date';
+  }
+
+  @override
+  String minutesApprovedBy(String name, String date) {
+    return 'Imeidhinishwa na $name, $date';
+  }
+
+  @override
+  String minutesSentBack(String comment) {
+    return 'Imerudishwa: $comment';
+  }
+
+  @override
+  String get minutesAfterMeeting => 'Kumbukumbu huandikwa baada ya mkutano.';
+
+  @override
+  String get minutesNotYetApproved => 'Kumbukumbu bado hazijaidhinishwa.';
+
+  @override
+  String get writeMinutes => 'Andika kumbukumbu';
+
+  @override
+  String get editMinutes => 'Hariri kumbukumbu';
+
+  @override
+  String get submitMinutes => 'Tuma kuidhinishwa';
+
+  @override
+  String get submitMinutesBody =>
+      'Mwenyekiti (au mwidhinishaji mwingine) atazipitia. Huwezi kuhariri zikisubiri.';
+
+  @override
+  String get minutesSubmitted => 'Kumbukumbu zimetumwa kuidhinishwa';
+
+  @override
+  String get cantApproveOwnMinutes =>
+      'Ulituma kumbukumbu hizi, kwa hiyo mtu mwingine lazima aziidhinishe.';
+
+  @override
+  String get sendBackMinutes => 'Rudisha';
+
+  @override
+  String get whatNeedsChanging => 'Nini kinahitaji kubadilishwa?';
+
+  @override
+  String get minutesReturned => 'Zimerudishwa kwa Katibu';
+
+  @override
+  String get approveMinutes => 'Idhinisha';
+
+  @override
+  String get approveMinutesBody =>
+      'Kumbukumbu zilizoidhinishwa hufungwa na kushirikiwa na wanachama (mikutano mikuu). Marekebisho huongezwa kama nyongeza.';
+
+  @override
+  String get minutesPdf => 'PDF';
+
+  @override
+  String get addAddendum => 'Ongeza nyongeza';
+
+  @override
+  String get addendumText => 'Marekebisho au maelezo';
+
+  @override
+  String get addendumHelp =>
+      'Kumbukumbu zilizoidhinishwa haziwezi kuhaririwa; nyongeza huongezwa chini yake na jina lako na tarehe.';
+
+  @override
+  String get addendumAdded => 'Nyongeza imeongezwa';
+
+  @override
+  String addendumBy(String name, String date) {
+    return 'Nyongeza - $name, $date';
+  }
+
+  @override
+  String get minutesSaved => 'Rasimu imehifadhiwa';
+
+  @override
+  String get saveDraft => 'Hifadhi rasimu';
+
+  @override
+  String get addMinuteItem => 'Ongeza kumbukumbu yenye namba';
+
+  @override
+  String get minutesHint => 'Andika kumbukumbu...';
+
+  @override
+  String get unsavedMinutes => 'Hifadhi mabadiliko?';
+
+  @override
+  String get unsavedMinutesBody => 'Una mabadiliko ambayo hayajahifadhiwa.';
+
+  @override
+  String get taskMinutesToApprove => 'Kumbukumbu za kuidhinisha';
 }

@@ -10,7 +10,7 @@ from . import services
 from .models import Meeting, MeetingStatus
 from .serializers import MeetingSerializer, RecordAttendanceSerializer, ScheduleMeetingSerializer
 
-MEETINGS = Meeting.objects.prefetch_related("attendance")
+MEETINGS = Meeting.objects.prefetch_related("attendance", "documents").select_related("minutes")
 
 
 def _bad(exc):

@@ -562,6 +562,10 @@ def my_tasks(user) -> list[dict]:
         ProfileChangeRequest,
     )
 
+    from governance.models import MeetingMinutes, MinutesStatus
+
+    add("minutes_to_approve", "governance.approve_minutes",
+        MeetingMinutes.objects.filter(status=MinutesStatus.SUBMITTED).exclude(submitted_by=user).count())
     add("applications_to_approve", "members.approve_admission",
         MemberApplication.objects.filter(status=ApplicationStatus.PENDING).exclude(submitted_by=user).count())
 

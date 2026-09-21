@@ -4975,6 +4975,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'0712 345 678 or IW-26-00123'**
   String get loginIdHint;
+
+  /// No description provided for @meetingDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get meetingDocuments;
+
+  /// No description provided for @meetingMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get meetingMinutes;
+
+  /// No description provided for @meetingRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get meetingRegister;
+
+  /// No description provided for @docAgenda.
+  ///
+  /// In en, this message translates to:
+  /// **'Agenda'**
+  String get docAgenda;
+
+  /// No description provided for @docNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get docNotice;
+
+  /// No description provided for @docReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get docReport;
+
+  /// No description provided for @docFinancials.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial statements'**
+  String get docFinancials;
+
+  /// No description provided for @docSignedMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed minutes'**
+  String get docSignedMinutes;
+
+  /// No description provided for @docAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment'**
+  String get docAttachment;
+
+  /// No description provided for @addDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Add document'**
+  String get addDocument;
+
+  /// No description provided for @chooseFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get chooseFile;
+
+  /// No description provided for @chooseFileHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF, Word, Excel, PowerPoint or a photo'**
+  String get chooseFileHelp;
+
+  /// No description provided for @photoOfPaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo of a printed paper'**
+  String get photoOfPaper;
+
+  /// No description provided for @documentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get documentTitle;
+
+  /// No description provided for @documentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get documentType;
+
+  /// No description provided for @documentAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Document added'**
+  String get documentAdded;
+
+  /// No description provided for @noDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents yet.'**
+  String get noDocuments;
+
+  /// No description provided for @documentsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 document} other{{count} documents}}'**
+  String documentsCount(int count);
+
+  /// No description provided for @withdrawDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw document'**
+  String get withdrawDocument;
+
+  /// No description provided for @withdrawDocumentHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'It stays on record (for the audit trail) but members no longer see it.'**
+  String get withdrawDocumentHelp;
+
+  /// No description provided for @withdrawReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get withdrawReason;
+
+  /// No description provided for @documentWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Document withdrawn'**
+  String get documentWithdrawn;
+
+  /// No description provided for @withdrawnBecause.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn: {reason}'**
+  String withdrawnBecause(String reason);
+
+  /// No description provided for @confidentialPapers.
+  ///
+  /// In en, this message translates to:
+  /// **'Committee/board papers - leaders only.'**
+  String get confidentialPapers;
+
+  /// No description provided for @minutesDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get minutesDraft;
+
+  /// No description provided for @minutesAwaitingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting approval'**
+  String get minutesAwaitingApproval;
+
+  /// No description provided for @minutesApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes approved'**
+  String get minutesApproved;
+
+  /// No description provided for @minutesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not written yet'**
+  String get minutesNone;
+
+  /// No description provided for @minutesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes available'**
+  String get minutesAvailable;
+
+  /// No description provided for @minutesSubmittedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Written by {name}, {date}'**
+  String minutesSubmittedBy(String name, String date);
+
+  /// No description provided for @minutesApprovedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved by {name}, {date}'**
+  String minutesApprovedBy(String name, String date);
+
+  /// No description provided for @minutesSentBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent back: {comment}'**
+  String minutesSentBack(String comment);
+
+  /// No description provided for @minutesAfterMeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes are written after the meeting.'**
+  String get minutesAfterMeeting;
+
+  /// No description provided for @minutesNotYetApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'The minutes aren\'t approved yet.'**
+  String get minutesNotYetApproved;
+
+  /// No description provided for @writeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Write minutes'**
+  String get writeMinutes;
+
+  /// No description provided for @editMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit minutes'**
+  String get editMinutes;
+
+  /// No description provided for @submitMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for approval'**
+  String get submitMinutes;
+
+  /// No description provided for @submitMinutesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Chairperson (or another approver) will review them. You can\'t edit while they\'re waiting.'**
+  String get submitMinutesBody;
+
+  /// No description provided for @minutesSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes sent for approval'**
+  String get minutesSubmitted;
+
+  /// No description provided for @cantApproveOwnMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'You sent these minutes, so someone else must approve them.'**
+  String get cantApproveOwnMinutes;
+
+  /// No description provided for @sendBackMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Send back'**
+  String get sendBackMinutes;
+
+  /// No description provided for @whatNeedsChanging.
+  ///
+  /// In en, this message translates to:
+  /// **'What needs changing?'**
+  String get whatNeedsChanging;
+
+  /// No description provided for @minutesReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent back to the Secretary'**
+  String get minutesReturned;
+
+  /// No description provided for @approveMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get approveMinutes;
+
+  /// No description provided for @approveMinutesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved minutes are locked and shared with members (general meetings). Corrections are then added as addenda.'**
+  String get approveMinutesBody;
+
+  /// No description provided for @minutesPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF'**
+  String get minutesPdf;
+
+  /// No description provided for @addAddendum.
+  ///
+  /// In en, this message translates to:
+  /// **'Add addendum'**
+  String get addAddendum;
+
+  /// No description provided for @addendumText.
+  ///
+  /// In en, this message translates to:
+  /// **'Correction or note'**
+  String get addendumText;
+
+  /// No description provided for @addendumHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved minutes can\'t be edited; an addendum is added below them with your name and the date.'**
+  String get addendumHelp;
+
+  /// No description provided for @addendumAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Addendum added'**
+  String get addendumAdded;
+
+  /// No description provided for @addendumBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Addendum - {name}, {date}'**
+  String addendumBy(String name, String date);
+
+  /// No description provided for @minutesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved'**
+  String get minutesSaved;
+
+  /// No description provided for @saveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save draft'**
+  String get saveDraft;
+
+  /// No description provided for @addMinuteItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add numbered minute'**
+  String get addMinuteItem;
+
+  /// No description provided for @minutesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write the minutes...'**
+  String get minutesHint;
+
+  /// No description provided for @unsavedMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your changes?'**
+  String get unsavedMinutes;
+
+  /// No description provided for @unsavedMinutesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have changes that aren\'t saved.'**
+  String get unsavedMinutesBody;
+
+  /// No description provided for @taskMinutesToApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes to approve'**
+  String get taskMinutesToApprove;
 }
 
 class _AppLocalizationsDelegate

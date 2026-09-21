@@ -1450,5 +1450,114 @@
   "greetAfternoonPlain": "Good afternoon",
   "greetEveningPlain": "Good evening",
   "loginIdLabel": "Phone or member number",
-  "loginIdHint": "0712 345 678 or IW-26-00123"
+  "loginIdHint": "0712 345 678 or IW-26-00123",
+  "meetingDocuments": "Documents",
+  "meetingMinutes": "Minutes",
+  "meetingRegister": "Register",
+  "docAgenda": "Agenda",
+  "docNotice": "Notice",
+  "docReport": "Report",
+  "docFinancials": "Financial statements",
+  "docSignedMinutes": "Signed minutes",
+  "docAttachment": "Attachment",
+  "addDocument": "Add document",
+  "chooseFile": "Choose a file",
+  "chooseFileHelp": "PDF, Word, Excel, PowerPoint or a photo",
+  "photoOfPaper": "Photo of a printed paper",
+  "documentTitle": "Title",
+  "documentType": "Type",
+  "documentAdded": "Document added",
+  "noDocuments": "No documents yet.",
+  "documentsCount": "{count, plural, =1{1 document} other{{count} documents}}",
+  "@documentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "withdrawDocument": "Withdraw document",
+  "withdrawDocumentHelp": "It stays on record (for the audit trail) but members no longer see it.",
+  "withdrawReason": "Reason",
+  "documentWithdrawn": "Document withdrawn",
+  "withdrawnBecause": "Withdrawn: {reason}",
+  "@withdrawnBecause": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "confidentialPapers": "Committee/board papers - leaders only.",
+  "minutesDraft": "Draft",
+  "minutesAwaitingApproval": "Awaiting approval",
+  "minutesApproved": "Minutes approved",
+  "minutesNone": "Not written yet",
+  "minutesAvailable": "Minutes available",
+  "minutesSubmittedBy": "Written by {name}, {date}",
+  "@minutesSubmittedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesApprovedBy": "Approved by {name}, {date}",
+  "@minutesApprovedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesSentBack": "Sent back: {comment}",
+  "@minutesSentBack": {
+    "placeholders": {
+      "comment": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesAfterMeeting": "Minutes are written after the meeting.",
+  "minutesNotYetApproved": "The minutes aren't approved yet.",
+  "writeMinutes": "Write minutes",
+  "editMinutes": "Edit minutes",
+  "submitMinutes": "Send for approval",
+  "submitMinutesBody": "The Chairperson (or another approver) will review them. You can't edit while they're waiting.",
+  "minutesSubmitted": "Minutes sent for approval",
+  "cantApproveOwnMinutes": "You sent these minutes, so someone else must approve them.",
+  "sendBackMinutes": "Send back",
+  "whatNeedsChanging": "What needs changing?",
+  "minutesReturned": "Sent back to the Secretary",
+  "approveMinutes": "Approve",
+  "approveMinutesBody": "Approved minutes are locked and shared with members (general meetings). Corrections are then added as addenda.",
+  "minutesPdf": "PDF",
+  "addAddendum": "Add addendum",
+  "addendumText": "Correction or note",
+  "addendumHelp": "Approved minutes can't be edited; an addendum is added below them with your name and the date.",
+  "addendumAdded": "Addendum added",
+  "addendumBy": "Addendum - {name}, {date}",
+  "@addendumBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesSaved": "Draft saved",
+  "saveDraft": "Save draft",
+  "addMinuteItem": "Add numbered minute",
+  "minutesHint": "Write the minutes...",
+  "unsavedMinutes": "Save your changes?",
+  "unsavedMinutesBody": "You have changes that aren't saved.",
+  "taskMinutesToApprove": "Minutes to approve"
 }
