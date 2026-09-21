@@ -2730,5 +2730,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginIdLabel => 'Phone or member number';
 
   @override
-  String get loginIdHint => '0712 345 678 or member no.';
+  String get loginIdHint => '0712 345 678 or IW-26-00123';
 }

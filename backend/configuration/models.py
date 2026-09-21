@@ -41,6 +41,13 @@ class TenantConfig(models.Model):
         default=5, help_text="Digits to zero-pad the sequence to, e.g. 5 -> 00001"
     )
     member_number_next_sequence = models.PositiveIntegerField(default=1)
+    # Year style: prefix + 2-digit joining year + separator + sequence, e.g.
+    # IW-26-00123. The sequence restarts at 1 each new year (the year keeps
+    # numbers unique); member_number_sequence_year tracks which year the
+    # running sequence belongs to.
+    member_number_include_year = models.BooleanField(default=False)
+    member_number_year_separator = models.CharField(max_length=3, default="-", blank=True)
+    member_number_sequence_year = models.PositiveSmallIntegerField(null=True, blank=True)
 
     # Loan multiplier default (e.g. 3.0 == borrow up to 3x deposits).
     # Actual loan products can override this per-product in Phase 4.

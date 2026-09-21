@@ -2730,5 +2730,5 @@ class AppLocalizationsSw extends AppLocalizations {
   String get loginIdLabel => 'Simu au nambari ya mwanachama';
 
   @override
-  String get loginIdHint => '0712 345 678 au nambari ya mwanachama';
+  String get loginIdHint => '0712 345 678 au IW-26-00123';
 }

@@ -73,6 +73,21 @@ class AdmissionTests(TenantTestCase):
         self.assertTrue(TenantAccess.objects.filter(user=user, tenant=self.tenant, is_active=True).exists())
         self.assertTrue(Membership.objects.filter(user=user, role__name="Member").exists())
 
+    def test_year_style_member_numbers_restart_each_year(self):
+        from configuration.models import TenantConfig
+
+        from .services import generate_member_number
+
+        config = TenantConfig.objects.first() or TenantConfig.objects.create()
+        config.member_number_prefix = "IW-"
+        config.member_number_include_year = True
+        config.member_number_sequence_year = date.today().year - 1
+        config.member_number_next_sequence = 57
+        config.save()
+        yy = f"{date.today().year % 100:02d}"
+        self.assertEqual(generate_member_number(), f"IW-{yy}-00001")
+        self.assertEqual(generate_member_number(), f"IW-{yy}-00002")
+
     def test_nobody_approves_their_own_registration(self):
         application = self._submit()
         Membership.objects.create(user=self.secretary, role=Role.objects.get(name="Chairperson"))

@@ -13,6 +13,8 @@ class TenantConfigSerializer(serializers.ModelSerializer):
             "member_number_suffix",
             "member_number_padding",
             "member_number_next_sequence",
+            "member_number_include_year",
+            "member_number_year_separator",
             "active_sms_provider",
             "active_payment_provider",
             "active_crb_provider",

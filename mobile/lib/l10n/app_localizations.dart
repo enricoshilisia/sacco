@@ -4973,7 +4973,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginIdHint.
   ///
   /// In en, this message translates to:
-  /// **'0712 345 678 or member no.'**
+  /// **'0712 345 678 or IW-26-00123'**
   String get loginIdHint;
 }
 
