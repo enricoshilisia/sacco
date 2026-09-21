@@ -803,5 +803,13 @@
   "auditDevice": "Kifaa",
   "auditRequest": "Ombi",
   "locationAskTitle": "Linda akaunti yako",
-  "locationAskBody": "Inuka West inaweza kurekodi eneo la takriban unapoingia, ili SACCO igundue mtu mwingine akitumia akaunti yako. Huhifadhiwa kwenye kumbukumbu za ukaguzi za SACCO tu. Unaweza kukataa."
+  "locationAskBody": "Inuka West inaweza kurekodi eneo la takriban unapoingia, ili SACCO igundue mtu mwingine akitumia akaunti yako. Huhifadhiwa kwenye kumbukumbu za ukaguzi za SACCO tu. Unaweza kukataa.",
+  "greetMorning": "Habari za asubuhi, {name}",
+  "greetAfternoon": "Habari za mchana, {name}",
+  "greetEvening": "Habari za jioni, {name}",
+  "greetMorningPlain": "Habari za asubuhi",
+  "greetAfternoonPlain": "Habari za mchana",
+  "greetEveningPlain": "Habari za jioni",
+  "loginIdLabel": "Simu au nambari ya mwanachama",
+  "loginIdHint": "0712 345 678 au nambari ya mwanachama"
 }

@@ -68,16 +68,9 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final session = context.watch<Session>();
-    final l10n = context.l10n;
     final member = session.member;
     return Scaffold(
-      appBar: InukaAppBar(
-        title: l10n.navHome,
-        subtitle: [
-          l10n.welcome(member?.firstName ?? session.profile?.firstName ?? ''),
-          if (member != null) l10n.memberNumber(member.memberNumber),
-        ].join(' · '),
-      ),
+      appBar: InukaAppBar(title: greeting(context, member?.firstName ?? session.profile?.firstName ?? '')),
       body: AsyncView<_DashboardData>(
         load: () => _load(session),
         builder: (context, data, reload) => _DashboardBody(data: data, reload: reload),

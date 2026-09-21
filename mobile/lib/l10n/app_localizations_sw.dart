@@ -2701,4 +2701,34 @@ class AppLocalizationsSw extends AppLocalizations {
   @override
   String get locationAskBody =>
       'Inuka West inaweza kurekodi eneo la takriban unapoingia, ili SACCO igundue mtu mwingine akitumia akaunti yako. Huhifadhiwa kwenye kumbukumbu za ukaguzi za SACCO tu. Unaweza kukataa.';
+
+  @override
+  String greetMorning(String name) {
+    return 'Habari za asubuhi, $name';
+  }
+
+  @override
+  String greetAfternoon(String name) {
+    return 'Habari za mchana, $name';
+  }
+
+  @override
+  String greetEvening(String name) {
+    return 'Habari za jioni, $name';
+  }
+
+  @override
+  String get greetMorningPlain => 'Habari za asubuhi';
+
+  @override
+  String get greetAfternoonPlain => 'Habari za mchana';
+
+  @override
+  String get greetEveningPlain => 'Habari za jioni';
+
+  @override
+  String get loginIdLabel => 'Simu au nambari ya mwanachama';
+
+  @override
+  String get loginIdHint => '0712 345 678 au nambari ya mwanachama';
 }

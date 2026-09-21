@@ -35,13 +35,16 @@ class TenantScopedTokenObtainPairView(TokenObtainPairView):
         from audit.models import AuditAction
         from audit.services import record
 
-        phone = str(request.data.get("phone_number", ""))[:20]
+        from .login_ids import resolve_login_id
+
+        typed = str(request.data.get("phone_number", ""))[:40]
+        phone = resolve_login_id(typed)[:20]
         user = User.objects.filter(phone_number=phone).first() if ok else None
         record(
             request=request, user=user, actor="" if ok else phone,
             action=AuditAction.LOGIN if ok else AuditAction.LOGIN_FAILED,
             event="auth.login" if ok else "auth.login_failed", area="auth",
-            summary="Signed in" if ok else f"Failed sign-in for {phone}",
+            summary="Signed in" if ok else f"Failed sign-in for {typed}",
             method="POST", path=request.path, status_code=200 if ok else 401,
         )
 

@@ -43,6 +43,10 @@ class TenantScopedTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         from subscriptions.models import Subscription
 
+        from .login_ids import resolve_login_id
+
+        # Phone number in any common form, or member number.
+        attrs[self.username_field] = resolve_login_id(attrs.get(self.username_field, ""))
         data = super().validate(attrs)
         if connection.schema_name != get_public_schema_name():
             has_access = TenantAccess.objects.filter(

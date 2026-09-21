@@ -2701,4 +2701,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get locationAskBody =>
       'Inuka West can note the approximate area you sign in from, so the SACCO can spot someone else using your account. It\'s only kept in the SACCO\'s audit log. You can say no.';
+
+  @override
+  String greetMorning(String name) {
+    return 'Good morning, $name';
+  }
+
+  @override
+  String greetAfternoon(String name) {
+    return 'Good afternoon, $name';
+  }
+
+  @override
+  String greetEvening(String name) {
+    return 'Good evening, $name';
+  }
+
+  @override
+  String get greetMorningPlain => 'Good morning';
+
+  @override
+  String get greetAfternoonPlain => 'Good afternoon';
+
+  @override
+  String get greetEveningPlain => 'Good evening';
+
+  @override
+  String get loginIdLabel => 'Phone or member number';
+
+  @override
+  String get loginIdHint => '0712 345 678 or member no.';
 }

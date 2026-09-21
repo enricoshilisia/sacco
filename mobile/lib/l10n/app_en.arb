@@ -1421,5 +1421,34 @@
   "auditDevice": "Device",
   "auditRequest": "Request",
   "locationAskTitle": "Protect your account",
-  "locationAskBody": "Inuka West can note the approximate area you sign in from, so the SACCO can spot someone else using your account. It's only kept in the SACCO's audit log. You can say no."
+  "locationAskBody": "Inuka West can note the approximate area you sign in from, so the SACCO can spot someone else using your account. It's only kept in the SACCO's audit log. You can say no.",
+  "greetMorning": "Good morning, {name}",
+  "@greetMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetAfternoon": "Good afternoon, {name}",
+  "@greetAfternoon": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetEvening": "Good evening, {name}",
+  "@greetEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetMorningPlain": "Good morning",
+  "greetAfternoonPlain": "Good afternoon",
+  "greetEveningPlain": "Good evening",
+  "loginIdLabel": "Phone or member number",
+  "loginIdHint": "0712 345 678 or member no."
 }

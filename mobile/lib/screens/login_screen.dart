@@ -98,13 +98,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 20),
                           TextField(
                             controller: _phone,
-                            keyboardType: TextInputType.phone,
-                            autofillHints: const [AutofillHints.telephoneNumber],
+                            // Phone number (any format) or member number.
+                            keyboardType: TextInputType.visiblePassword,
+                            autocorrect: false,
+                            textCapitalization: TextCapitalization.characters,
+                            autofillHints: const [AutofillHints.username],
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
-                              labelText: l10n.phoneNumber,
-                              hintText: l10n.phoneHint,
-                              prefixIcon: const Icon(Icons.phone_iphone),
+                              labelText: l10n.loginIdLabel,
+                              hintText: l10n.loginIdHint,
+                              prefixIcon: const Icon(Icons.badge_outlined),
                             ),
                           ),
                           const SizedBox(height: 12),

@@ -20,7 +20,7 @@ class LeaderHubScreen extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: InukaAppBar(title: l10n.navHome, subtitle: l10n.welcome(profile?.firstName ?? '')),
+      appBar: InukaAppBar(title: greeting(context, profile?.firstName ?? '')),
       body: RefreshIndicator(
         onRefresh: () async => homeShellOf(context)?.refreshAll(),
         child: ListView(

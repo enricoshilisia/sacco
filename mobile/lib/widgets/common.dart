@@ -202,3 +202,14 @@ class InfoRow extends StatelessWidget {
     );
   }
 }
+
+
+/// "Good morning, Mary" - the Home top bar.
+String greeting(BuildContext context, String name) {
+  final l10n = context.l10n;
+  final hour = DateTime.now().hour;
+  final first = name.trim().split(' ').first;
+  if (hour < 12) return first.isEmpty ? l10n.greetMorningPlain : l10n.greetMorning(first);
+  if (hour < 17) return first.isEmpty ? l10n.greetAfternoonPlain : l10n.greetAfternoon(first);
+  return first.isEmpty ? l10n.greetEveningPlain : l10n.greetEvening(first);
+}

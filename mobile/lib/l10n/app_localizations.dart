@@ -4927,6 +4927,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inuka West can note the approximate area you sign in from, so the SACCO can spot someone else using your account. It\'s only kept in the SACCO\'s audit log. You can say no.'**
   String get locationAskBody;
+
+  /// No description provided for @greetMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning, {name}'**
+  String greetMorning(String name);
+
+  /// No description provided for @greetAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon, {name}'**
+  String greetAfternoon(String name);
+
+  /// No description provided for @greetEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening, {name}'**
+  String greetEvening(String name);
+
+  /// No description provided for @greetMorningPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get greetMorningPlain;
+
+  /// No description provided for @greetAfternoonPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get greetAfternoonPlain;
+
+  /// No description provided for @greetEveningPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get greetEveningPlain;
+
+  /// No description provided for @loginIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone or member number'**
+  String get loginIdLabel;
+
+  /// No description provided for @loginIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'0712 345 678 or member no.'**
+  String get loginIdHint;
 }
 
 class _AppLocalizationsDelegate

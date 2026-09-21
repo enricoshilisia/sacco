@@ -219,6 +219,14 @@ class SupportTests(TenantTestCase):
         self.assertEqual(str(viewed.latitude), "-1.283300")
         self.assertEqual(viewed.summary, "Viewed audit › events")
 
+    def test_sign_in_with_member_number_or_local_phone_format(self):
+        Member.objects.create(member_number="IW-00042", user=self.member_user, first_name="Mary", last_name="W",
+                              id_type="NATIONAL_ID", id_number="1", phone_number="+254711666003")
+        self.assertEqual(self._token("iw-00042").status_code, 200)
+        self.assertEqual(self._token("0711666003").status_code, 200)
+        self.assertEqual(self._token("254711666003").status_code, 200)
+        self.assertEqual(self._token("IW-99999").status_code, 401)
+
     def test_members_cannot_read_the_audit_log(self):
         token = self._token("+254711666003").json()["access"]
         r = self.client.get("/api/audit/events/", HTTP_AUTHORIZATION=f"Bearer {token}")
