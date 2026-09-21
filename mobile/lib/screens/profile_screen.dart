@@ -8,6 +8,7 @@ import '../widgets/common.dart';
 import 'distributions_screen.dart';
 import '../widgets/inuka_app_bar.dart';
 import '../widgets/member_avatar.dart';
+import 'profile/my_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -104,6 +105,23 @@ class ProfileScreen extends StatelessWidget {
                   InfoRow(l10n.email, member.email.isEmpty ? '—' : member.email),
                   InfoRow(l10n.address, member.physicalAddress.isEmpty ? '—' : member.physicalAddress),
                 ]),
+              ),
+            ),
+          ],
+          if (member != null) ...[
+            const SizedBox(height: 8),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.family_restroom),
+                title: Text(l10n.myDetailsTitle),
+                subtitle: Text(l10n.myDetailsHelp),
+                trailing: member.profileApproved
+                    ? const Icon(Icons.verified, color: Color(0xFF2E9E4F))
+                    : StatusChip(l10n.profileActionNeeded, tone: Tone.warn),
+                onTap: () async {
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyProfileScreen()));
+                  await session.reloadMember();
+                },
               ),
             ),
           ],

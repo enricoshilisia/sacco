@@ -7,6 +7,9 @@ import '../../core/session.dart';
 import '../../models/welfare.dart';
 import '../../widgets/common.dart';
 import '../../widgets/labels.dart';
+import '../../core/profile_api.dart';
+import '../../models/profile.dart';
+import '../profile/profile_labels.dart';
 import 'member_picker.dart';
 import '../../widgets/inuka_app_bar.dart';
 
@@ -143,18 +146,51 @@ class OpenCaseScreen extends StatefulWidget {
 
 class _OpenCaseScreenState extends State<OpenCaseScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _affected = TextEditingController();
   final _description = TextEditingController();
   MemberBrief? _member;
   WelfareCaseType? _type;
+  List<FamilyPerson>? _family;
+  // '' = the member themself; otherwise a family member id.
+  String? _affectedId;
   bool _busy = false;
   String? _error;
 
   @override
   void dispose() {
-    _affected.dispose();
     _description.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickMember() async {
+    final picked = await pickMember(context);
+    if (picked == null || !mounted) return;
+    setState(() {
+      _member = picked;
+      _family = null;
+      _affectedId = null;
+    });
+    try {
+      final family = await context.read<Session>().api!.welfareFamily(picked.id);
+      if (mounted) setState(() => _family = family);
+    } catch (e) {
+      if (mounted) setState(() => _error = errorText(context, e));
+    }
+  }
+
+  /// Who this case type can be opened for, from the member's approved register.
+  List<(String, String)> _eligible() {
+    final type = _type;
+    final l10n = context.l10n;
+    if (type == null || _member == null) return const [];
+    final options = <(String, String)>[];
+    if (type.covers.contains('SELF')) options.add(('', '${_member!.fullName} (${l10n.relSelf.toLowerCase()})'));
+    for (final p in _family ?? const <FamilyPerson>[]) {
+      if (!type.covers.contains(p.relationship)) continue;
+      if (p.relationship == 'CHILD' && type.childMaxAge != null && (p.age ?? 999) > type.childMaxAge!) continue;
+      options.add((p.id, '${p.fullName} (${relationshipLabel(l10n, p.relationship).toLowerCase()}'
+          '${p.age != null ? ', ${l10n.ageYears(p.age!)}' : ''})'));
+    }
+    return options;
   }
 
   Future<void> _submit() async {
@@ -163,6 +199,10 @@ class _OpenCaseScreenState extends State<OpenCaseScreen> {
       return;
     }
     if (!_formKey.currentState!.validate()) return;
+    if (_affectedId == null) {
+      setState(() => _error = context.l10n.welfarePickAffected);
+      return;
+    }
     setState(() {
       _busy = true;
       _error = null;
@@ -171,7 +211,7 @@ class _OpenCaseScreenState extends State<OpenCaseScreen> {
       await context.read<Session>().api!.openWelfareCase(
             caseTypeId: _type!.id,
             beneficiaryId: _member!.id,
-            affectedPerson: _affected.text.trim(),
+            affectedFamilyMemberId: _affectedId!.isEmpty ? null : _affectedId,
             description: _description.text.trim(),
           );
       if (!mounted) return;
@@ -203,10 +243,7 @@ class _OpenCaseScreenState extends State<OpenCaseScreen> {
                   title: Text(_member?.fullName ?? l10n.welfarePickMember),
                   subtitle: _member == null ? null : Text('${_member!.memberNumber} · ${_member!.phoneNumber}'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () async {
-                    final picked = await pickMember(context);
-                    if (picked != null) setState(() => _member = picked);
-                  },
+                  onTap: _pickMember,
                 ),
               ),
               const SizedBox(height: 16),
@@ -222,7 +259,10 @@ class _OpenCaseScreenState extends State<OpenCaseScreen> {
                       DropdownMenuItem(value: t, child: Text('${t.name} · ${money(context, t.contributionPerMember)}')),
                   ],
                   validator: (v) => v == null ? l10n.required : null,
-                  onChanged: (v) => setState(() => _type = v),
+                  onChanged: (v) => setState(() {
+                    _type = v;
+                    _affectedId = null;
+                  }),
                 ),
               if (_type != null) ...[
                 const SizedBox(height: 8),
@@ -234,10 +274,30 @@ class _OpenCaseScreenState extends State<OpenCaseScreen> {
                   Text(_type!.description, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _affected,
-                decoration: InputDecoration(labelText: l10n.welfareAffectedPerson, hintText: l10n.welfareAffectedPersonHint),
-              ),
+              if (_member != null && _type != null) ...[
+                if (_family == null)
+                  const LinearProgressIndicator()
+                else if (_eligible().isEmpty)
+                  Card(
+                    color: theme.colorScheme.errorContainer,
+                    child: ListTile(
+                      leading: const Icon(Icons.info_outline),
+                      title: Text(l10n.welfareNobodyCovered),
+                      subtitle: Text(l10n.welfareNobodyCoveredHelp),
+                    ),
+                  )
+                else
+                  DropdownButtonFormField<String>(
+                    key: ValueKey('${_type!.id}${_member!.id}'),
+                    initialValue: _affectedId,
+                    isExpanded: true,
+                    decoration: InputDecoration(labelText: l10n.welfareAffectedPerson),
+                    items: [for (final o in _eligible()) DropdownMenuItem(value: o.$1, child: Text(o.$2))],
+                    onChanged: (v) => setState(() => _affectedId = v),
+                  ),
+                const SizedBox(height: 6),
+                Text(l10n.welfareRegisterOnlyHelp, style: theme.textTheme.bodySmall),
+              ],
               const SizedBox(height: 16),
               TextFormField(
                 controller: _description,

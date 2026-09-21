@@ -1481,4 +1481,427 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get photoUpdated => 'Picha ya wasifu imesasishwa';
+
+  @override
+  String get yes => 'Ndiyo';
+
+  @override
+  String get no => 'Hapana';
+
+  @override
+  String get submit => 'Wasilisha';
+
+  @override
+  String get upload => 'Pakia';
+
+  @override
+  String get uploaded => 'Imepakiwa';
+
+  @override
+  String get replace => 'Badilisha';
+
+  @override
+  String get field => 'Taarifa';
+
+  @override
+  String get now => 'Sasa';
+
+  @override
+  String get newValue => 'Badilisha kuwa';
+
+  @override
+  String get onRecord => 'Taarifa';
+
+  @override
+  String get myDetailsTitle => 'Taarifa zangu na familia';
+
+  @override
+  String get myDetailsHelp => 'Taarifa binafsi, kitambulisho, familia';
+
+  @override
+  String get personalDetails => 'Taarifa binafsi';
+
+  @override
+  String get basicDetails => 'Mawasiliano na kazi';
+
+  @override
+  String get basicDetailsHelp => 'Unaweza kubadilisha hizi wakati wowote.';
+
+  @override
+  String get idDocuments => 'Kitambulisho';
+
+  @override
+  String get idFront => 'Mbele ya kitambulisho';
+
+  @override
+  String get idBack => 'Nyuma ya kitambulisho';
+
+  @override
+  String get tapToScan => 'Gusa kupiga picha';
+
+  @override
+  String get idScanFrontTip =>
+      'Weka kitambulisho sawa mahali penye mwanga, jaza fremu, epuka mng\'ao.';
+
+  @override
+  String get idScanBackTip => 'Sasa upande wa nyuma wa kitambulisho.';
+
+  @override
+  String get idNotRead =>
+      'Hatukuweza kusoma nambari ya kitambulisho. Bado unaweza kuipakia; Katibu ataikagua.';
+
+  @override
+  String idReadMatches(String number) {
+    return 'Nambari iliyosomwa $number. Inalingana na rekodi yako.';
+  }
+
+  @override
+  String idReadDifferent(String read, String record) {
+    return 'Nambari iliyosomwa $read, lakini rekodi yako inasema $record. Kagua picha, au omba kubadilisha nambari.';
+  }
+
+  @override
+  String get idNumberMatches => 'Nambari inalingana';
+
+  @override
+  String get idNumberMismatch => 'Nambari haifanani';
+
+  @override
+  String idNumberRead(String number) {
+    return 'Iliyosomwa: $number';
+  }
+
+  @override
+  String get documentUploaded => 'Hati imepakiwa';
+
+  @override
+  String get documentOnFile => 'Hati imehifadhiwa';
+
+  @override
+  String get documentLoadFailed => 'Imeshindikana kupakua hati hii.';
+
+  @override
+  String get pdfOnFile => 'PDF hii imehifadhiwa; ifungue kwenye wavuti kuiona.';
+
+  @override
+  String get familyRegister => 'Rejista ya familia';
+
+  @override
+  String get familyRegisterHelp =>
+      'Ni watu walioidhinishwa hapa tu wanaolindwa na ustawi.';
+
+  @override
+  String get familyEmpty => 'Hakuna wanafamilia waliosajiliwa bado.';
+
+  @override
+  String get addFamilyMember => 'Ongeza mwanafamilia';
+
+  @override
+  String get familyFormHelp =>
+      'Katibu humwidhinisha kila mtu kabla ya kulindwa na ustawi. Ongeza cheti cha kuzaliwa au kitambulisho baadaye.';
+
+  @override
+  String get fieldFirstName => 'Jina la kwanza';
+
+  @override
+  String get fieldLastName => 'Jina la ukoo';
+
+  @override
+  String get fieldOtherNames => 'Majina mengine';
+
+  @override
+  String get fieldFullName => 'Jina kamili';
+
+  @override
+  String get fieldDateOfBirth => 'Tarehe ya kuzaliwa';
+
+  @override
+  String get fieldGender => 'Jinsia';
+
+  @override
+  String get fieldIdType => 'Aina ya kitambulisho';
+
+  @override
+  String get fieldMaritalStatus => 'Hali ya ndoa';
+
+  @override
+  String get fieldRelationship => 'Uhusiano';
+
+  @override
+  String get fieldBirthCert => 'Nambari ya cheti cha kuzaliwa';
+
+  @override
+  String get fieldNextOfKin => 'Mrithi / ndugu wa karibu';
+
+  @override
+  String get fieldDeceased => 'Marehemu';
+
+  @override
+  String get fieldOccupation => 'Kazi';
+
+  @override
+  String get fieldEmployer => 'Mwajiri';
+
+  @override
+  String get fieldCounty => 'Kaunti / mkoa';
+
+  @override
+  String get relSpouse => 'Mwenzi';
+
+  @override
+  String get relChild => 'Mtoto';
+
+  @override
+  String get relParent => 'Mzazi';
+
+  @override
+  String get relParentInLaw => 'Mkwe';
+
+  @override
+  String get relSibling => 'Ndugu';
+
+  @override
+  String get relSelf => 'Mwanachama mwenyewe';
+
+  @override
+  String get genderFemale => 'Mke';
+
+  @override
+  String get genderMale => 'Mume';
+
+  @override
+  String get genderOther => 'Nyingine';
+
+  @override
+  String get maritalSingle => 'Hajaoa / hajaolewa';
+
+  @override
+  String get maritalMarried => 'Ameoa / ameolewa';
+
+  @override
+  String get maritalWidowed => 'Mjane';
+
+  @override
+  String get maritalDivorced => 'Ametalikiana';
+
+  @override
+  String get idTypeNational => 'Kitambulisho cha taifa';
+
+  @override
+  String get idTypeHuduma => 'Huduma Namba';
+
+  @override
+  String get idTypeNida => 'NIDA';
+
+  @override
+  String get idTypePassport => 'Pasipoti';
+
+  @override
+  String ageYears(int age) {
+    return 'miaka $age';
+  }
+
+  @override
+  String get statusApproved => 'Imeidhinishwa';
+
+  @override
+  String get statusAwaitingApproval => 'Inasubiri idhini';
+
+  @override
+  String get statusRejected => 'Imekataliwa';
+
+  @override
+  String get requestChange => 'Omba mabadiliko';
+
+  @override
+  String get requestRemoval => 'Omba kuondolewa';
+
+  @override
+  String get cancelRequest => 'Ghairi ombi';
+
+  @override
+  String get requestCancelled => 'Ombi limeghairiwa';
+
+  @override
+  String get changeAwaitingApproval => 'Mabadiliko yanasubiri idhini';
+
+  @override
+  String get changeSentForApproval => 'Imetumwa kwa Katibu kuidhinishwa';
+
+  @override
+  String get sendForApproval => 'Tuma kwa idhini';
+
+  @override
+  String get changeReason => 'Sababu ya mabadiliko (husaidia idhini)';
+
+  @override
+  String get nothingChanged => 'Hakuna kilichobadilika.';
+
+  @override
+  String get personalChangeHelp =>
+      'Mabadiliko ya taarifa hizi hukaguliwa na kuidhinishwa na Katibu kabla ya kutumika. Pakia kitambulisho ikiwa nambari au majina yanabadilika.';
+
+  @override
+  String get childDobRequired =>
+      'Tarehe ya kuzaliwa ya mtoto inahitajika kwa ulinzi wa ustawi.';
+
+  @override
+  String get uploadBirthCert => 'Pakia cheti cha kuzaliwa';
+
+  @override
+  String get uploadIdPhoto => 'Pakia picha ya kitambulisho';
+
+  @override
+  String removalHelp(String name) {
+    return 'Kumwondoa $name kunamaanisha ustawi hautamlinda tena. Katibu lazima aidhinishe.';
+  }
+
+  @override
+  String get myRequests => 'Maombi yangu';
+
+  @override
+  String get submitForApproval => 'Wasilisha kwa idhini';
+
+  @override
+  String get submitForApprovalTitle => 'Wasilisha taarifa zako?';
+
+  @override
+  String get submitForApprovalBody =>
+      'Katibu atakagua taarifa zako na kitambulisho. Zikiidhinishwa, mabadiliko yatahitaji idhini.';
+
+  @override
+  String get submittedForApproval => 'Imewasilishwa kwa idhini';
+
+  @override
+  String get profileDraft => 'Kamilisha wasifu wako';
+
+  @override
+  String get profileDraftHelp =>
+      'Kagua taarifa zako, piga picha ya kitambulisho na ongeza familia, kisha wasilisha.';
+
+  @override
+  String get profilePending => 'Inasubiri idhini';
+
+  @override
+  String get profilePendingHelp => 'Katibu anakagua taarifa zako.';
+
+  @override
+  String get profileVerified => 'Wasifu umethibitishwa';
+
+  @override
+  String get profileVerifiedHelp =>
+      'Taarifa zako zimefungwa. Mabadiliko yanahitaji idhini ya Katibu.';
+
+  @override
+  String get profileActionNeeded => 'Hatua inahitajika';
+
+  @override
+  String get profileNotSubmitted => 'Haijawasilishwa';
+
+  @override
+  String get completeProfileTitle => 'Kamilisha wasifu wako';
+
+  @override
+  String get completeProfileBody =>
+      'Ongeza kitambulisho na familia ili ustawi uwalinde.';
+
+  @override
+  String get navApprovals => 'Idhini';
+
+  @override
+  String get approvalsTitle => 'Idhini za wanachama';
+
+  @override
+  String get approvalsHelp => 'Mabadiliko ya wasifu, kitambulisho na familia';
+
+  @override
+  String get approvalsEmpty => 'Hakuna kinachosubiri idhini.';
+
+  @override
+  String get firstProfileApproval => 'Wasifu mpya wa kuthibitisha';
+
+  @override
+  String memberSays(String note) {
+    return 'Maelezo ya mwanachama: $note';
+  }
+
+  @override
+  String get whatChanges => 'Kinachobadilika';
+
+  @override
+  String get documentsToCheck => 'Hati za kukagua';
+
+  @override
+  String get noDocumentsYet => 'Hakuna hati zilizopakiwa bado.';
+
+  @override
+  String get compareIdHelp =>
+      'Linganisha picha ya kitambulisho na taarifa kabla ya kuidhinisha. Ukaguzi wa nambari ni mwongozo tu.';
+
+  @override
+  String get removalWarning =>
+      'Kuidhinisha kutamwondoa mtu huyu kwenye ulinzi wa ustawi.';
+
+  @override
+  String get rejectReasonForMember => 'Sababu (mwanachama ataiona)';
+
+  @override
+  String get changeApproved => 'Imeidhinishwa';
+
+  @override
+  String get changeRejected => 'Imekataliwa';
+
+  @override
+  String get tableMember => 'Mwanachama';
+
+  @override
+  String get tableStatus => 'Hali';
+
+  @override
+  String get tableProfile => 'Wasifu';
+
+  @override
+  String tableCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'wanachama $count',
+      one: 'mwanachama 1',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get memberDormant => 'Hasiti';
+
+  @override
+  String get memberExited => 'Ameondoka';
+
+  @override
+  String get welfareCovers => 'Inawalinda nani';
+
+  @override
+  String get welfareCoversRequired =>
+      'Chagua angalau mtu mmoja aina hii inamlinda.';
+
+  @override
+  String get welfareChildMaxAge => 'Kikomo cha umri wa mtoto (hiari)';
+
+  @override
+  String get welfareChildMaxAgeHint => 'mfano 18';
+
+  @override
+  String get welfarePickAffected => 'Chagua kesi ni ya nani.';
+
+  @override
+  String get welfareNobodyCovered =>
+      'Hakuna kwenye rejista ya mwanachama huyu anayelindwa na aina hii.';
+
+  @override
+  String get welfareNobodyCoveredHelp =>
+      'Mwanachama lazima amwongeze mtu huyo kwenye rejista na aidhinishwe kwanza.';
+
+  @override
+  String get welfareRegisterOnlyHelp =>
+      'Ni walioidhinishwa kwenye rejista tu wanaolindwa.';
 }

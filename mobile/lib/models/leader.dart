@@ -247,6 +247,8 @@ class MemberListItem {
   final String status;
   final String phoneNumber;
   final bool isKycVerified;
+  final String profileStatus;
+  final String photo;
 
   MemberListItem.fromJson(Map<String, dynamic> j)
       : id = _str(j['id']),
@@ -254,5 +256,7 @@ class MemberListItem {
         fullName = _str(j['full_name']),
         status = _str(j['status']),
         phoneNumber = _str(j['phone_number']),
-        isKycVerified = j['is_kyc_verified'] == true;
+        isKycVerified = j['is_kyc_verified'] == true,
+        profileStatus = _str(j['profile_status']),
+        photo = _str(j['photo']);
 }

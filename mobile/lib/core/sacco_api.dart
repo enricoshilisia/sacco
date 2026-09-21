@@ -147,6 +147,8 @@ class SaccoApi {
     required Decimal contributionPerMember,
     required bool beneficiaryContributes,
     required bool isActive,
+    required List<String> covers,
+    int? childMaxAge,
   }) {
     final data = {
       'name': name,
@@ -154,6 +156,8 @@ class SaccoApi {
       'contribution_per_member': contributionPerMember.toStringAsFixed(2),
       'beneficiary_contributes': beneficiaryContributes,
       'is_active': isActive,
+      'covers': covers,
+      'child_max_age': childMaxAge,
     };
     return id == null
         ? client.post<Object?>('/api/welfare/case-types/', data: data)
@@ -182,16 +186,18 @@ class SaccoApi {
         query: outstandingOnly ? {'outstanding': 'true'} : null,
       )).map(WelfareContribution.fromJson).toList();
 
+  /// [affectedFamilyMemberId] null = the member themself; otherwise someone on
+  /// their approved family register (the server checks the case type covers them).
   Future<WelfareCase> openWelfareCase({
     required String caseTypeId,
     required String beneficiaryId,
-    required String affectedPerson,
+    String? affectedFamilyMemberId,
     required String description,
   }) async =>
       WelfareCase.fromJson(await client.post<Map<String, dynamic>>('/api/welfare/cases/', data: {
         'case_type': caseTypeId,
         'beneficiary': beneficiaryId,
-        'affected_person': affectedPerson,
+        'affected_family_member': affectedFamilyMemberId,
         'description': description,
       }));
 

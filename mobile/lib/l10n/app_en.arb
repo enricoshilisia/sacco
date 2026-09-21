@@ -738,5 +738,186 @@
   "photoChoose": "Choose from gallery",
   "photoPickFailed": "Couldn't open that photo. Try another one.",
   "photoUploading": "Uploading photo…",
-  "photoUpdated": "Profile photo updated"
+  "photoUpdated": "Profile photo updated",
+  "yes": "Yes",
+  "no": "No",
+  "submit": "Submit",
+  "upload": "Upload",
+  "uploaded": "Uploaded",
+  "replace": "Replace",
+  "field": "Detail",
+  "now": "Now",
+  "newValue": "Change to",
+  "onRecord": "Details",
+  "myDetailsTitle": "My details & family",
+  "myDetailsHelp": "Personal details, ID, family register",
+  "personalDetails": "Personal details",
+  "basicDetails": "Contact & work",
+  "basicDetailsHelp": "You can update these any time.",
+  "idDocuments": "ID card",
+  "idFront": "ID front",
+  "idBack": "ID back",
+  "tapToScan": "Tap to scan",
+  "idScanFrontTip": "Lay your ID flat in good light, fill the frame, avoid glare.",
+  "idScanBackTip": "Now the back of the ID card.",
+  "idNotRead": "We couldn't read the ID number from the photo. You can still upload it; the Secretary will check it.",
+  "idReadMatches": "Read ID number {number}. It matches your record.",
+  "@idReadMatches": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "idReadDifferent": "Read ID number {read}, but your record says {record}. Check the photo, or request a change to your ID number.",
+  "@idReadDifferent": {
+    "placeholders": {
+      "read": {
+        "type": "String"
+      },
+      "record": {
+        "type": "String"
+      }
+    }
+  },
+  "idNumberMatches": "Number matches",
+  "idNumberMismatch": "Number differs",
+  "idNumberRead": "Read: {number}",
+  "@idNumberRead": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "documentUploaded": "Document uploaded",
+  "documentOnFile": "Document on file",
+  "documentLoadFailed": "Couldn't load this document.",
+  "pdfOnFile": "This PDF is on file; open it on the web to view.",
+  "familyRegister": "Family register",
+  "familyRegisterHelp": "Only people approved here are covered by welfare.",
+  "familyEmpty": "No family members registered yet.",
+  "addFamilyMember": "Add family member",
+  "familyFormHelp": "The Secretary approves each person before they're covered by welfare. Add a birth certificate or ID afterwards.",
+  "fieldFirstName": "First name",
+  "fieldLastName": "Surname",
+  "fieldOtherNames": "Other names",
+  "fieldFullName": "Full name",
+  "fieldDateOfBirth": "Date of birth",
+  "fieldGender": "Gender",
+  "fieldIdType": "ID type",
+  "fieldMaritalStatus": "Marital status",
+  "fieldRelationship": "Relationship",
+  "fieldBirthCert": "Birth certificate no.",
+  "fieldNextOfKin": "Next of kin",
+  "fieldDeceased": "Deceased",
+  "fieldOccupation": "Occupation",
+  "fieldEmployer": "Employer",
+  "fieldCounty": "County / region",
+  "relSpouse": "Spouse",
+  "relChild": "Child",
+  "relParent": "Parent",
+  "relParentInLaw": "Parent-in-law",
+  "relSibling": "Sibling",
+  "relSelf": "Member themself",
+  "genderFemale": "Female",
+  "genderMale": "Male",
+  "genderOther": "Other",
+  "maritalSingle": "Single",
+  "maritalMarried": "Married",
+  "maritalWidowed": "Widowed",
+  "maritalDivorced": "Divorced / separated",
+  "idTypeNational": "National ID",
+  "idTypeHuduma": "Huduma Namba",
+  "idTypeNida": "NIDA",
+  "idTypePassport": "Passport",
+  "ageYears": "{age} yrs",
+  "@ageYears": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "statusApproved": "Approved",
+  "statusAwaitingApproval": "Awaiting approval",
+  "statusRejected": "Rejected",
+  "requestChange": "Request a change",
+  "requestRemoval": "Request removal",
+  "cancelRequest": "Cancel request",
+  "requestCancelled": "Request cancelled",
+  "changeAwaitingApproval": "Change awaiting approval",
+  "changeSentForApproval": "Sent to the Secretary for approval",
+  "sendForApproval": "Send for approval",
+  "changeReason": "Reason for the change (helps approval)",
+  "nothingChanged": "Nothing has changed.",
+  "personalChangeHelp": "Changes to these details are checked and approved by the Secretary before they apply. Upload your ID if the number or names change.",
+  "childDobRequired": "A child's date of birth is needed for welfare cover.",
+  "uploadBirthCert": "Upload birth certificate",
+  "uploadIdPhoto": "Upload ID photo",
+  "removalHelp": "Removing {name} means welfare no longer covers them. The Secretary must approve.",
+  "@removalHelp": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "myRequests": "My requests",
+  "submitForApproval": "Submit for approval",
+  "submitForApprovalTitle": "Submit your details?",
+  "submitForApprovalBody": "The Secretary will check your details and ID. Once approved, changes need approval.",
+  "submittedForApproval": "Submitted for approval",
+  "profileDraft": "Complete your profile",
+  "profileDraftHelp": "Check your details, scan your ID and add your family, then submit.",
+  "profilePending": "Awaiting approval",
+  "profilePendingHelp": "The Secretary is checking your details.",
+  "profileVerified": "Profile verified",
+  "profileVerifiedHelp": "Your details are locked. Changes need the Secretary's approval.",
+  "profileActionNeeded": "Action needed",
+  "profileNotSubmitted": "Not submitted",
+  "completeProfileTitle": "Complete your profile",
+  "completeProfileBody": "Add your ID and family so welfare can cover them.",
+  "navApprovals": "Approvals",
+  "approvalsTitle": "Member approvals",
+  "approvalsHelp": "Profile, ID and family changes to approve",
+  "approvalsEmpty": "Nothing waiting for approval.",
+  "firstProfileApproval": "New profile to verify",
+  "memberSays": "Member's note: {note}",
+  "@memberSays": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "whatChanges": "What changes",
+  "documentsToCheck": "Documents to check",
+  "noDocumentsYet": "No documents uploaded yet.",
+  "compareIdHelp": "Compare the ID photo with the details before approving. The number check is a guide only.",
+  "removalWarning": "Approving removes this person from welfare cover.",
+  "rejectReasonForMember": "Reason (the member will see this)",
+  "changeApproved": "Approved",
+  "changeRejected": "Rejected",
+  "tableMember": "Member",
+  "tableStatus": "Status",
+  "tableProfile": "Profile",
+  "tableCount": "{count, plural, =1{1 member} other{{count} members}}",
+  "@tableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memberDormant": "Dormant",
+  "memberExited": "Exited",
+  "welfareCovers": "Who this covers",
+  "welfareCoversRequired": "Choose at least one person this case type covers.",
+  "welfareChildMaxAge": "Child age limit (optional)",
+  "welfareChildMaxAgeHint": "e.g. 18",
+  "welfarePickAffected": "Choose who the case is for.",
+  "welfareNobodyCovered": "Nobody on this member's register is covered by this case type.",
+  "welfareNobodyCoveredHelp": "The member must add the person to their family register and have it approved first.",
+  "welfareRegisterOnlyHelp": "Only approved family-register entries are covered."
 }

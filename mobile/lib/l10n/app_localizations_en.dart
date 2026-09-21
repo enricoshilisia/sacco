@@ -1478,4 +1478,427 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photoUpdated => 'Profile photo updated';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get uploaded => 'Uploaded';
+
+  @override
+  String get replace => 'Replace';
+
+  @override
+  String get field => 'Detail';
+
+  @override
+  String get now => 'Now';
+
+  @override
+  String get newValue => 'Change to';
+
+  @override
+  String get onRecord => 'Details';
+
+  @override
+  String get myDetailsTitle => 'My details & family';
+
+  @override
+  String get myDetailsHelp => 'Personal details, ID, family register';
+
+  @override
+  String get personalDetails => 'Personal details';
+
+  @override
+  String get basicDetails => 'Contact & work';
+
+  @override
+  String get basicDetailsHelp => 'You can update these any time.';
+
+  @override
+  String get idDocuments => 'ID card';
+
+  @override
+  String get idFront => 'ID front';
+
+  @override
+  String get idBack => 'ID back';
+
+  @override
+  String get tapToScan => 'Tap to scan';
+
+  @override
+  String get idScanFrontTip =>
+      'Lay your ID flat in good light, fill the frame, avoid glare.';
+
+  @override
+  String get idScanBackTip => 'Now the back of the ID card.';
+
+  @override
+  String get idNotRead =>
+      'We couldn\'t read the ID number from the photo. You can still upload it; the Secretary will check it.';
+
+  @override
+  String idReadMatches(String number) {
+    return 'Read ID number $number. It matches your record.';
+  }
+
+  @override
+  String idReadDifferent(String read, String record) {
+    return 'Read ID number $read, but your record says $record. Check the photo, or request a change to your ID number.';
+  }
+
+  @override
+  String get idNumberMatches => 'Number matches';
+
+  @override
+  String get idNumberMismatch => 'Number differs';
+
+  @override
+  String idNumberRead(String number) {
+    return 'Read: $number';
+  }
+
+  @override
+  String get documentUploaded => 'Document uploaded';
+
+  @override
+  String get documentOnFile => 'Document on file';
+
+  @override
+  String get documentLoadFailed => 'Couldn\'t load this document.';
+
+  @override
+  String get pdfOnFile => 'This PDF is on file; open it on the web to view.';
+
+  @override
+  String get familyRegister => 'Family register';
+
+  @override
+  String get familyRegisterHelp =>
+      'Only people approved here are covered by welfare.';
+
+  @override
+  String get familyEmpty => 'No family members registered yet.';
+
+  @override
+  String get addFamilyMember => 'Add family member';
+
+  @override
+  String get familyFormHelp =>
+      'The Secretary approves each person before they\'re covered by welfare. Add a birth certificate or ID afterwards.';
+
+  @override
+  String get fieldFirstName => 'First name';
+
+  @override
+  String get fieldLastName => 'Surname';
+
+  @override
+  String get fieldOtherNames => 'Other names';
+
+  @override
+  String get fieldFullName => 'Full name';
+
+  @override
+  String get fieldDateOfBirth => 'Date of birth';
+
+  @override
+  String get fieldGender => 'Gender';
+
+  @override
+  String get fieldIdType => 'ID type';
+
+  @override
+  String get fieldMaritalStatus => 'Marital status';
+
+  @override
+  String get fieldRelationship => 'Relationship';
+
+  @override
+  String get fieldBirthCert => 'Birth certificate no.';
+
+  @override
+  String get fieldNextOfKin => 'Next of kin';
+
+  @override
+  String get fieldDeceased => 'Deceased';
+
+  @override
+  String get fieldOccupation => 'Occupation';
+
+  @override
+  String get fieldEmployer => 'Employer';
+
+  @override
+  String get fieldCounty => 'County / region';
+
+  @override
+  String get relSpouse => 'Spouse';
+
+  @override
+  String get relChild => 'Child';
+
+  @override
+  String get relParent => 'Parent';
+
+  @override
+  String get relParentInLaw => 'Parent-in-law';
+
+  @override
+  String get relSibling => 'Sibling';
+
+  @override
+  String get relSelf => 'Member themself';
+
+  @override
+  String get genderFemale => 'Female';
+
+  @override
+  String get genderMale => 'Male';
+
+  @override
+  String get genderOther => 'Other';
+
+  @override
+  String get maritalSingle => 'Single';
+
+  @override
+  String get maritalMarried => 'Married';
+
+  @override
+  String get maritalWidowed => 'Widowed';
+
+  @override
+  String get maritalDivorced => 'Divorced / separated';
+
+  @override
+  String get idTypeNational => 'National ID';
+
+  @override
+  String get idTypeHuduma => 'Huduma Namba';
+
+  @override
+  String get idTypeNida => 'NIDA';
+
+  @override
+  String get idTypePassport => 'Passport';
+
+  @override
+  String ageYears(int age) {
+    return '$age yrs';
+  }
+
+  @override
+  String get statusApproved => 'Approved';
+
+  @override
+  String get statusAwaitingApproval => 'Awaiting approval';
+
+  @override
+  String get statusRejected => 'Rejected';
+
+  @override
+  String get requestChange => 'Request a change';
+
+  @override
+  String get requestRemoval => 'Request removal';
+
+  @override
+  String get cancelRequest => 'Cancel request';
+
+  @override
+  String get requestCancelled => 'Request cancelled';
+
+  @override
+  String get changeAwaitingApproval => 'Change awaiting approval';
+
+  @override
+  String get changeSentForApproval => 'Sent to the Secretary for approval';
+
+  @override
+  String get sendForApproval => 'Send for approval';
+
+  @override
+  String get changeReason => 'Reason for the change (helps approval)';
+
+  @override
+  String get nothingChanged => 'Nothing has changed.';
+
+  @override
+  String get personalChangeHelp =>
+      'Changes to these details are checked and approved by the Secretary before they apply. Upload your ID if the number or names change.';
+
+  @override
+  String get childDobRequired =>
+      'A child\'s date of birth is needed for welfare cover.';
+
+  @override
+  String get uploadBirthCert => 'Upload birth certificate';
+
+  @override
+  String get uploadIdPhoto => 'Upload ID photo';
+
+  @override
+  String removalHelp(String name) {
+    return 'Removing $name means welfare no longer covers them. The Secretary must approve.';
+  }
+
+  @override
+  String get myRequests => 'My requests';
+
+  @override
+  String get submitForApproval => 'Submit for approval';
+
+  @override
+  String get submitForApprovalTitle => 'Submit your details?';
+
+  @override
+  String get submitForApprovalBody =>
+      'The Secretary will check your details and ID. Once approved, changes need approval.';
+
+  @override
+  String get submittedForApproval => 'Submitted for approval';
+
+  @override
+  String get profileDraft => 'Complete your profile';
+
+  @override
+  String get profileDraftHelp =>
+      'Check your details, scan your ID and add your family, then submit.';
+
+  @override
+  String get profilePending => 'Awaiting approval';
+
+  @override
+  String get profilePendingHelp => 'The Secretary is checking your details.';
+
+  @override
+  String get profileVerified => 'Profile verified';
+
+  @override
+  String get profileVerifiedHelp =>
+      'Your details are locked. Changes need the Secretary\'s approval.';
+
+  @override
+  String get profileActionNeeded => 'Action needed';
+
+  @override
+  String get profileNotSubmitted => 'Not submitted';
+
+  @override
+  String get completeProfileTitle => 'Complete your profile';
+
+  @override
+  String get completeProfileBody =>
+      'Add your ID and family so welfare can cover them.';
+
+  @override
+  String get navApprovals => 'Approvals';
+
+  @override
+  String get approvalsTitle => 'Member approvals';
+
+  @override
+  String get approvalsHelp => 'Profile, ID and family changes to approve';
+
+  @override
+  String get approvalsEmpty => 'Nothing waiting for approval.';
+
+  @override
+  String get firstProfileApproval => 'New profile to verify';
+
+  @override
+  String memberSays(String note) {
+    return 'Member\'s note: $note';
+  }
+
+  @override
+  String get whatChanges => 'What changes';
+
+  @override
+  String get documentsToCheck => 'Documents to check';
+
+  @override
+  String get noDocumentsYet => 'No documents uploaded yet.';
+
+  @override
+  String get compareIdHelp =>
+      'Compare the ID photo with the details before approving. The number check is a guide only.';
+
+  @override
+  String get removalWarning =>
+      'Approving removes this person from welfare cover.';
+
+  @override
+  String get rejectReasonForMember => 'Reason (the member will see this)';
+
+  @override
+  String get changeApproved => 'Approved';
+
+  @override
+  String get changeRejected => 'Rejected';
+
+  @override
+  String get tableMember => 'Member';
+
+  @override
+  String get tableStatus => 'Status';
+
+  @override
+  String get tableProfile => 'Profile';
+
+  @override
+  String tableCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '1 member',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get memberDormant => 'Dormant';
+
+  @override
+  String get memberExited => 'Exited';
+
+  @override
+  String get welfareCovers => 'Who this covers';
+
+  @override
+  String get welfareCoversRequired =>
+      'Choose at least one person this case type covers.';
+
+  @override
+  String get welfareChildMaxAge => 'Child age limit (optional)';
+
+  @override
+  String get welfareChildMaxAgeHint => 'e.g. 18';
+
+  @override
+  String get welfarePickAffected => 'Choose who the case is for.';
+
+  @override
+  String get welfareNobodyCovered =>
+      'Nobody on this member\'s register is covered by this case type.';
+
+  @override
+  String get welfareNobodyCoveredHelp =>
+      'The member must add the person to their family register and have it approved first.';
+
+  @override
+  String get welfareRegisterOnlyHelp =>
+      'Only approved family-register entries are covered.';
 }

@@ -9,6 +9,7 @@ import '../widgets/common.dart';
 import '../widgets/glass.dart';
 import '../widgets/inuka_app_bar.dart';
 import 'dashboard_screen.dart';
+import 'leader/approvals_screen.dart';
 import 'leader/distribution_runs_screen.dart';
 import 'leader/finance_screen.dart';
 import 'leader/leader_hub.dart';
@@ -28,6 +29,7 @@ enum AppTab {
   loans,
   welfare, // member's own welfare
   finance,
+  approvals,
   loanDesk,
   members,
   welfareAdmin,
@@ -95,6 +97,7 @@ class HomeShellState extends State<HomeShell> {
       AppTab.loans => LoansScreen(key: key),
       AppTab.welfare => WelfareScreen(key: key),
       AppTab.finance => FinanceScreen(key: key),
+      AppTab.approvals => ApprovalsScreen(key: key),
       AppTab.loanDesk => LoanDeskScreen(key: key),
       AppTab.members => MembersScreen(key: key),
       AppTab.welfareAdmin => WelfareScreen(key: key, staffMode: true),
@@ -130,6 +133,7 @@ const maxBarItems = 5;
   final p = profile;
   final staff = <AppTab>[
     if (p?.hasFinance ?? false) AppTab.finance,
+    if (p?.hasApprovals ?? false) AppTab.approvals,
     if (p?.hasLoanDesk ?? false) AppTab.loanDesk,
     if (p?.hasMembers ?? false) AppTab.members,
     if (p?.hasWelfareTools ?? false) AppTab.welfareAdmin,
@@ -158,6 +162,7 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.loans => GlassNavItem(Icons.request_quote_outlined, Icons.request_quote, l.navLoans),
       AppTab.welfare => GlassNavItem(Icons.volunteer_activism_outlined, Icons.volunteer_activism, l.navWelfare),
       AppTab.finance => GlassNavItem(Icons.account_balance_outlined, Icons.account_balance, l.navFinance),
+      AppTab.approvals => GlassNavItem(Icons.task_alt_outlined, Icons.task_alt, l.navApprovals),
       AppTab.loanDesk => GlassNavItem(Icons.fact_check_outlined, Icons.fact_check, l.navLoanDesk),
       AppTab.members => GlassNavItem(Icons.groups_outlined, Icons.groups, l.navMembers),
       AppTab.welfareAdmin => GlassNavItem(Icons.volunteer_activism_outlined, Icons.volunteer_activism, l.navWelfare),
@@ -172,6 +177,7 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.loans => (l.navLoans, l.myLoans),
       AppTab.welfare => (l.welfareMine, l.welfareBalanceHelp),
       AppTab.finance => (l.leaderFinance, l.leaderFinanceHelp),
+      AppTab.approvals => (l.approvalsTitle, l.approvalsHelp),
       AppTab.loanDesk => (l.leaderLoanDesk, l.leaderLoanDeskHelp),
       AppTab.members => (l.leaderMembers, l.leaderMembersHelp),
       AppTab.welfareAdmin => (l.leaderWelfare, l.leaderWelfareHelp),

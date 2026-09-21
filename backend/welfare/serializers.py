@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from rest_framework import serializers
 
-from members.models import Member
+from members.models import FamilyMember, Member
 
 from .models import (
     WelfareCase,
@@ -34,7 +34,20 @@ class WelfareSettingsSerializer(serializers.ModelSerializer):
 class WelfareCaseTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = WelfareCaseType
-        fields = ["id", "name", "description", "contribution_per_member", "beneficiary_contributes", "is_active"]
+        fields = [
+            "id", "name", "description", "contribution_per_member", "beneficiary_contributes",
+            "covers", "child_max_age", "is_active",
+        ]
+
+    def validate_covers(self, value):
+        from .models import COVER_CHOICES
+
+        if not isinstance(value, list) or not value:
+            raise serializers.ValidationError("Choose at least one person this case type covers.")
+        bad = [v for v in value if v not in COVER_CHOICES]
+        if bad:
+            raise serializers.ValidationError(f"Unknown: {', '.join(map(str, bad))}.")
+        return list(dict.fromkeys(value))
 
     def validate_contribution_per_member(self, value):
         if value <= 0:
@@ -74,7 +87,7 @@ class WelfareCaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = WelfareCase
         fields = [
-            "id", "case_type", "case_type_name", "beneficiary", "affected_person", "description",
+            "id", "case_type", "case_type_name", "beneficiary", "affected_person", "affected_family_member", "description",
             "contribution_per_member", "beneficiary_contributes", "status",
             "created_by_name", "created_at", "decided_by_name", "decided_at", "decision_notes",
             "levied_at", "closed_at",
@@ -120,6 +133,9 @@ class WelfareCaseSerializer(serializers.ModelSerializer):
 class CreateCaseInputSerializer(serializers.Serializer):
     case_type = serializers.PrimaryKeyRelatedField(queryset=WelfareCaseType.objects.filter(is_active=True))
     beneficiary = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
+    affected_family_member = serializers.PrimaryKeyRelatedField(
+        queryset=FamilyMember.objects.all(), required=False, allow_null=True, default=None
+    )
     affected_person = serializers.CharField(required=False, allow_blank=True, default="", max_length=255)
     description = serializers.CharField(required=False, allow_blank=True, default="")
 

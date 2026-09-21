@@ -14,6 +14,7 @@ import 'apply_loan_screen.dart';
 import 'home_shell.dart';
 import 'leader/tasks_list.dart';
 import 'pay_sheet.dart';
+import 'profile/my_profile_screen.dart';
 import '../widgets/inuka_app_bar.dart';
 
 class _DashboardData {
@@ -97,6 +98,30 @@ class _DashboardBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
+        // Until the member's details and family register are approved, nudge them.
+        if (context.read<Session>().member != null && !context.read<Session>().member!.profileApproved)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: GlassCard(
+              onTap: () async {
+                await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyProfileScreen()));
+                if (context.mounted) await context.read<Session>().reloadMember();
+              },
+              tint: const LinearGradient(colors: [Color(0xEEE2342B), Color(0xE6F28A1E)]),
+              child: Row(children: [
+                const Icon(Icons.assignment_ind_outlined, color: Colors.white, size: 30),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(l10n.completeProfileTitle,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+                    Text(l10n.completeProfileBody, style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 13)),
+                  ]),
+                ),
+                const Icon(Icons.chevron_right, color: Colors.white),
+              ]),
+            ),
+          ),
         // Leaders who are also members see what's waiting on them here.
         if (context.read<Session>().profile?.hasStaffTools ?? false) const LeaderTasksList(showAllClear: false),
         if (data.pendingGuarantees.isNotEmpty)

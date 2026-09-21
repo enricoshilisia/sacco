@@ -7,6 +7,7 @@ import '../../core/session.dart';
 import '../../models/welfare.dart';
 import '../../widgets/common.dart';
 import '../pay_sheet.dart';
+import '../profile/profile_labels.dart';
 import 'welfare_cases.dart';
 import 'welfare_counter.dart';
 import '../../widgets/inuka_app_bar.dart';
@@ -392,6 +393,8 @@ class _CaseTypeSheetState extends State<_CaseTypeSheet> {
   late final _description = TextEditingController(text: widget.type?.description ?? '');
   late final _amount = TextEditingController(text: widget.type?.contributionPerMember.toStringAsFixed(2) ?? '');
   late bool _beneficiaryContributes = widget.type?.beneficiaryContributes ?? false;
+  late final Set<String> _covers = {...(widget.type?.covers ?? const ['SELF'])};
+  late final _childAge = TextEditingController(text: widget.type?.childMaxAge?.toString() ?? '');
   late bool _active = widget.type?.isActive ?? true;
   bool _busy = false;
   String? _error;
@@ -401,17 +404,24 @@ class _CaseTypeSheetState extends State<_CaseTypeSheet> {
     _name.dispose();
     _description.dispose();
     _amount.dispose();
+    _childAge.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_covers.isEmpty) {
+      setState(() => _error = context.l10n.welfareCoversRequired);
+      return;
+    }
     setState(() {
       _busy = true;
       _error = null;
     });
     try {
       await context.read<Session>().api!.saveWelfareCaseType(
+            covers: _covers.toList(),
+            childMaxAge: int.tryParse(_childAge.text.trim()),
             id: widget.type?.id,
             name: _name.text.trim(),
             description: _description.text.trim(),
@@ -462,6 +472,25 @@ class _CaseTypeSheetState extends State<_CaseTypeSheet> {
                 maxLines: 2,
                 decoration: InputDecoration(labelText: l10n.welfareRuleDescription),
               ),
+              const SizedBox(height: 12),
+              Text(l10n.welfareCovers, style: Theme.of(context).textTheme.titleSmall),
+              const SizedBox(height: 6),
+              Wrap(spacing: 8, runSpacing: 6, children: [
+                for (final c in const ['SELF', 'SPOUSE', 'CHILD', 'PARENT', 'PARENT_IN_LAW', 'SIBLING'])
+                  FilterChip(
+                    label: Text(relationshipLabel(l10n, c)),
+                    selected: _covers.contains(c),
+                    onSelected: (on) => setState(() => on ? _covers.add(c) : _covers.remove(c)),
+                  ),
+              ]),
+              if (_covers.contains('CHILD')) ...[
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _childAge,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: l10n.welfareChildMaxAge, hintText: l10n.welfareChildMaxAgeHint),
+                ),
+              ],
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(l10n.welfareBeneficiaryContributes),

@@ -23,6 +23,22 @@ class MemberStatus(models.TextChoices):
     EXITED = "EXITED", "Exited"
 
 
+class MaritalStatus(models.TextChoices):
+    SINGLE = "SINGLE", "Single"
+    MARRIED = "MARRIED", "Married"
+    WIDOWED = "WIDOWED", "Widowed"
+    DIVORCED = "DIVORCED", "Divorced / separated"
+
+
+class ProfileStatus(models.TextChoices):
+    """Where a member's profile stands. Once APPROVED, identity details and
+    the family register are locked: changes go through ProfileChangeRequest."""
+
+    DRAFT = "DRAFT", "Not yet submitted"
+    PENDING = "PENDING", "Awaiting approval"
+    APPROVED = "APPROVED", "Approved"
+
+
 class Gender(models.TextChoices):
     FEMALE = "FEMALE", "Female"
     MALE = "MALE", "Male"
@@ -68,6 +84,14 @@ class Member(AuditMixin, models.Model):
     email = models.EmailField(blank=True)
     physical_address = models.TextField(blank=True)
     photo = models.ImageField(upload_to=member_photo_path, blank=True, null=True)
+
+    # Personal details. Marital status is identity data (approval needed);
+    # occupation/employer/county are basic data members may update freely.
+    marital_status = models.CharField(max_length=10, choices=MaritalStatus.choices, blank=True)
+    occupation = models.CharField(max_length=120, blank=True)
+    employer = models.CharField(max_length=150, blank=True)
+    county = models.CharField(max_length=80, blank=True, help_text="County / region of residence.")
+    profile_status = models.CharField(max_length=10, choices=ProfileStatus.choices, default=ProfileStatus.DRAFT)
 
     is_kyc_verified = models.BooleanField(default=False)
     kyc_verified_at = models.DateTimeField(null=True, blank=True)
@@ -217,11 +241,19 @@ class MemberDocument(models.Model):
     """KYC/supporting documents. Stored via the tenant's configured S3/MinIO backend."""
 
     NATIONAL_ID_DOC = "ID_DOCUMENT"
+    ID_FRONT = "ID_FRONT"
+    ID_BACK = "ID_BACK"
+    BIRTH_CERTIFICATE = "BIRTH_CERT"
+    MARRIAGE_CERTIFICATE = "MARRIAGE_CERT"
     PASSPORT_PHOTO = "PASSPORT_PHOTO"
     PROOF_OF_ADDRESS = "PROOF_OF_ADDRESS"
     OTHER = "OTHER"
     DOCUMENT_TYPE_CHOICES = [
         (NATIONAL_ID_DOC, "ID document"),
+        (ID_FRONT, "ID card - front"),
+        (ID_BACK, "ID card - back"),
+        (BIRTH_CERTIFICATE, "Birth certificate"),
+        (MARRIAGE_CERTIFICATE, "Marriage certificate"),
         (PASSPORT_PHOTO, "Passport photo"),
         (PROOF_OF_ADDRESS, "Proof of address"),
         (OTHER, "Other"),
@@ -231,6 +263,16 @@ class MemberDocument(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="documents")
     document_type = models.CharField(max_length=20, choices=DOCUMENT_TYPE_CHOICES)
     file = models.FileField(upload_to=member_document_path)
+    # Whose document it is: the member (null) or someone on their family
+    # register (a child's birth certificate, a spouse's ID...).
+    family_member = models.ForeignKey(
+        "FamilyMember", null=True, blank=True, on_delete=models.SET_NULL, related_name="documents"
+    )
+    # ID scans: the number the phone read from the image, and whether it
+    # matched the ID number on record. Guidance for the approver, who still
+    # compares the image themselves - the phone's reading isn't trusted alone.
+    ocr_id_number = models.CharField(max_length=50, blank=True)
+    id_number_match = models.BooleanField(null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -242,3 +284,101 @@ class MemberDocument(models.Model):
 
     def __str__(self):
         return f"{self.get_document_type_display()} for {self.member}"
+
+
+class FamilyRelationship(models.TextChoices):
+    SPOUSE = "SPOUSE", "Spouse"
+    CHILD = "CHILD", "Child"
+    PARENT = "PARENT", "Parent"
+    PARENT_IN_LAW = "PARENT_IN_LAW", "Parent-in-law"
+    SIBLING = "SIBLING", "Sibling"
+
+
+class FamilyMemberStatus(models.TextChoices):
+    PENDING = "PENDING", "Awaiting approval"
+    APPROVED = "APPROVED", "Approved"
+    REJECTED = "REJECTED", "Rejected"
+    REMOVED = "REMOVED", "Removed"
+
+
+class FamilyMember(models.Model):
+    """
+    One person on a member's family register: spouse, children, parents,
+    parents-in-law, siblings. Only APPROVED entries count - they're who
+    welfare cases can be opened for (welfare.WelfareCaseType.covers says
+    which relationships each kind of case covers). Entries are added,
+    changed and removed only through an approved ProfileChangeRequest;
+    removal keeps the row (status REMOVED) for the audit trail.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="family")
+    relationship = models.CharField(max_length=20, choices=FamilyRelationship.choices)
+    full_name = models.CharField(max_length=255)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=Gender.choices, blank=True)
+    id_number = models.CharField(max_length=50, blank=True, help_text="National ID / NIDA, if they have one.")
+    birth_certificate_number = models.CharField(max_length=50, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    is_next_of_kin = models.BooleanField(default=False)
+    is_deceased = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=FamilyMemberStatus.choices, default=FamilyMemberStatus.PENDING)
+    approved_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["relationship", "date_of_birth", "full_name"]
+
+    def __str__(self):
+        return f"{self.full_name} ({self.get_relationship_display()} of {self.member.member_number})"
+
+    def age_on(self, day):
+        if not self.date_of_birth:
+            return None
+        dob = self.date_of_birth
+        return day.year - dob.year - ((day.month, day.day) < (dob.month, dob.day))
+
+
+class ChangeRequestStatus(models.TextChoices):
+    PENDING = "PENDING", "Awaiting approval"
+    APPROVED = "APPROVED", "Approved"
+    REJECTED = "REJECTED", "Rejected"
+
+
+class ChangeRequestTarget(models.TextChoices):
+    PROFILE = "PROFILE", "Personal details"
+    FAMILY_ADD = "FAMILY_ADD", "Add family member"
+    FAMILY_UPDATE = "FAMILY_UPDATE", "Change family member"
+    FAMILY_REMOVE = "FAMILY_REMOVE", "Remove family member"
+
+
+class ProfileChangeRequest(models.Model):
+    """
+    A requested change to protected member data, applied only when an
+    approver (the Secretary, by default) accepts it. `before` is a snapshot
+    of the values being replaced and `changes` the new values, so the
+    approver sees exactly what changes, and the history keeps it forever.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="change_requests")
+    target = models.CharField(max_length=20, choices=ChangeRequestTarget.choices)
+    family_member = models.ForeignKey(
+        FamilyMember, null=True, blank=True, on_delete=models.CASCADE, related_name="change_requests"
+    )
+    changes = models.JSONField(default=dict)
+    before = models.JSONField(default=dict)
+    note = models.TextField(blank=True, help_text="The member's explanation, e.g. a name change after marriage.")
+    status = models.CharField(max_length=10, choices=ChangeRequestStatus.choices, default=ChangeRequestStatus.PENDING)
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    decided_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decision_notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-submitted_at"]

@@ -213,6 +213,21 @@ class MemberSearchView(APIView):
         return Response(MemberBriefSerializer(members, many=True).data)
 
 
+class MemberFamilyForCaseView(APIView):
+    """A member's approved family register, for choosing who a case is for."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, member_id):
+        from members.models import FamilyMemberStatus
+        from members.profile_serializers import FamilyMemberSerializer
+
+        _require_any(request, "welfare.create_case", "welfare.view")
+        member = generics.get_object_or_404(Member, pk=member_id)
+        people = member.family.filter(status=FamilyMemberStatus.APPROVED, is_deceased=False)
+        return Response(FamilyMemberSerializer(people, many=True).data)
+
+
 class MemberWelfareView(APIView):
     """Staff view of one member's welfare position (for the counter)."""
 

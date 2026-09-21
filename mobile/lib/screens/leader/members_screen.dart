@@ -11,6 +11,7 @@ import '../../models/leader.dart';
 import '../../models/models.dart';
 import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
+import '../../widgets/glass.dart';
 import '../../widgets/labels.dart';
 import '../../models/welfare.dart';
 import '../welfare/welfare_counter.dart';
@@ -68,25 +69,222 @@ class _MembersScreenState extends State<MembersScreen> {
               }
               final members = snap.data!;
               if (members.isEmpty) return Center(child: EmptyNote(l10n.noMembersFound));
-              return ListView.separated(
-                itemCount: members.length,
-                separatorBuilder: (_, _) => const Divider(height: 1),
-                itemBuilder: (context, i) {
-                  final m = members[i];
-                  return ListTile(
-                    leading: CircleAvatar(child: Text(m.fullName.isEmpty ? '?' : m.fullName[0].toUpperCase())),
-                    title: Text(m.fullName),
-                    subtitle: Text('${m.memberNumber} · ${m.phoneNumber}'),
-                    trailing: m.isKycVerified ? null : StatusChip(l10n.kycPending, tone: Tone.warn),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => MemberDetailScreen(memberId: m.id))),
-                  );
-                },
+              return MembersTable(
+                members: members,
+                onOpen: (m) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => MemberDetailScreen(memberId: m.id))),
               );
             },
           ),
         ),
       ]),
     );
+  }
+}
+
+enum _SortBy { name, number, status, profile }
+
+/// The member register as a modern table: frosted-glass card, sticky header,
+/// tap a column to sort, alternating row shading, avatars, status chips.
+/// The phone column hides on narrow screens so it stays readable.
+class MembersTable extends StatefulWidget {
+  final List<MemberListItem> members;
+  final ValueChanged<MemberListItem> onOpen;
+  const MembersTable({super.key, required this.members, required this.onOpen});
+
+  @override
+  State<MembersTable> createState() => _MembersTableState();
+}
+
+class _MembersTableState extends State<MembersTable> {
+  _SortBy _sortBy = _SortBy.number;
+  bool _ascending = true;
+
+  void _sort(_SortBy by) => setState(() {
+        if (_sortBy == by) {
+          _ascending = !_ascending;
+        } else {
+          _sortBy = by;
+          _ascending = true;
+        }
+      });
+
+  List<MemberListItem> get _sorted {
+    int compare(MemberListItem a, MemberListItem b) => switch (_sortBy) {
+          _SortBy.name => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()),
+          _SortBy.number => a.memberNumber.compareTo(b.memberNumber),
+          _SortBy.status => a.status.compareTo(b.status),
+          _SortBy.profile => a.profileStatus.compareTo(b.profileStatus),
+        };
+    final list = [...widget.members]..sort(compare);
+    return _ascending ? list : list.reversed.toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final wide = MediaQuery.of(context).size.width >= 420;
+    final rows = _sorted;
+
+    Widget header(String label, _SortBy by, {int flex = 1, TextAlign align = TextAlign.start}) => Expanded(
+          flex: flex,
+          child: InkWell(
+            onTap: () => _sort(by),
+            child: Row(
+              mainAxisAlignment: align == TextAlign.end ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Text(label.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        letterSpacing: 0.6,
+                        fontWeight: FontWeight.w800,
+                        color: _sortBy == by ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                      )),
+                ),
+                if (_sortBy == by)
+                  Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward, size: 13, color: theme.colorScheme.primary),
+              ],
+            ),
+          ),
+        );
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: GlassCard(
+        padding: EdgeInsets.zero,
+        radius: 20,
+        child: Column(children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                theme.colorScheme.primary.withValues(alpha: 0.10),
+                theme.colorScheme.secondary.withValues(alpha: 0.08),
+              ]),
+            ),
+            child: Row(children: [
+              header(l10n.tableMember, _SortBy.name, flex: 5),
+              if (wide) header(l10n.phoneNumber, _SortBy.number, flex: 3),
+              header(l10n.tableStatus, _SortBy.status, flex: 2),
+              header(l10n.tableProfile, _SortBy.profile, flex: 3, align: TextAlign.end),
+            ]),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: rows.length + 1,
+              itemBuilder: (context, i) {
+                if (i == rows.length) {
+                  return Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Text(l10n.tableCount(rows.length),
+                        textAlign: TextAlign.center, style: theme.textTheme.bodySmall),
+                  );
+                }
+                final m = rows[i];
+                final (profileLabel, profileTone) = switch (m.profileStatus) {
+                  'APPROVED' => (l10n.statusApproved, Tone.good),
+                  'PENDING' => (l10n.statusAwaitingApproval, Tone.warn),
+                  _ => (l10n.profileNotSubmitted, Tone.neutral),
+                };
+                return Material(
+                  color: i.isOdd ? theme.colorScheme.onSurface.withValues(alpha: 0.03) : Colors.transparent,
+                  child: InkWell(
+                    onTap: () => widget.onOpen(m),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      child: Row(children: [
+                        Expanded(
+                          flex: 5,
+                          child: Row(children: [
+                            _Avatar(name: m.fullName, photo: m.photo),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text(m.fullName,
+                                    maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700)),
+                                Text(m.memberNumber,
+                                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                              ]),
+                            ),
+                          ]),
+                        ),
+                        if (wide)
+                          Expanded(
+                            flex: 3,
+                            child: Text(m.phoneNumber, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodySmall),
+                          ),
+                        Expanded(
+                          flex: 2,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: _Dot(active: m.status == 'ACTIVE', label: _statusLabel(context, m.status)),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Align(alignment: Alignment.centerRight, child: StatusChip(profileLabel, tone: profileTone)),
+                        ),
+                      ]),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  String _statusLabel(BuildContext context, String status) => switch (status) {
+        'ACTIVE' => context.l10n.active,
+        'DORMANT' => context.l10n.memberDormant,
+        'EXITED' => context.l10n.memberExited,
+        _ => status,
+      };
+}
+
+class _Avatar extends StatelessWidget {
+  final String name;
+  final String photo;
+  const _Avatar({required this.name, required this.photo});
+
+  @override
+  Widget build(BuildContext context) {
+    final initials = name.trim().split(RegExp(r'\s+')).take(2).map((w) => w.isEmpty ? '' : w[0]).join().toUpperCase();
+    final fallback = Center(child: Text(initials, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)));
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(colors: [Color(0xFFE2342B), Color(0xFFF28A1E)]),
+      ),
+      child: ClipOval(
+        child: photo.isEmpty
+            ? fallback
+            : Image.network(photo, fit: BoxFit.cover, errorBuilder: (_, _, _) => fallback),
+      ),
+    );
+  }
+}
+
+class _Dot extends StatelessWidget {
+  final bool active;
+  final String label;
+  const _Dot({required this.active, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = active ? const Color(0xFF2E9E4F) : Theme.of(context).colorScheme.outline;
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+      const SizedBox(width: 5),
+      Flexible(child: Text(label, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w600))),
+    ]);
   }
 }
 

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from . import profile_views, views
 
 app_name = "members"
 
@@ -8,6 +8,27 @@ urlpatterns = [
     path("", views.MemberListCreateView.as_view(), name="member_list_create"),
     path("me/", views.MyMemberView.as_view(), name="my_member"),
     path("me/photo/", views.MyMemberPhotoUploadView.as_view(), name="my_member_photo_upload"),
+    path("me/profile/", profile_views.MyProfileView.as_view(), name="my_profile"),
+    path("me/profile/changes/", profile_views.MyProfileChangeView.as_view(), name="my_profile_changes"),
+    path("me/family/", profile_views.MyFamilyView.as_view(), name="my_family"),
+    path("me/family/<uuid:pk>/", profile_views.MyFamilyDetailView.as_view(), name="my_family_detail"),
+    path("me/documents/", profile_views.MyDocumentUploadView.as_view(), name="my_documents"),
+    path(
+        "me/change-requests/<uuid:pk>/cancel/",
+        profile_views.MyChangeRequestCancelView.as_view(),
+        name="my_change_request_cancel",
+    ),
+    path("change-requests/", profile_views.ChangeRequestListView.as_view(), name="change_request_list"),
+    path(
+        "change-requests/<uuid:pk>/approve/",
+        profile_views.ChangeRequestDecisionView.as_view(approve=True),
+        name="change_request_approve",
+    ),
+    path(
+        "change-requests/<uuid:pk>/reject/",
+        profile_views.ChangeRequestDecisionView.as_view(approve=False),
+        name="change_request_reject",
+    ),
     path("portal-invites/", views.PortalInviteListView.as_view(), name="portal_invite_list"),
     path(
         "portal-invites/<uuid:pk>/revoke/",
@@ -21,6 +42,8 @@ urlpatterns = [
     ),
     path("<uuid:pk>/", views.MemberDetailView.as_view(), name="member_detail"),
     path("<uuid:pk>/verify-kyc/", views.MemberKycVerifyView.as_view(), name="member_kyc_verify"),
+    path("<uuid:pk>/family/", profile_views.MemberFamilyView.as_view(), name="member_family"),
+    path("<uuid:pk>/documents/", profile_views.MemberDocumentListView.as_view(), name="member_documents"),
     path("<uuid:pk>/photo/", views.MemberPhotoUploadView.as_view(), name="member_photo_upload"),
     path("<uuid:member_id>/portal-invite/", views.InvitePortalAccessView.as_view(), name="invite_portal_access"),
     path("guarantor-consents/", views.GuarantorConsentListCreateView.as_view(), name="guarantor_consent_list_create"),

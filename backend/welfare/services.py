@@ -68,15 +68,50 @@ def member_summary(member) -> dict:
 # --- Cases -----------------------------------------------------------------
 
 
-def create_case(*, case_type, beneficiary, affected_person="", description="", created_by=None) -> WelfareCase:
+def check_cover(case_type, beneficiary, affected_family_member=None, *, on=None) -> str:
+    """
+    Enforces the constitution's cover rules: a case is either for the member
+    themself (if the case type covers SELF) or for someone on their APPROVED
+    family register whose relationship the case type covers - and, for
+    children, within the case type's age limit. Returns a label for the
+    affected person; raises ValueError when they aren't covered.
+    """
+    from members.models import FamilyMemberStatus
+
+    covers = case_type.covers or []
+    if affected_family_member is None:
+        if "SELF" not in covers:
+            raise ValueError(f"'{case_type.name}' is for a family member - choose who from the member's register.")
+        return ""
+    person = affected_family_member
+    if person.member_id != beneficiary.pk:
+        raise ValueError("That person isn't on this member's family register.")
+    if person.status != FamilyMemberStatus.APPROVED:
+        raise ValueError(f"{person.full_name} isn't approved on the family register yet, so isn't covered.")
+    if person.relationship not in covers:
+        raise ValueError(f"'{case_type.name}' doesn't cover a {person.get_relationship_display().lower()}.")
+    if person.relationship == "CHILD" and case_type.child_max_age is not None:
+        age = person.age_on(on or date.today())
+        if age is None:
+            raise ValueError(f"{person.full_name} has no date of birth on record, so the child age limit can't be checked.")
+        if age > case_type.child_max_age:
+            raise ValueError(f"{person.full_name} is {age}; '{case_type.name}' covers children up to {case_type.child_max_age}.")
+    return f"{person.full_name} ({person.get_relationship_display().lower()})"
+
+
+def create_case(
+    *, case_type, beneficiary, affected_family_member=None, affected_person="", description="", created_by=None,
+) -> WelfareCase:
     if not case_type.is_active:
         raise ValueError("This welfare case type is no longer active.")
     if beneficiary.status == MemberStatus.EXITED:
         raise ValueError("Welfare cases can't be opened for a member who has exited.")
+    label = check_cover(case_type, beneficiary, affected_family_member)
     return WelfareCase.objects.create(
         case_type=case_type,
         beneficiary=beneficiary,
-        affected_person=affected_person,
+        affected_family_member=affected_family_member,
+        affected_person=label or affected_person,
         description=description,
         contribution_per_member=case_type.contribution_per_member,
         beneficiary_contributes=case_type.beneficiary_contributes,

@@ -20,7 +20,7 @@ class MemberListSerializer(serializers.ModelSerializer):
         model = Member
         fields = [
             "id", "member_number", "full_name", "category", "status",
-            "phone_number", "id_type", "id_number", "is_kyc_verified", "date_joined", "photo",
+            "phone_number", "id_type", "id_number", "is_kyc_verified", "date_joined", "photo", "profile_status",
         ]
 
 
@@ -33,11 +33,12 @@ class MemberSerializer(serializers.ModelSerializer):
             "id", "member_number", "user", "category", "status",
             "first_name", "last_name", "other_names", "date_of_birth", "gender",
             "id_type", "id_number", "phone_number", "email", "physical_address", "photo",
+            "marital_status", "occupation", "employer", "county", "profile_status",
             "is_kyc_verified", "kyc_verified_at", "date_joined", "created_at", "relations",
         ]
         read_only_fields = [
             "id", "member_number", "photo", "is_kyc_verified", "kyc_verified_at",
-            "date_joined", "created_at",
+            "date_joined", "created_at", "profile_status",
         ]
 
     def create(self, validated_data):
@@ -82,15 +83,18 @@ class MyMemberSerializer(MemberSerializer):
     identity/KYC fields (name, DOB, gender, ID type/number) and
     membership status/category are staff-mediated changes only, since
     changing them silently would invalidate the KYC verification already
-    on file. Only phone_number, email and physical_address are writable
-    here; the staff-facing MemberSerializer (any field, gated by
-    members.edit) is the one used for a real KYC-reviewed correction.
+    on file. Only basic details are writable here (email, address,
+    occupation, employer, county - members.profile_services.FREE_MEMBER_FIELDS).
+    Phone number and marital status joined the protected list: phone is used
+    for mobile-money payments, so a change goes through an approved
+    ProfileChangeRequest like any other identity change.
     """
 
     class Meta(MemberSerializer.Meta):
         read_only_fields = MemberSerializer.Meta.read_only_fields + [
             "user", "category", "status", "first_name", "last_name", "other_names",
             "date_of_birth", "gender", "id_type", "id_number", "relations",
+            "phone_number", "marital_status",
         ]
 
 

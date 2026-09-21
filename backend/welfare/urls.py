@@ -17,6 +17,7 @@ urlpatterns = [
     path("cases/<uuid:pk>/payouts/", views.RecordPayoutView.as_view(), name="record_payout"),
     path("members/search/", views.MemberSearchView.as_view(), name="member_search"),
     path("members/<uuid:member_id>/", views.MemberWelfareView.as_view(), name="member_welfare"),
+    path("members/<uuid:member_id>/family/", views.MemberFamilyForCaseView.as_view(), name="member_family"),
     path("members/<uuid:member_id>/payments/", views.RecordMemberPaymentView.as_view(), name="record_payment"),
     path("me/", views.MyWelfareView.as_view(), name="my_welfare"),
     path("years/", views.YearCloseListView.as_view(), name="year_close_list"),

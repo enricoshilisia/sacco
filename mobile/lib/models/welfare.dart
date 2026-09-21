@@ -108,6 +108,8 @@ class WelfareCaseType {
   final String description;
   final Decimal contributionPerMember;
   final bool beneficiaryContributes;
+  final List<String> covers; // SELF and/or family relationships
+  final int? childMaxAge;
   final bool isActive;
 
   WelfareCaseType.fromJson(Map<String, dynamic> j)
@@ -116,6 +118,8 @@ class WelfareCaseType {
         description = _str(j['description']),
         contributionPerMember = Money.parse(j['contribution_per_member']),
         beneficiaryContributes = j['beneficiary_contributes'] == true,
+        covers = ((j['covers'] as List?) ?? const ['SELF']).map((e) => e.toString()).toList(),
+        childMaxAge = (j['child_max_age'] as num?)?.toInt(),
         isActive = j['is_active'] != false;
 }
 

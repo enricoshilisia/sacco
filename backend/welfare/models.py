@@ -48,6 +48,15 @@ class WelfareSettings(models.Model):
         return obj
 
 
+# Who a case type can be opened for: the member themself ("SELF") or a
+# relationship on their approved family register (members.FamilyRelationship).
+COVER_CHOICES = ["SELF", "SPOUSE", "CHILD", "PARENT", "PARENT_IN_LAW", "SIBLING"]
+
+
+def default_covers():
+    return list(COVER_CHOICES)
+
+
 class WelfareCaseType(models.Model):
     """One constitution rule, e.g. "Member hospitalised - 200 per member"
     or "Death of member's parent - 300 per member"."""
@@ -58,6 +67,13 @@ class WelfareCaseType(models.Model):
     contribution_per_member = models.DecimalField(max_digits=18, decimal_places=2)
     beneficiary_contributes = models.BooleanField(
         default=False, help_text="Whether the affected member is also levied for their own case."
+    )
+    covers = models.JSONField(
+        default=default_covers,
+        help_text="Who this case can be for: SELF and/or family relationships (SPOUSE, CHILD, PARENT, PARENT_IN_LAW, SIBLING).",
+    )
+    child_max_age = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Children older than this aren't covered by this case type (blank = no limit)."
     )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -82,6 +98,11 @@ class WelfareCase(models.Model):
     beneficiary = models.ForeignKey("members.Member", on_delete=models.PROTECT, related_name="welfare_cases")
     affected_person = models.CharField(
         max_length=255, blank=True, help_text="Who is sick/deceased if not the member, e.g. 'Mary W. (daughter)'."
+    )
+    # Who the case is for, from the member's APPROVED family register (blank
+    # = the member themself). Only registered, covered people can have cases.
+    affected_family_member = models.ForeignKey(
+        "members.FamilyMember", null=True, blank=True, on_delete=models.PROTECT, related_name="welfare_cases"
     )
     description = models.TextField(blank=True)
     # Snapshotted from the case type when the case is opened, so a later

@@ -43,10 +43,11 @@ class TenantProfile {
   bool get hasLoanDesk => canAny(const ['loans.appraise', 'loans.approve', 'loans.reject', 'loans.disburse', 'loans.repay']);
   bool get hasMembers => can('members.view');
   bool get hasDistributions => can('distributions.view');
+  bool get hasApprovals => can('members.approve_changes');
 
   /// Any leader module this app offers.
   bool get hasStaffTools =>
-      hasWelfareTools || hasFinance || hasReports || hasLoanDesk || hasMembers || hasDistributions;
+      hasWelfareTools || hasFinance || hasReports || hasLoanDesk || hasMembers || hasDistributions || hasApprovals;
 }
 
 /// GET /api/members/me/
@@ -66,6 +67,13 @@ class Member {
   final String? photo;
   final bool isKycVerified;
   final DateTime? dateJoined;
+  final DateTime? dateOfBirth;
+  final String gender;
+  final String maritalStatus;
+  final String occupation;
+  final String employer;
+  final String county;
+  final String profileStatus; // DRAFT / PENDING / APPROVED
 
   Member.fromJson(Map<String, dynamic> json)
       : id = _str(json['id']),
@@ -82,7 +90,16 @@ class Member {
         physicalAddress = _str(json['physical_address']),
         photo = json['photo'] as String?,
         isKycVerified = json['is_kyc_verified'] == true,
-        dateJoined = _date(json['date_joined']);
+        dateJoined = _date(json['date_joined']),
+        dateOfBirth = _date(json['date_of_birth']),
+        gender = _str(json['gender']),
+        maritalStatus = _str(json['marital_status']),
+        occupation = _str(json['occupation']),
+        employer = _str(json['employer']),
+        county = _str(json['county']),
+        profileStatus = _str(json['profile_status']).isEmpty ? 'DRAFT' : _str(json['profile_status']);
+
+  bool get profileApproved => profileStatus == 'APPROVED';
 
   String get fullName => [firstName, otherNames, lastName].where((s) => s.isNotEmpty).join(' ');
 }

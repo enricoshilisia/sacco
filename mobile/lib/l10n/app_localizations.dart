@@ -2767,6 +2767,780 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile photo updated'**
   String get photoUpdated;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// No description provided for @uploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded'**
+  String get uploaded;
+
+  /// No description provided for @replace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get replace;
+
+  /// No description provided for @field.
+  ///
+  /// In en, this message translates to:
+  /// **'Detail'**
+  String get field;
+
+  /// No description provided for @now.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get now;
+
+  /// No description provided for @newValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Change to'**
+  String get newValue;
+
+  /// No description provided for @onRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get onRecord;
+
+  /// No description provided for @myDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My details & family'**
+  String get myDetailsTitle;
+
+  /// No description provided for @myDetailsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal details, ID, family register'**
+  String get myDetailsHelp;
+
+  /// No description provided for @personalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal details'**
+  String get personalDetails;
+
+  /// No description provided for @basicDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact & work'**
+  String get basicDetails;
+
+  /// No description provided for @basicDetailsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You can update these any time.'**
+  String get basicDetailsHelp;
+
+  /// No description provided for @idDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'ID card'**
+  String get idDocuments;
+
+  /// No description provided for @idFront.
+  ///
+  /// In en, this message translates to:
+  /// **'ID front'**
+  String get idFront;
+
+  /// No description provided for @idBack.
+  ///
+  /// In en, this message translates to:
+  /// **'ID back'**
+  String get idBack;
+
+  /// No description provided for @tapToScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to scan'**
+  String get tapToScan;
+
+  /// No description provided for @idScanFrontTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Lay your ID flat in good light, fill the frame, avoid glare.'**
+  String get idScanFrontTip;
+
+  /// No description provided for @idScanBackTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Now the back of the ID card.'**
+  String get idScanBackTip;
+
+  /// No description provided for @idNotRead.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t read the ID number from the photo. You can still upload it; the Secretary will check it.'**
+  String get idNotRead;
+
+  /// No description provided for @idReadMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Read ID number {number}. It matches your record.'**
+  String idReadMatches(String number);
+
+  /// No description provided for @idReadDifferent.
+  ///
+  /// In en, this message translates to:
+  /// **'Read ID number {read}, but your record says {record}. Check the photo, or request a change to your ID number.'**
+  String idReadDifferent(String read, String record);
+
+  /// No description provided for @idNumberMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Number matches'**
+  String get idNumberMatches;
+
+  /// No description provided for @idNumberMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Number differs'**
+  String get idNumberMismatch;
+
+  /// No description provided for @idNumberRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read: {number}'**
+  String idNumberRead(String number);
+
+  /// No description provided for @documentUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Document uploaded'**
+  String get documentUploaded;
+
+  /// No description provided for @documentOnFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Document on file'**
+  String get documentOnFile;
+
+  /// No description provided for @documentLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this document.'**
+  String get documentLoadFailed;
+
+  /// No description provided for @pdfOnFile.
+  ///
+  /// In en, this message translates to:
+  /// **'This PDF is on file; open it on the web to view.'**
+  String get pdfOnFile;
+
+  /// No description provided for @familyRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Family register'**
+  String get familyRegister;
+
+  /// No description provided for @familyRegisterHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Only people approved here are covered by welfare.'**
+  String get familyRegisterHelp;
+
+  /// No description provided for @familyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No family members registered yet.'**
+  String get familyEmpty;
+
+  /// No description provided for @addFamilyMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Add family member'**
+  String get addFamilyMember;
+
+  /// No description provided for @familyFormHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The Secretary approves each person before they\'re covered by welfare. Add a birth certificate or ID afterwards.'**
+  String get familyFormHelp;
+
+  /// No description provided for @fieldFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First name'**
+  String get fieldFirstName;
+
+  /// No description provided for @fieldLastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Surname'**
+  String get fieldLastName;
+
+  /// No description provided for @fieldOtherNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Other names'**
+  String get fieldOtherNames;
+
+  /// No description provided for @fieldFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get fieldFullName;
+
+  /// No description provided for @fieldDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get fieldDateOfBirth;
+
+  /// No description provided for @fieldGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get fieldGender;
+
+  /// No description provided for @fieldIdType.
+  ///
+  /// In en, this message translates to:
+  /// **'ID type'**
+  String get fieldIdType;
+
+  /// No description provided for @fieldMaritalStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Marital status'**
+  String get fieldMaritalStatus;
+
+  /// No description provided for @fieldRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship'**
+  String get fieldRelationship;
+
+  /// No description provided for @fieldBirthCert.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth certificate no.'**
+  String get fieldBirthCert;
+
+  /// No description provided for @fieldNextOfKin.
+  ///
+  /// In en, this message translates to:
+  /// **'Next of kin'**
+  String get fieldNextOfKin;
+
+  /// No description provided for @fieldDeceased.
+  ///
+  /// In en, this message translates to:
+  /// **'Deceased'**
+  String get fieldDeceased;
+
+  /// No description provided for @fieldOccupation.
+  ///
+  /// In en, this message translates to:
+  /// **'Occupation'**
+  String get fieldOccupation;
+
+  /// No description provided for @fieldEmployer.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer'**
+  String get fieldEmployer;
+
+  /// No description provided for @fieldCounty.
+  ///
+  /// In en, this message translates to:
+  /// **'County / region'**
+  String get fieldCounty;
+
+  /// No description provided for @relSpouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouse'**
+  String get relSpouse;
+
+  /// No description provided for @relChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Child'**
+  String get relChild;
+
+  /// No description provided for @relParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent'**
+  String get relParent;
+
+  /// No description provided for @relParentInLaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent-in-law'**
+  String get relParentInLaw;
+
+  /// No description provided for @relSibling.
+  ///
+  /// In en, this message translates to:
+  /// **'Sibling'**
+  String get relSibling;
+
+  /// No description provided for @relSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Member themself'**
+  String get relSelf;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// No description provided for @genderOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get genderOther;
+
+  /// No description provided for @maritalSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Single'**
+  String get maritalSingle;
+
+  /// No description provided for @maritalMarried.
+  ///
+  /// In en, this message translates to:
+  /// **'Married'**
+  String get maritalMarried;
+
+  /// No description provided for @maritalWidowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Widowed'**
+  String get maritalWidowed;
+
+  /// No description provided for @maritalDivorced.
+  ///
+  /// In en, this message translates to:
+  /// **'Divorced / separated'**
+  String get maritalDivorced;
+
+  /// No description provided for @idTypeNational.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get idTypeNational;
+
+  /// No description provided for @idTypeHuduma.
+  ///
+  /// In en, this message translates to:
+  /// **'Huduma Namba'**
+  String get idTypeHuduma;
+
+  /// No description provided for @idTypeNida.
+  ///
+  /// In en, this message translates to:
+  /// **'NIDA'**
+  String get idTypeNida;
+
+  /// No description provided for @idTypePassport.
+  ///
+  /// In en, this message translates to:
+  /// **'Passport'**
+  String get idTypePassport;
+
+  /// No description provided for @ageYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} yrs'**
+  String ageYears(int age);
+
+  /// No description provided for @statusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get statusApproved;
+
+  /// No description provided for @statusAwaitingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting approval'**
+  String get statusAwaitingApproval;
+
+  /// No description provided for @statusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get statusRejected;
+
+  /// No description provided for @requestChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a change'**
+  String get requestChange;
+
+  /// No description provided for @requestRemoval.
+  ///
+  /// In en, this message translates to:
+  /// **'Request removal'**
+  String get requestRemoval;
+
+  /// No description provided for @cancelRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request'**
+  String get cancelRequest;
+
+  /// No description provided for @requestCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancelled'**
+  String get requestCancelled;
+
+  /// No description provided for @changeAwaitingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Change awaiting approval'**
+  String get changeAwaitingApproval;
+
+  /// No description provided for @changeSentForApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to the Secretary for approval'**
+  String get changeSentForApproval;
+
+  /// No description provided for @sendForApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for approval'**
+  String get sendForApproval;
+
+  /// No description provided for @changeReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for the change (helps approval)'**
+  String get changeReason;
+
+  /// No description provided for @nothingChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing has changed.'**
+  String get nothingChanged;
+
+  /// No description provided for @personalChangeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes to these details are checked and approved by the Secretary before they apply. Upload your ID if the number or names change.'**
+  String get personalChangeHelp;
+
+  /// No description provided for @childDobRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'A child\'s date of birth is needed for welfare cover.'**
+  String get childDobRequired;
+
+  /// No description provided for @uploadBirthCert.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload birth certificate'**
+  String get uploadBirthCert;
+
+  /// No description provided for @uploadIdPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload ID photo'**
+  String get uploadIdPhoto;
+
+  /// No description provided for @removalHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Removing {name} means welfare no longer covers them. The Secretary must approve.'**
+  String removalHelp(String name);
+
+  /// No description provided for @myRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'My requests'**
+  String get myRequests;
+
+  /// No description provided for @submitForApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for approval'**
+  String get submitForApproval;
+
+  /// No description provided for @submitForApprovalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit your details?'**
+  String get submitForApprovalTitle;
+
+  /// No description provided for @submitForApprovalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Secretary will check your details and ID. Once approved, changes need approval.'**
+  String get submitForApprovalBody;
+
+  /// No description provided for @submittedForApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted for approval'**
+  String get submittedForApproval;
+
+  /// No description provided for @profileDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get profileDraft;
+
+  /// No description provided for @profileDraftHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your details, scan your ID and add your family, then submit.'**
+  String get profileDraftHelp;
+
+  /// No description provided for @profilePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting approval'**
+  String get profilePending;
+
+  /// No description provided for @profilePendingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The Secretary is checking your details.'**
+  String get profilePendingHelp;
+
+  /// No description provided for @profileVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile verified'**
+  String get profileVerified;
+
+  /// No description provided for @profileVerifiedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your details are locked. Changes need the Secretary\'s approval.'**
+  String get profileVerifiedHelp;
+
+  /// No description provided for @profileActionNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Action needed'**
+  String get profileActionNeeded;
+
+  /// No description provided for @profileNotSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not submitted'**
+  String get profileNotSubmitted;
+
+  /// No description provided for @completeProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get completeProfileTitle;
+
+  /// No description provided for @completeProfileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your ID and family so welfare can cover them.'**
+  String get completeProfileBody;
+
+  /// No description provided for @navApprovals.
+  ///
+  /// In en, this message translates to:
+  /// **'Approvals'**
+  String get navApprovals;
+
+  /// No description provided for @approvalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Member approvals'**
+  String get approvalsTitle;
+
+  /// No description provided for @approvalsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile, ID and family changes to approve'**
+  String get approvalsHelp;
+
+  /// No description provided for @approvalsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing waiting for approval.'**
+  String get approvalsEmpty;
+
+  /// No description provided for @firstProfileApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'New profile to verify'**
+  String get firstProfileApproval;
+
+  /// No description provided for @memberSays.
+  ///
+  /// In en, this message translates to:
+  /// **'Member\'s note: {note}'**
+  String memberSays(String note);
+
+  /// No description provided for @whatChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'What changes'**
+  String get whatChanges;
+
+  /// No description provided for @documentsToCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents to check'**
+  String get documentsToCheck;
+
+  /// No description provided for @noDocumentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents uploaded yet.'**
+  String get noDocumentsYet;
+
+  /// No description provided for @compareIdHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare the ID photo with the details before approving. The number check is a guide only.'**
+  String get compareIdHelp;
+
+  /// No description provided for @removalWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Approving removes this person from welfare cover.'**
+  String get removalWarning;
+
+  /// No description provided for @rejectReasonForMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (the member will see this)'**
+  String get rejectReasonForMember;
+
+  /// No description provided for @changeApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get changeApproved;
+
+  /// No description provided for @changeRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get changeRejected;
+
+  /// No description provided for @tableMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get tableMember;
+
+  /// No description provided for @tableStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get tableStatus;
+
+  /// No description provided for @tableProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get tableProfile;
+
+  /// No description provided for @tableCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 member} other{{count} members}}'**
+  String tableCount(int count);
+
+  /// No description provided for @memberDormant.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormant'**
+  String get memberDormant;
+
+  /// No description provided for @memberExited.
+  ///
+  /// In en, this message translates to:
+  /// **'Exited'**
+  String get memberExited;
+
+  /// No description provided for @welfareCovers.
+  ///
+  /// In en, this message translates to:
+  /// **'Who this covers'**
+  String get welfareCovers;
+
+  /// No description provided for @welfareCoversRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least one person this case type covers.'**
+  String get welfareCoversRequired;
+
+  /// No description provided for @welfareChildMaxAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Child age limit (optional)'**
+  String get welfareChildMaxAge;
+
+  /// No description provided for @welfareChildMaxAgeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 18'**
+  String get welfareChildMaxAgeHint;
+
+  /// No description provided for @welfarePickAffected.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose who the case is for.'**
+  String get welfarePickAffected;
+
+  /// No description provided for @welfareNobodyCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody on this member\'s register is covered by this case type.'**
+  String get welfareNobodyCovered;
+
+  /// No description provided for @welfareNobodyCoveredHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The member must add the person to their family register and have it approved first.'**
+  String get welfareNobodyCoveredHelp;
+
+  /// No description provided for @welfareRegisterOnlyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Only approved family-register entries are covered.'**
+  String get welfareRegisterOnlyHelp;
 }
 
 class _AppLocalizationsDelegate
