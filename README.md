@@ -373,6 +373,12 @@ cp -r build/web/. ../backend/webapp/       # WEBAPP_ROOT, see config/settings.py
 ```
 
 On an iPhone, open the address in Safari and use Share → Add to Home Screen:
-it then opens full screen with the Inuka West icon. Serve the site over
-HTTPS before real use - on plain HTTP the browser keeps the login token in
-ordinary site storage (see mobile/lib/core/key_store_web.dart).
+it then opens full screen with the Inuka West icon.
+
+Caddy (`C:\Users\enrico\caddy\Caddyfile`) terminates TLS on this server and
+proxies `inuka.20.166.120.83.sslip.io` to Django on 8090, so the app is
+reached at **https://inuka.20.166.120.83.sslip.io/app/** — no port number,
+which also avoids mobile networks that block uncommon ports. Set
+`BEHIND_TLS_PROXY=True` so Django knows the connection was secure. Port
+8090 stays open for phones still on the older APK; close it once everyone
+has updated.
