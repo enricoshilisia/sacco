@@ -360,3 +360,19 @@ the same host, no rewrite needed).
 Per `BUILD_PLAN.md`: Phase 2 (`accounting` + `savings` together - "the
 make-or-break slice"). Don't skip ahead to payments/loans before the
 ledger is proven.
+
+## The web app (iPhone and desktop)
+
+The same Flutter app also runs in a browser, served from this server at
+`/app/` so it shares the SACCO's domain (no CORS, tenant picked by hostname):
+
+```bash
+cd mobile
+flutter build web --release --base-href "/app/" --dart-define=DEFAULT_SACCO_CODE=inuka
+cp -r build/web/. ../backend/webapp/       # WEBAPP_ROOT, see config/settings.py
+```
+
+On an iPhone, open the address in Safari and use Share → Add to Home Screen:
+it then opens full screen with the Inuka West icon. Serve the site over
+HTTPS before real use - on plain HTTP the browser keeps the login token in
+ordinary site storage (see mobile/lib/core/key_store_web.dart).

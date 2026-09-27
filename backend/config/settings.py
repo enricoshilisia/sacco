@@ -353,3 +353,8 @@ SELCOM_ENV = env("SELCOM_ENV", default="sandbox")
 # location-by-IP when the app didn't send the phone's location.
 AUDIT_TRUST_X_FORWARDED_FOR = env.bool("AUDIT_TRUST_X_FORWARDED_FOR", default=False)
 GEOIP_CITY_DB = env("GEOIP_CITY_DB", default="")
+
+# The Flutter web build (iPhone and desktop), served at /app/ from this
+# same server - see core/webapp.py. Build it with:
+#   flutter build web --release --base-href /app/ --dart-define=DEFAULT_SACCO_CODE=<code>
+WEBAPP_ROOT = env("WEBAPP_ROOT", default=str(BASE_DIR / "webapp"))

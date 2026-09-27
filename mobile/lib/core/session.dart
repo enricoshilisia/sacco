@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -161,6 +162,7 @@ class Session extends ChangeNotifier {
   Future<bool> biometricAvailable() => _biometricAvailable ??= _checkBiometricAvailable();
 
   Future<bool> _checkBiometricAvailable() async {
+    if (kIsWeb) return false; // a browser has no fingerprint unlock
     try {
       return await _localAuth.canCheckBiometrics && await _localAuth.isDeviceSupported();
     } catch (_) {

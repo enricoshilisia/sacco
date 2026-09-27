@@ -1,10 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
+import '../../core/files.dart';
 import '../../core/leader_api.dart';
 import '../../core/money.dart';
 import '../../core/session.dart';
@@ -68,11 +66,9 @@ class _ReportViewScreenState extends State<ReportViewScreen> {
     setState(() => _exporting = true);
     try {
       final bytes = await context.read<Session>().api!.reportCsv(widget.reportKey, _query);
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/${widget.reportKey}_${isoDate(DateTime.now())}.csv');
-      await file.writeAsBytes(bytes);
       final (title, _, _) = reportInfo(l10n, widget.reportKey);
-      await SharePlus.instance.share(ShareParams(files: [XFile(file.path, mimeType: 'text/csv')], subject: title));
+      await shareFile(bytes, '${widget.reportKey}_${isoDate(DateTime.now())}.csv',
+          mimeType: 'text/csv', subject: title);
     } catch (e) {
       if (mounted) showSnack(context, errorText(context, e), error: true);
     } finally {

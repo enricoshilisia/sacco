@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../config.dart';
 import '../models/models.dart';
@@ -10,6 +11,17 @@ import 'money.dart';
 
 /// Public-schema call: resolve a SACCO code before any tenant is known.
 Future<Sacco> lookupSacco(String code) async {
+  if (kIsWeb) {
+    // The page is served from the SACCO's own domain, so the hostname has
+    // already chosen the tenant - no public code lookup needed.
+    final web = Dio(BaseOptions(connectTimeout: const Duration(seconds: 15)));
+    try {
+      final response = await web.get<Map<String, dynamic>>('/api/tenant/info/');
+      return Sacco.fromJson(response.data!);
+    } catch (error) {
+      throw toApiException(error);
+    }
+  }
   final dio = Dio(BaseOptions(baseUrl: AppConfig.publicApiBaseUrl, connectTimeout: const Duration(seconds: 15)));
   final label = code.trim().toLowerCase().split('.').first;
   try {

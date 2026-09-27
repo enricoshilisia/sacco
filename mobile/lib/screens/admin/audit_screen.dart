@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../core/admin_api.dart';
+import '../../core/files.dart';
 import '../../core/session.dart';
 import '../../models/admin.dart';
 import '../../theme.dart';
@@ -114,10 +112,7 @@ class _AuditScreenState extends State<AuditScreen> {
             from: _range?.start,
             to: _range?.end,
           );
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/audit-log.csv');
-      await file.writeAsBytes(bytes);
-      await SharePlus.instance.share(ShareParams(files: [XFile(file.path, mimeType: 'text/csv')], subject: 'Audit log'));
+      await shareFile(bytes, 'audit-log.csv', mimeType: 'text/csv', subject: 'Audit log');
     } catch (e) {
       if (mounted) showSnack(context, errorText(context, e), error: true);
     }

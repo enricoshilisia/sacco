@@ -37,6 +37,45 @@ class MyTenantProfileView(APIView):
         return Response(MyTenantProfileSerializer(request).data)
 
 
+class TenantInfoView(APIView):
+    """
+    Public: which SACCO this hostname belongs to, and enough branding for a
+    login screen. The web app (served from the SACCO's own domain) asks
+    here instead of the public code lookup the phone app uses - the
+    hostname has already picked the tenant. Nothing here is about members.
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        from django.conf import settings
+
+        tenant = Tenant.objects.get(schema_name=connection.schema_name)
+        domain = (
+            tenant.domains.filter(domain=request.get_host().split(":")[0]).first()
+            or tenant.domains.filter(is_primary=True).first()
+            or tenant.domains.first()
+        )
+        host = domain.domain if domain else request.get_host().split(":")[0]
+        logo_url = None
+        if tenant.logo:
+            try:
+                logo_url = request.build_absolute_uri(tenant.logo.url)
+            except Exception:  # noqa: BLE001 - branding is best-effort
+                logo_url = None
+        base_domain = getattr(settings, "TENANT_BASE_DOMAIN", "localhost")
+        return Response({
+            "code": host.split(".")[0],
+            "name": tenant.name,
+            "country": tenant.country,
+            "currency": tenant.currency,
+            "default_language": tenant.default_language,
+            "logo": logo_url,
+            "domain": host if host.endswith(base_domain) or "." in host else host,
+        })
+
+
 class TenantProfileUpdateView(RetrieveUpdateAPIView):
     """
     Edit this SACCO's own profile (name, contact details, logo) after

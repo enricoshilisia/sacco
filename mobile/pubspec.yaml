@@ -28,6 +28,7 @@ dependencies:
   provider: ^6.1.5+1
   share_plus: ^13.3.0
   uuid: ^4.6.0
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:

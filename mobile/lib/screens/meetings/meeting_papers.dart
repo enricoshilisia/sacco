@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
+import '../../core/files.dart';
 import '../../core/governance_api.dart';
 import '../../core/session.dart';
 import '../../models/governance.dart';
@@ -48,14 +44,7 @@ Future<void> openMeetingFile(BuildContext context, String path, String fileName)
   final api = context.read<Session>().api!;
   try {
     final bytes = await api.downloadBytes(path);
-    final dir = await getTemporaryDirectory();
-    final safe = fileName.replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '-');
-    final file = File('${dir.path}/$safe');
-    await file.writeAsBytes(bytes);
-    final result = await OpenFilex.open(file.path);
-    if (result.type != ResultType.done) {
-      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)]));
-    }
+    await openFile(bytes, fileName);
   } catch (e) {
     if (context.mounted) showSnack(context, errorText(context, e), error: true);
   }

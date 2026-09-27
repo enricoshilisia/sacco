@@ -3,6 +3,8 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.static import serve
 
+from core.webapp import webapp
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/auth/", include("identity.urls")),
@@ -22,6 +24,8 @@ urlpatterns = [
     path("api/audit/", include("audit.urls")),
     path("api/fines/", include("fines.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
+    path("app/", webapp, name="webapp"),
+    re_path(r"^app/(?P<path>.*)$", webapp, name="webapp_file"),
 ]
 
 if settings.FILE_STORAGE == "local":

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../config.dart';
 import 'client_context.dart';
@@ -62,14 +63,17 @@ class ApiClient {
   ApiClient({required this.sacco, required this.store, required this.onSessionExpired}) {
     final override = AppConfig.tenantConnectOverride;
     final port = AppConfig.tenantPort.isEmpty ? '' : ':${AppConfig.tenantPort}';
+    // In a browser the app is served from the SACCO's own domain, so every
+    // call is relative and the browser sends the right Host itself.
+    final origin = kIsWeb ? '' : (override.isNotEmpty ? override : '${AppConfig.tenantScheme}://${sacco.domain}$port');
     dio = Dio(
       BaseOptions(
-        baseUrl: override.isNotEmpty ? override : '${AppConfig.tenantScheme}://${sacco.domain}$port',
+        baseUrl: origin,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 30),
         headers: {
           'Accept': 'application/json',
-          if (override.isNotEmpty) 'Host': sacco.domain,
+          if (!kIsWeb && override.isNotEmpty) 'Host': sacco.domain,
         },
       ),
     );

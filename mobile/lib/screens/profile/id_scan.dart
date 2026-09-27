@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../widgets/common.dart';
+import 'ocr.dart';
 
 String digitsOnly(String value) => value.replaceAll(RegExp(r'\D'), '');
 
@@ -73,15 +73,10 @@ Future<IdScanResult?> scanIdCard(BuildContext context, {required String expected
 
   String? read;
   if (front) {
-    final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
-    try {
-      final text = await recognizer.processImage(InputImage.fromFilePath(picked.path));
-      read = extractIdNumber(text.text, expected: expectedId);
-    } catch (_) {
-      read = null; // reading failed - the approver still checks the photo
-    } finally {
-      await recognizer.close();
-    }
+    // Reading fails (or isn't available in a browser) - the approver still
+    // checks the photo themselves.
+    final text = await readTextFromImage(picked.path);
+    read = text == null ? null : extractIdNumber(text, expected: expectedId);
   }
   final matches = read != null && digitsOnly(expectedId).isNotEmpty && read == digitsOnly(expectedId);
   return IdScanResult(picked.path, read, matches);

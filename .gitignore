@@ -28,3 +28,6 @@ frontend/.env*.local
 
 # Logs
 *.log
+
+# Built Flutter web app (deployed from the build, not committed)
+backend/webapp/

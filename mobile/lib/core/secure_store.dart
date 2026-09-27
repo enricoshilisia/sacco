@@ -1,14 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import '../models/sacco.dart';
+import 'key_store.dart';
 
 /// Tokens live in the platform keystore (Android Keystore / iOS Keychain),
-/// never in plain preferences - a refresh token is a 7-day credential to
-/// a member's money.
+/// or, in a browser, in that site's own storage - see key_store.dart.
 class SecureStore {
-  static const _storage = FlutterSecureStorage();
+  static final _storage = KeyStore();
 
   static const _kSacco = 'sacco';
   static const _kAccess = 'access_token';
@@ -18,7 +16,7 @@ class SecureStore {
   static const _kLocationAsked = 'location_asked';
 
   Future<Sacco?> readSacco() async {
-    final raw = await _storage.read(key: _kSacco);
+    final raw = await _storage.read(_kSacco);
     if (raw == null) return null;
     try {
       return Sacco.fromJson(jsonDecode(raw) as Map<String, dynamic>);
@@ -28,28 +26,28 @@ class SecureStore {
   }
 
   Future<void> writeSacco(Sacco? sacco) => sacco == null
-      ? _storage.delete(key: _kSacco)
-      : _storage.write(key: _kSacco, value: jsonEncode(sacco.toJson()));
+      ? _storage.delete(_kSacco)
+      : _storage.write(_kSacco, jsonEncode(sacco.toJson()));
 
-  Future<String?> readAccess() => _storage.read(key: _kAccess);
-  Future<String?> readRefresh() => _storage.read(key: _kRefresh);
+  Future<String?> readAccess() => _storage.read(_kAccess);
+  Future<String?> readRefresh() => _storage.read(_kRefresh);
 
   Future<void> writeTokens(String access, String refresh) async {
-    await _storage.write(key: _kAccess, value: access);
-    await _storage.write(key: _kRefresh, value: refresh);
+    await _storage.write(_kAccess, access);
+    await _storage.write(_kRefresh, refresh);
   }
 
   Future<void> clearTokens() async {
-    await _storage.delete(key: _kAccess);
-    await _storage.delete(key: _kRefresh);
+    await _storage.delete(_kAccess);
+    await _storage.delete(_kRefresh);
   }
 
-  Future<bool> readBiometricEnabled() async => (await _storage.read(key: _kBiometric)) == 'true';
-  Future<void> writeBiometricEnabled(bool value) => _storage.write(key: _kBiometric, value: '$value');
+  Future<bool> readBiometricEnabled() async => (await _storage.read(_kBiometric)) == 'true';
+  Future<void> writeBiometricEnabled(bool value) => _storage.write(_kBiometric, '$value');
 
-  Future<String?> readLocale() => _storage.read(key: _kLocale);
-  Future<void> writeLocale(String code) => _storage.write(key: _kLocale, value: code);
+  Future<String?> readLocale() => _storage.read(_kLocale);
+  Future<void> writeLocale(String code) => _storage.write(_kLocale, code);
 
-  Future<bool> readLocationAsked() async => (await _storage.read(key: _kLocationAsked)) == 'true';
-  Future<void> writeLocationAsked() => _storage.write(key: _kLocationAsked, value: 'true');
+  Future<bool> readLocationAsked() async => (await _storage.read(_kLocationAsked)) == 'true';
+  Future<void> writeLocationAsked() => _storage.write(_kLocationAsked, 'true');
 }

@@ -15,6 +15,7 @@ urlpatterns = [
     path("positions/<uuid:pk>/assign/", support_views.PositionAssignView.as_view(), name="position_assign"),
     path("memberships/<uuid:pk>/remove/", support_views.MembershipRemoveView.as_view(), name="membership_remove"),
     path("me/", views.MyTenantProfileView.as_view(), name="my_tenant_profile"),
+    path("info/", views.TenantInfoView.as_view(), name="tenant_info"),
     path("profile/", views.TenantProfileUpdateView.as_view(), name="tenant_profile_update"),
     path("roles/", views.RoleListView.as_view(), name="role_list"),
     path("staff/", views.StaffListView.as_view(), name="staff_list"),

@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -27,14 +26,17 @@ class ClientContext {
       final package = await PackageInfo.fromPlatform();
       final app = 'Inuka West ${package.version}';
       final info = DeviceInfoPlugin();
-      if (Platform.isAndroid) {
+      if (kIsWeb) {
+        final w = await info.webBrowserInfo;
+        device = '${w.browserName.name} · ${w.platform ?? 'web'} · $app (web)';
+      } else if (defaultTargetPlatform == TargetPlatform.android) {
         final a = await info.androidInfo;
         device = '${_cap(a.manufacturer)} ${a.model} · Android ${a.version.release} · $app';
-      } else if (Platform.isIOS) {
+      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
         final i = await info.iosInfo;
         device = '${i.utsname.machine} · iOS ${i.systemVersion} · $app';
       } else {
-        device = '${Platform.operatingSystem} · $app';
+        device = '${defaultTargetPlatform.name} · $app';
       }
     } catch (_) {
       device = 'Inuka West app';
