@@ -5687,31 +5687,31 @@ abstract class AppLocalizations {
   /// No description provided for @payForMonth.
   ///
   /// In en, this message translates to:
-  /// **'Paying for'**
+  /// **'Saving for'**
   String get payForMonth;
 
   /// No description provided for @monthlyContributions.
   ///
   /// In en, this message translates to:
-  /// **'Monthly contributions'**
+  /// **'Savings'**
   String get monthlyContributions;
 
   /// No description provided for @monthlyContributionsHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your share of the group. Not withdrawn; it earns a share of the year\'s profit.'**
+  /// **'Your savings in the group. They fund the group\'s projects and are not withdrawn.'**
   String get monthlyContributionsHelp;
 
   /// No description provided for @actionPayContribution.
   ///
   /// In en, this message translates to:
-  /// **'Pay contribution'**
+  /// **'Pay savings'**
   String get actionPayContribution;
 
   /// No description provided for @recordContribution.
   ///
   /// In en, this message translates to:
-  /// **'Record contribution'**
+  /// **'Record savings'**
   String get recordContribution;
 
   /// No description provided for @howToPayAction.

@@ -3144,20 +3144,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pay on M-Pesa with these details. Paying inside the app is coming soon.';
 
   @override
-  String get payForMonth => 'Paying for';
+  String get payForMonth => 'Saving for';
 
   @override
-  String get monthlyContributions => 'Monthly contributions';
+  String get monthlyContributions => 'Savings';
 
   @override
   String get monthlyContributionsHelp =>
-      'Your share of the group. Not withdrawn; it earns a share of the year\'s profit.';
+      'Your savings in the group. They fund the group\'s projects and are not withdrawn.';
 
   @override
-  String get actionPayContribution => 'Pay contribution';
+  String get actionPayContribution => 'Pay savings';
 
   @override
-  String get recordContribution => 'Record contribution';
+  String get recordContribution => 'Record savings';
 
   @override
   String get howToPayAction => 'See how to pay';

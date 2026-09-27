@@ -3146,20 +3146,20 @@ class AppLocalizationsSw extends AppLocalizations {
       'Lipa kwa M-Pesa kwa maelezo haya. Kulipa ndani ya programu kunakuja hivi karibuni.';
 
   @override
-  String get payForMonth => 'Unalipa kwa mwezi';
+  String get payForMonth => 'Akiba ya mwezi';
 
   @override
-  String get monthlyContributions => 'Michango ya kila mwezi';
+  String get monthlyContributions => 'Akiba';
 
   @override
   String get monthlyContributionsHelp =>
-      'Hisa yako kwenye kikundi. Haitolewi; inapata sehemu ya faida ya mwaka.';
+      'Akiba yako kwenye kikundi. Hutumika kwa miradi ya kikundi na haitolewi.';
 
   @override
-  String get actionPayContribution => 'Lipa mchango';
+  String get actionPayContribution => 'Lipa akiba';
 
   @override
-  String get recordContribution => 'Rekodi mchango';
+  String get recordContribution => 'Rekodi akiba';
 
   @override
   String get howToPayAction => 'Ona jinsi ya kulipa';
