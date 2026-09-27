@@ -41,6 +41,14 @@ def initiate_collection(
         raise ValueError("Collection amount must be positive.")
     if purpose == CollectionPurpose.SAVINGS_DEPOSIT and savings_account is None:
         raise ValueError("savings_account is required for a savings deposit collection.")
+    if purpose == CollectionPurpose.FINE_PAYMENT:
+        from fines.services import outstanding_total
+
+        owed = outstanding_total(member)
+        if owed <= 0:
+            raise ValueError("There are no fines outstanding.")
+        if amount > owed:
+            raise ValueError(f"Only {owed} in fines is outstanding.")
     if purpose == CollectionPurpose.REGISTRATION_FEE:
         from members.admission import verification_status
 
@@ -142,6 +150,23 @@ def handle_collection_callback(
             collection.welfare_payment = payment
             update_fields = ["status", "provider_receipt", "welfare_payment", "raw_callback", "completed_at"]
             confirmation_target = "welfare contributions"
+        elif collection.purpose == CollectionPurpose.FINE_PAYMENT:
+            # Clears the member's oldest fines first (fines.services).
+            from fines.models import FinePaymentMethod
+            from fines.services import record_payment as record_fine_payment
+
+            fine_payment = record_fine_payment(
+                member=collection.member,
+                amount=collection.amount,
+                method=FinePaymentMethod.MOBILE_MONEY,
+                paid_on=date.today(),
+                reference=receipt or provider_reference,
+                idempotency_key=f"collection-{collection.pk}",
+                recorded_by=collection.created_by,
+            )
+            collection.fine_payment = fine_payment
+            update_fields = ["status", "provider_receipt", "fine_payment", "raw_callback", "completed_at"]
+            confirmation_target = "fines"
         elif collection.purpose == CollectionPurpose.REGISTRATION_FEE:
             # One-off, non-refundable: SACCO income (members.admission).
             from members.admission import record_registration_fee

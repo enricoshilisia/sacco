@@ -2928,4 +2928,207 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get taskMinutesToApprove => 'Kumbukumbu za kuidhinisha';
+
+  @override
+  String get navFines => 'Faini';
+
+  @override
+  String get finesTitle => 'Faini';
+
+  @override
+  String get finesHelp => 'Nani anadaiwa nini, kutoza na kupokea faini';
+
+  @override
+  String get myFines => 'Faini zangu';
+
+  @override
+  String get finesCharged => 'Zilizotozwa';
+
+  @override
+  String get finesPaid => 'Zilizolipwa';
+
+  @override
+  String get finesOutstanding => 'Zinazodaiwa';
+
+  @override
+  String finesWaivedTotal(String amount) {
+    return 'Zilizosamehewa: $amount';
+  }
+
+  @override
+  String get finesOwingOnly => 'Wanaodaiwa tu';
+
+  @override
+  String finesMembersCount(int count) {
+    return 'Wanachama $count';
+  }
+
+  @override
+  String get finesNobodyOwes => 'Hakuna anayedaiwa faini.';
+
+  @override
+  String get finesNone => 'Hakuna faini.';
+
+  @override
+  String finesPaidOf(String paid, String total) {
+    return '$paid kati ya $total zimelipwa';
+  }
+
+  @override
+  String finesOwedNow(String amount) {
+    return 'Anadaiwa sasa: $amount';
+  }
+
+  @override
+  String finesOwedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Faini $count za kulipa',
+      one: 'Faini 1 ya kulipa',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get finesNothingOwed => 'Huna faini za kulipa. Asante.';
+
+  @override
+  String get payFines => 'Lipa faini';
+
+  @override
+  String get finesPayHelp => 'Faini yako ya zamani hulipwa kwanza.';
+
+  @override
+  String get chargeFine => 'Toza faini';
+
+  @override
+  String get fineCharged => 'Faini imetozwa';
+
+  @override
+  String get fineAmountHelp =>
+      'Badilisha ikiwa tukio hili linatofautiana na kiasi cha kawaida.';
+
+  @override
+  String get fineDate => 'Tarehe ya kosa';
+
+  @override
+  String get chooseMemberAndOffence => 'Chagua mwanachama na kosa.';
+
+  @override
+  String get member => 'Mwanachama';
+
+  @override
+  String get offence => 'Kosa';
+
+  @override
+  String get recordFinePayment => 'Rekodi malipo';
+
+  @override
+  String get finePaymentRecorded => 'Malipo ya faini yamerekodiwa';
+
+  @override
+  String get waiveFine => 'Samehe faini';
+
+  @override
+  String get waiveReason => 'Sababu';
+
+  @override
+  String get waiveFineHelp =>
+      'Faini inabaki kwenye kumbukumbu kama iliyosamehewa, na vitabu vinarekebishwa. Lazima mtu mwingine ndiye aliyeitoza.';
+
+  @override
+  String get fineWaived => 'Faini imesamehewa';
+
+  @override
+  String waivedBy(String name, String reason) {
+    return 'Imesamehewa na $name: $reason';
+  }
+
+  @override
+  String get waiveHint => 'Bonyeza na ushikilie faini ili kuisamehe.';
+
+  @override
+  String get offenceTypes => 'Makosa na viwango';
+
+  @override
+  String get offenceTypesHelp =>
+      'Kutoka katiba. Kubadilisha kiwango hakubadilishi faini zilizotozwa.';
+
+  @override
+  String get newOffence => 'Kosa jipya';
+
+  @override
+  String get offenceFromRegister => 'Pendekeza kutoka mahudhurio';
+
+  @override
+  String get offenceFromNone => 'Usipendekeze moja kwa moja';
+
+  @override
+  String get offenceFromAbsent => 'Kwa kutokuwepo bila udhuru';
+
+  @override
+  String get offenceFromLate => 'Kwa kuchelewa';
+
+  @override
+  String get offenceActive => 'Inatumika';
+
+  @override
+  String get offenceInactive => 'Haitumiki tena';
+
+  @override
+  String get fieldDescription => 'Maelezo';
+
+  @override
+  String get taskFinesOutstanding => 'Faini za kukusanya';
+
+  @override
+  String get chargeFinesFromRegister => 'Toza faini kutoka mahudhurio haya';
+
+  @override
+  String get fineProposalsNone =>
+      'Hakuna wa kutozwa faini kutoka mahudhurio haya.';
+
+  @override
+  String get fineProposalsHelp =>
+      'Kutokana na alama za mahudhurio. Ondoa tiki kwa asiyepaswa kutozwa.';
+
+  @override
+  String get fineAlreadyCharged => 'Tayari ametozwa';
+
+  @override
+  String finesChargedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Faini $count zimetozwa',
+      one: 'Faini 1 imetozwa',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assignFines => 'Panga faini';
+
+  @override
+  String get assignFinesHelp =>
+      'Tiki mwanachama na uweke kiasi chake. Hakuna kinachotozwa hadi utumie.';
+
+  @override
+  String get applyFines => 'Tumia faini';
+
+  @override
+  String applyFinesBody(int count, String total) {
+    return 'Toza wanachama $count jumla ya $total? Watadaiwa hadi walipe.';
+  }
+
+  @override
+  String get finesFixAmounts =>
+      'Kila mwanachama aliyetikiwa anahitaji kiasi zaidi ya 0.';
+
+  @override
+  String get finesNotesLabel => 'Maelezo kwa wote';
+
+  @override
+  String get finesNotesHint => 'mfano 12 Jul - 13 Sep 2026';
 }

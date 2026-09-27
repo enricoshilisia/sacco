@@ -5,6 +5,7 @@ import '../config.dart';
 import '../core/session.dart';
 import '../models/models.dart';
 import '../widgets/common.dart';
+import 'fines/my_fines_screen.dart';
 import 'distributions_screen.dart';
 import '../widgets/inuka_app_bar.dart';
 import '../widgets/member_avatar.dart';
@@ -126,6 +127,16 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ],
+          if (member != null)
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.gavel_outlined),
+                title: Text(l10n.myFines),
+                subtitle: Text(l10n.finesPayHelp),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyFinesScreen())),
+              ),
+            ),
           if (member != null)
             Card(
               child: ListTile(

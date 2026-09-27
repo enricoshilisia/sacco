@@ -20,6 +20,9 @@ import 'my_meetings_screen.dart';
 import 'pay_sheet.dart';
 import '../core/admin_api.dart';
 import '../models/admin.dart';
+import '../core/fines_api.dart';
+import '../models/fines.dart';
+import 'fines/my_fines_screen.dart';
 import 'profile/my_profile_screen.dart';
 import '../widgets/inuka_app_bar.dart';
 
@@ -32,8 +35,9 @@ class _DashboardData {
   final MyActivity? activity;
   final MeetingItem? nextMeeting;
   final Verification? verification;
+  final MemberFines? fines;
   _DashboardData(this.statement, this.loans, this.pendingGuarantees, this.recentCollections, this.welfare,
-      this.activity, this.nextMeeting, this.verification);
+      this.activity, this.nextMeeting, this.verification, this.fines);
 }
 
 class DashboardScreen extends StatelessWidget {
@@ -52,6 +56,7 @@ class DashboardScreen extends StatelessWidget {
       api.myActivity().then<MyActivity?>((a) => a, onError: (_) => null),
       api.meetings(when: 'upcoming').then<List<MeetingItem>?>((m) => m, onError: (_) => null),
       api.myVerification().then<Verification?>((v) => v, onError: (_) => null),
+      api.myFines().then<MemberFines?>((f) => f, onError: (_) => null),
     ]);
     return _DashboardData(
       results[0] as Statement,
@@ -62,6 +67,7 @@ class DashboardScreen extends StatelessWidget {
       results[5] as MyActivity?,
       (results[6] as List<MeetingItem>?)?.firstOrNull,
       results[7] as Verification?,
+      results[8] as MemberFines?,
     );
   }
 
@@ -113,6 +119,15 @@ class _DashboardBody extends StatelessWidget {
             child: ProbationCard(
               verification: data.verification!,
               onPayFee: () => pay(PayPurpose.registrationFee),
+            ),
+          ),
+        if ((data.fines?.outstanding ?? Decimal.zero) > Decimal.zero)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: MyFinesCard(
+              fines: data.fines!,
+              onPaid: reload,
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyFinesScreen())),
             ),
           ),
         if (data.activity?.isDormant ?? false)

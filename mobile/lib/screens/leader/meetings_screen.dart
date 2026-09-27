@@ -10,6 +10,7 @@ import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/glass.dart';
 import '../../widgets/inuka_app_bar.dart';
+import '../fines/fines_screen.dart';
 import '../meetings/meeting_papers.dart';
 
 String meetingTypeLabel(AppLocalizations l, String type) => switch (type) {
@@ -360,6 +361,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 if (context.mounted) Navigator.pop(context);
               },
               itemBuilder: (_) => [PopupMenuItem(value: 'cancel', child: Text(l10n.meetingCancel))],
+            ),
+          // Once the register is closed, the marks can become fines.
+          if (m != null && m.isHeld && context.read<Session>().can('fines.charge'))
+            IconButton(
+              tooltip: l10n.chargeFinesFromRegister,
+              icon: const Icon(Icons.gavel_outlined),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => MeetingFinesScreen(meetingId: widget.meetingId, meetingTitle: m.title))),
             ),
         ],
       ),

@@ -77,10 +77,12 @@ class Member(AuditMixin, models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=Gender.choices, blank=True)
 
-    id_type = models.CharField(max_length=20, choices=IdType.choices)
-    id_number = models.CharField(max_length=50)
+    id_type = models.CharField(max_length=20, choices=IdType.choices, blank=True)
+    # Blank while the register is being brought onto the system (no ID copy
+    # or phone on file yet); unique once filled in - see Meta.constraints.
+    id_number = models.CharField(max_length=50, blank=True)
 
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     physical_address = models.TextField(blank=True)
     photo = models.ImageField(upload_to=member_photo_path, blank=True, null=True)
@@ -119,8 +121,14 @@ class Member(AuditMixin, models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ("id_type", "id_number")
         ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["id_type", "id_number"],
+                condition=~models.Q(id_number=""),
+                name="unique_id_number_when_known",
+            )
+        ]
 
     def __str__(self):
         return f"{self.member_number} - {self.first_name} {self.last_name}"

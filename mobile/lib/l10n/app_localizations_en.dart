@@ -2928,4 +2928,205 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskMinutesToApprove => 'Minutes to approve';
+
+  @override
+  String get navFines => 'Fines';
+
+  @override
+  String get finesTitle => 'Fines';
+
+  @override
+  String get finesHelp => 'Who owes what, charging and receiving fines';
+
+  @override
+  String get myFines => 'My fines';
+
+  @override
+  String get finesCharged => 'Charged';
+
+  @override
+  String get finesPaid => 'Paid';
+
+  @override
+  String get finesOutstanding => 'Outstanding';
+
+  @override
+  String finesWaivedTotal(String amount) {
+    return 'Waived: $amount';
+  }
+
+  @override
+  String get finesOwingOnly => 'Owing only';
+
+  @override
+  String finesMembersCount(int count) {
+    return '$count members';
+  }
+
+  @override
+  String get finesNobodyOwes => 'Nobody owes a fine.';
+
+  @override
+  String get finesNone => 'No fines.';
+
+  @override
+  String finesPaidOf(String paid, String total) {
+    return '$paid of $total paid';
+  }
+
+  @override
+  String finesOwedNow(String amount) {
+    return 'Owed now: $amount';
+  }
+
+  @override
+  String finesOwedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fines to pay',
+      one: '1 fine to pay',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get finesNothingOwed => 'You have no fines to pay. Thank you.';
+
+  @override
+  String get payFines => 'Pay fines';
+
+  @override
+  String get finesPayHelp => 'Your oldest fine is cleared first.';
+
+  @override
+  String get chargeFine => 'Charge a fine';
+
+  @override
+  String get fineCharged => 'Fine charged';
+
+  @override
+  String get fineAmountHelp =>
+      'Change it if this case differs from the standard amount.';
+
+  @override
+  String get fineDate => 'Date of the offence';
+
+  @override
+  String get chooseMemberAndOffence => 'Choose the member and the offence.';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get offence => 'Offence';
+
+  @override
+  String get recordFinePayment => 'Record payment';
+
+  @override
+  String get finePaymentRecorded => 'Fine payment recorded';
+
+  @override
+  String get waiveFine => 'Waive fine';
+
+  @override
+  String get waiveReason => 'Reason';
+
+  @override
+  String get waiveFineHelp =>
+      'The fine stays on record as waived, and the books are corrected with a reversing entry. Somebody else must have charged it.';
+
+  @override
+  String get fineWaived => 'Fine waived';
+
+  @override
+  String waivedBy(String name, String reason) {
+    return 'Waived by $name: $reason';
+  }
+
+  @override
+  String get waiveHint => 'Press and hold a fine to waive it.';
+
+  @override
+  String get offenceTypes => 'Offences and amounts';
+
+  @override
+  String get offenceTypesHelp =>
+      'From the constitution. Changing an amount never changes fines already charged.';
+
+  @override
+  String get newOffence => 'New offence';
+
+  @override
+  String get offenceFromRegister => 'Propose from the register';
+
+  @override
+  String get offenceFromNone => 'Don\'t propose automatically';
+
+  @override
+  String get offenceFromAbsent => 'For absent without apology';
+
+  @override
+  String get offenceFromLate => 'For arriving late';
+
+  @override
+  String get offenceActive => 'In use';
+
+  @override
+  String get offenceInactive => 'No longer used';
+
+  @override
+  String get fieldDescription => 'Description';
+
+  @override
+  String get taskFinesOutstanding => 'Fines to collect';
+
+  @override
+  String get chargeFinesFromRegister => 'Charge fines from this register';
+
+  @override
+  String get fineProposalsNone => 'Nobody to fine from this register.';
+
+  @override
+  String get fineProposalsHelp =>
+      'From the marks on the register. Untick anyone who shouldn\'t be fined.';
+
+  @override
+  String get fineAlreadyCharged => 'Already charged';
+
+  @override
+  String finesChargedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fines charged',
+      one: '1 fine charged',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get assignFines => 'Assign fines';
+
+  @override
+  String get assignFinesHelp =>
+      'Tick each member and set their amount. Nothing is charged until you apply.';
+
+  @override
+  String get applyFines => 'Apply fines';
+
+  @override
+  String applyFinesBody(int count, String total) {
+    return 'Charge $count members a total of $total? They will owe it until paid.';
+  }
+
+  @override
+  String get finesFixAmounts => 'Every ticked member needs an amount above 0.';
+
+  @override
+  String get finesNotesLabel => 'Note on all of them';
+
+  @override
+  String get finesNotesHint => 'e.g. 12 Jul - 13 Sep 2026';
 }

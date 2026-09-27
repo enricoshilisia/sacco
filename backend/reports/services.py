@@ -562,7 +562,10 @@ def my_tasks(user) -> list[dict]:
         ProfileChangeRequest,
     )
 
+    from fines.models import Fine, FineStatus
     from governance.models import MeetingMinutes, MinutesStatus
+
+    add("fines_outstanding", "fines.record_payment", Fine.objects.filter(status=FineStatus.OUTSTANDING).count())
 
     add("minutes_to_approve", "governance.approve_minutes",
         MeetingMinutes.objects.filter(status=MinutesStatus.SUBMITTED).exclude(submitted_by=user).count())

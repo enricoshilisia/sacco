@@ -9,6 +9,7 @@ import '../welfare/welfare_screen.dart';
 import 'activity_screen.dart';
 import 'admission_screens.dart';
 import '../meetings/meeting_papers.dart';
+import '../fines/fines_screen.dart';
 import 'approvals_screen.dart';
 import 'distribution_runs_screen.dart';
 import 'loan_desk_screen.dart';
@@ -92,6 +93,7 @@ String taskLabel(BuildContext context, String key) {
     'members_to_archive' => l10n.taskMembersToArchive,
     'applications_to_approve' => l10n.taskApplicationsToApprove,
     'minutes_to_approve' => l10n.taskMinutesToApprove,
+    'fines_outstanding' => l10n.taskFinesOutstanding,
     _ => key,
   };
 }
@@ -106,5 +108,6 @@ Widget? taskScreen(String key) => switch (key) {
       'members_to_archive' => const ActivityScreen(),
       'applications_to_approve' => const ApplicationsView(),
       'minutes_to_approve' => const PendingMinutesScreen(),
+      'fines_outstanding' => const FinesScreen(),
       _ => null,
     };

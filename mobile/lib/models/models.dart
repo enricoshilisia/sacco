@@ -48,6 +48,7 @@ class TenantProfile {
   bool get hasMembers => can('members.view');
   bool get hasDistributions => can('distributions.view');
   bool get hasApprovals => canAny(const ['members.approve_changes', 'members.approve_admission']);
+  bool get hasFines => can('fines.view');
   bool get hasAdmin => canAny(const ['users.view', 'audit.view', 'accesscontrol.assign_roles']);
   bool get hasMeetings => canAny(const ['governance.call_meeting', 'governance.take_attendance']);
   bool get hasActivity => can('members.approve_changes');
@@ -55,7 +56,7 @@ class TenantProfile {
   /// Any leader module this app offers.
   bool get hasStaffTools =>
       hasWelfareTools || hasFinance || hasReports || hasLoanDesk || hasMembers || hasDistributions || hasApprovals ||
-      hasMeetings || hasAdmin;
+      hasMeetings || hasAdmin || hasFines;
 }
 
 /// GET /api/members/me/

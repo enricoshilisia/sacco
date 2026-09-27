@@ -12,6 +12,7 @@ import '../widgets/glass.dart';
 import '../widgets/inuka_app_bar.dart';
 import 'admin/admin_screen.dart';
 import 'dashboard_screen.dart';
+import 'fines/fines_screen.dart';
 import 'leader/activity_screen.dart';
 import 'leader/approvals_screen.dart';
 import 'leader/distribution_runs_screen.dart';
@@ -42,6 +43,7 @@ enum AppTab {
   welfareAdmin,
   reports,
   distributions,
+  fines, // the fines register (staff)
   admin, // users & support, positions, audit log
   profile,
   more,
@@ -183,6 +185,7 @@ class HomeShellState extends State<HomeShell> {
       AppTab.welfareAdmin => WelfareScreen(key: key, staffMode: true),
       AppTab.reports => ReportsScreen(key: key),
       AppTab.distributions => DistributionRunsScreen(key: key),
+      AppTab.fines => FinesScreen(key: key),
       AppTab.admin => AdminScreen(key: key),
       AppTab.profile => ProfileScreen(key: key),
       AppTab.more => _MoreScreen(key: key, items: _more),
@@ -231,6 +234,7 @@ const maxBarItems = 5;
     if (p?.hasApprovals ?? false) AppTab.approvals,
     if (p?.hasFinance ?? false) AppTab.finance,
     if (p?.hasMeetings ?? false) AppTab.meetings,
+    if (p?.hasFines ?? false) AppTab.fines,
     if (p?.hasLoanDesk ?? false) AppTab.loanDesk,
     if (p?.hasMembers ?? false) AppTab.members,
     if (p?.hasActivity ?? false) AppTab.activity,
@@ -268,6 +272,7 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.welfareAdmin => GlassNavItem(Icons.volunteer_activism_outlined, Icons.volunteer_activism, l.navWelfare),
       AppTab.reports => GlassNavItem(Icons.assessment_outlined, Icons.assessment, l.navReports),
       AppTab.distributions => GlassNavItem(Icons.card_giftcard_outlined, Icons.card_giftcard, l.navDividends),
+      AppTab.fines => GlassNavItem(Icons.gavel_outlined, Icons.gavel_rounded, l.navFines),
       AppTab.admin => GlassNavItem(Icons.admin_panel_settings_outlined, Icons.admin_panel_settings, l.navAdmin),
       AppTab.profile => GlassNavItem(Icons.person_outline, Icons.person, l.navProfile),
       AppTab.more => GlassNavItem(Icons.grid_view_outlined, Icons.grid_view_rounded, l.navMore),
@@ -286,6 +291,7 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       AppTab.welfareAdmin => (l.leaderWelfare, l.leaderWelfareHelp),
       AppTab.reports => (l.leaderReports, l.leaderReportsHelp),
       AppTab.distributions => (l.leaderDistributions, l.leaderDistributionsHelp),
+      AppTab.fines => (l.finesTitle, l.finesHelp),
       AppTab.admin => (l.adminTitle, l.adminHelp),
       AppTab.profile => (l.profileTitle, l.moreProfileHelp),
       _ => ('', ''),

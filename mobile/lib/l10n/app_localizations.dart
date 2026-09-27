@@ -5323,6 +5323,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Minutes to approve'**
   String get taskMinutesToApprove;
+
+  /// No description provided for @navFines.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines'**
+  String get navFines;
+
+  /// No description provided for @finesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines'**
+  String get finesTitle;
+
+  /// No description provided for @finesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Who owes what, charging and receiving fines'**
+  String get finesHelp;
+
+  /// No description provided for @myFines.
+  ///
+  /// In en, this message translates to:
+  /// **'My fines'**
+  String get myFines;
+
+  /// No description provided for @finesCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Charged'**
+  String get finesCharged;
+
+  /// No description provided for @finesPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get finesPaid;
+
+  /// No description provided for @finesOutstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding'**
+  String get finesOutstanding;
+
+  /// No description provided for @finesWaivedTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Waived: {amount}'**
+  String finesWaivedTotal(String amount);
+
+  /// No description provided for @finesOwingOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Owing only'**
+  String get finesOwingOnly;
+
+  /// No description provided for @finesMembersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} members'**
+  String finesMembersCount(int count);
+
+  /// No description provided for @finesNobodyOwes.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody owes a fine.'**
+  String get finesNobodyOwes;
+
+  /// No description provided for @finesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No fines.'**
+  String get finesNone;
+
+  /// No description provided for @finesPaidOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{paid} of {total} paid'**
+  String finesPaidOf(String paid, String total);
+
+  /// No description provided for @finesOwedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Owed now: {amount}'**
+  String finesOwedNow(String amount);
+
+  /// No description provided for @finesOwedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 fine to pay} other{{count} fines to pay}}'**
+  String finesOwedCount(int count);
+
+  /// No description provided for @finesNothingOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no fines to pay. Thank you.'**
+  String get finesNothingOwed;
+
+  /// No description provided for @payFines.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay fines'**
+  String get payFines;
+
+  /// No description provided for @finesPayHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your oldest fine is cleared first.'**
+  String get finesPayHelp;
+
+  /// No description provided for @chargeFine.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge a fine'**
+  String get chargeFine;
+
+  /// No description provided for @fineCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine charged'**
+  String get fineCharged;
+
+  /// No description provided for @fineAmountHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Change it if this case differs from the standard amount.'**
+  String get fineAmountHelp;
+
+  /// No description provided for @fineDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of the offence'**
+  String get fineDate;
+
+  /// No description provided for @chooseMemberAndOffence.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the member and the offence.'**
+  String get chooseMemberAndOffence;
+
+  /// No description provided for @member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get member;
+
+  /// No description provided for @offence.
+  ///
+  /// In en, this message translates to:
+  /// **'Offence'**
+  String get offence;
+
+  /// No description provided for @recordFinePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record payment'**
+  String get recordFinePayment;
+
+  /// No description provided for @finePaymentRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine payment recorded'**
+  String get finePaymentRecorded;
+
+  /// No description provided for @waiveFine.
+  ///
+  /// In en, this message translates to:
+  /// **'Waive fine'**
+  String get waiveFine;
+
+  /// No description provided for @waiveReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get waiveReason;
+
+  /// No description provided for @waiveFineHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The fine stays on record as waived, and the books are corrected with a reversing entry. Somebody else must have charged it.'**
+  String get waiveFineHelp;
+
+  /// No description provided for @fineWaived.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine waived'**
+  String get fineWaived;
+
+  /// No description provided for @waivedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Waived by {name}: {reason}'**
+  String waivedBy(String name, String reason);
+
+  /// No description provided for @waiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Press and hold a fine to waive it.'**
+  String get waiveHint;
+
+  /// No description provided for @offenceTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Offences and amounts'**
+  String get offenceTypes;
+
+  /// No description provided for @offenceTypesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'From the constitution. Changing an amount never changes fines already charged.'**
+  String get offenceTypesHelp;
+
+  /// No description provided for @newOffence.
+  ///
+  /// In en, this message translates to:
+  /// **'New offence'**
+  String get newOffence;
+
+  /// No description provided for @offenceFromRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose from the register'**
+  String get offenceFromRegister;
+
+  /// No description provided for @offenceFromNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t propose automatically'**
+  String get offenceFromNone;
+
+  /// No description provided for @offenceFromAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'For absent without apology'**
+  String get offenceFromAbsent;
+
+  /// No description provided for @offenceFromLate.
+  ///
+  /// In en, this message translates to:
+  /// **'For arriving late'**
+  String get offenceFromLate;
+
+  /// No description provided for @offenceActive.
+  ///
+  /// In en, this message translates to:
+  /// **'In use'**
+  String get offenceActive;
+
+  /// No description provided for @offenceInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'No longer used'**
+  String get offenceInactive;
+
+  /// No description provided for @fieldDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get fieldDescription;
+
+  /// No description provided for @taskFinesOutstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines to collect'**
+  String get taskFinesOutstanding;
+
+  /// No description provided for @chargeFinesFromRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge fines from this register'**
+  String get chargeFinesFromRegister;
+
+  /// No description provided for @fineProposalsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody to fine from this register.'**
+  String get fineProposalsNone;
+
+  /// No description provided for @fineProposalsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'From the marks on the register. Untick anyone who shouldn\'t be fined.'**
+  String get fineProposalsHelp;
+
+  /// No description provided for @fineAlreadyCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Already charged'**
+  String get fineAlreadyCharged;
+
+  /// No description provided for @finesChargedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 fine charged} other{{count} fines charged}}'**
+  String finesChargedCount(int count);
+
+  /// No description provided for @assignFines.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign fines'**
+  String get assignFines;
+
+  /// No description provided for @assignFinesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick each member and set their amount. Nothing is charged until you apply.'**
+  String get assignFinesHelp;
+
+  /// No description provided for @applyFines.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply fines'**
+  String get applyFines;
+
+  /// No description provided for @applyFinesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Charge {count} members a total of {total}? They will owe it until paid.'**
+  String applyFinesBody(int count, String total);
+
+  /// No description provided for @finesFixAmounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Every ticked member needs an amount above 0.'**
+  String get finesFixAmounts;
+
+  /// No description provided for @finesNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note on all of them'**
+  String get finesNotesLabel;
+
+  /// No description provided for @finesNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 12 Jul - 13 Sep 2026'**
+  String get finesNotesHint;
 }
 
 class _AppLocalizationsDelegate

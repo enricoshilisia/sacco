@@ -1559,5 +1559,126 @@
   "minutesHint": "Write the minutes...",
   "unsavedMinutes": "Save your changes?",
   "unsavedMinutesBody": "You have changes that aren't saved.",
-  "taskMinutesToApprove": "Minutes to approve"
+  "taskMinutesToApprove": "Minutes to approve",
+  "navFines": "Fines",
+  "finesTitle": "Fines",
+  "finesHelp": "Who owes what, charging and receiving fines",
+  "myFines": "My fines",
+  "finesCharged": "Charged",
+  "finesPaid": "Paid",
+  "finesOutstanding": "Outstanding",
+  "finesWaivedTotal": "Waived: {amount}",
+  "@finesWaivedTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "finesOwingOnly": "Owing only",
+  "finesMembersCount": "{count} members",
+  "@finesMembersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "finesNobodyOwes": "Nobody owes a fine.",
+  "finesNone": "No fines.",
+  "finesPaidOf": "{paid} of {total} paid",
+  "@finesPaidOf": {
+    "placeholders": {
+      "paid": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "finesOwedNow": "Owed now: {amount}",
+  "@finesOwedNow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "finesOwedCount": "{count, plural, =1{1 fine to pay} other{{count} fines to pay}}",
+  "@finesOwedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "finesNothingOwed": "You have no fines to pay. Thank you.",
+  "payFines": "Pay fines",
+  "finesPayHelp": "Your oldest fine is cleared first.",
+  "chargeFine": "Charge a fine",
+  "fineCharged": "Fine charged",
+  "fineAmountHelp": "Change it if this case differs from the standard amount.",
+  "fineDate": "Date of the offence",
+  "chooseMemberAndOffence": "Choose the member and the offence.",
+  "member": "Member",
+  "offence": "Offence",
+  "recordFinePayment": "Record payment",
+  "finePaymentRecorded": "Fine payment recorded",
+  "waiveFine": "Waive fine",
+  "waiveReason": "Reason",
+  "waiveFineHelp": "The fine stays on record as waived, and the books are corrected with a reversing entry. Somebody else must have charged it.",
+  "fineWaived": "Fine waived",
+  "waivedBy": "Waived by {name}: {reason}",
+  "@waivedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "waiveHint": "Press and hold a fine to waive it.",
+  "offenceTypes": "Offences and amounts",
+  "offenceTypesHelp": "From the constitution. Changing an amount never changes fines already charged.",
+  "newOffence": "New offence",
+  "offenceFromRegister": "Propose from the register",
+  "offenceFromNone": "Don't propose automatically",
+  "offenceFromAbsent": "For absent without apology",
+  "offenceFromLate": "For arriving late",
+  "offenceActive": "In use",
+  "offenceInactive": "No longer used",
+  "fieldDescription": "Description",
+  "taskFinesOutstanding": "Fines to collect",
+  "chargeFinesFromRegister": "Charge fines from this register",
+  "fineProposalsNone": "Nobody to fine from this register.",
+  "fineProposalsHelp": "From the marks on the register. Untick anyone who shouldn't be fined.",
+  "fineAlreadyCharged": "Already charged",
+  "finesChargedCount": "{count, plural, =1{1 fine charged} other{{count} fines charged}}",
+  "@finesChargedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "assignFines": "Assign fines",
+  "assignFinesHelp": "Tick each member and set their amount. Nothing is charged until you apply.",
+  "applyFines": "Apply fines",
+  "applyFinesBody": "Charge {count} members a total of {total}? They will owe it until paid.",
+  "@applyFinesBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "finesFixAmounts": "Every ticked member needs an amount above 0.",
+  "finesNotesLabel": "Note on all of them",
+  "finesNotesHint": "e.g. 12 Jul - 13 Sep 2026"
 }

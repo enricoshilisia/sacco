@@ -16,6 +16,7 @@ class CollectionPurpose(models.TextChoices):
     SHARE_CONTRIBUTION = "SHARE_CONTRIBUTION", "Share contribution"
     WELFARE_CONTRIBUTION = "WELFARE_CONTRIBUTION", "Welfare contribution"
     REGISTRATION_FEE = "REGISTRATION_FEE", "Registration fee"
+    FINE_PAYMENT = "FINE_PAYMENT", "Fine payment"
 
 
 class PaymentCollection(models.Model):
@@ -67,6 +68,13 @@ class PaymentCollection(models.Model):
     )
     registration_fee = models.OneToOneField(
         "members.RegistrationFeePayment",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="payment_collection",
+    )
+    fine_payment = models.OneToOneField(
+        "fines.FinePayment",
         null=True,
         blank=True,
         on_delete=models.PROTECT,
