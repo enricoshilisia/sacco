@@ -41,14 +41,18 @@ CASH_ACCOUNT_CODE = "1000"
 REGISTRATION_FEE_INCOME_CODE = "5100"
 ZERO = Decimal("0")
 
-# Readable on a phone and easy to type: no 0/O, 1/l/I.
-_TEMP_ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789"
+# Temporary passwords are typed once, by someone who was told them over the
+# phone or in person, and must be changed straight after - so they are made
+# easy to say and type (two spoken syllables + four digits, e.g. jiju1365)
+# rather than strong. The account is unusable until the person sets their own.
+_CONSONANTS = "bdfgjklmnprstvz"
+_VOWELS = "aeiou"
 
 
 def generate_temporary_password() -> str:
-    """Three groups of four, e.g. k7mp-3xq9-ta4f (~60 bits)."""
-    groups = ["".join(secrets.choice(_TEMP_ALPHABET) for _ in range(4)) for _ in range(3)]
-    return "-".join(groups)
+    """e.g. jiju1365 - easy to read out, and only good for one sign-in."""
+    word = "".join(secrets.choice(_CONSONANTS) + secrets.choice(_VOWELS) for _ in range(2))
+    return f"{word}{secrets.randbelow(9000) + 1000}"
 
 
 # --- Applications -------------------------------------------------------------

@@ -254,3 +254,14 @@ class SupportTests(TenantTestCase):
             event.save()
         with self.assertRaises(ValueError):
             event.delete()
+
+
+class TemporaryPasswordTests(TenantTestCase):
+    def test_temporary_passwords_are_simple_to_read_out(self):
+        import re
+
+        from members.admission import generate_temporary_password
+
+        for _ in range(20):
+            password = generate_temporary_password()
+            self.assertRegex(password, r"^[a-z]{4}\d{4}$")
