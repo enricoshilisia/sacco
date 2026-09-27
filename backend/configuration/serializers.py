@@ -8,6 +8,10 @@ class TenantConfigSerializer(serializers.ModelSerializer):
         model = TenantConfig
         fields = [
             "default_language",
+            "paybill_number",
+            "paybill_account",
+            "paybill_name",
+            "payment_instructions",
             "allowed_id_types",
             "member_number_prefix",
             "member_number_suffix",

@@ -72,6 +72,19 @@ class ContributionRuleTests(ActivityTestBase):
         self._pay(self.member, months_ago(4))
         self.assertEqual(activity.missed_contribution_months(self.member), 3)
 
+    def test_paying_early_counts_for_the_month_it_was_paid_for(self):
+        from datetime import date
+
+        from savings.services import deposit_savings, get_or_open_savings_account
+
+        # Paid today, but for next month: this month is still unpaid.
+        next_month = (date.today().replace(day=1) + timedelta(days=32)).replace(day=1)
+        deposit_savings(savings_account=get_or_open_savings_account(self.member, self.mandatory), amount=D("500"),
+                        transaction_date=date.today(), for_month=next_month)
+        self.assertIn((next_month.year, next_month.month), activity.contributed_months(self.member))
+        today = date.today()
+        self.assertNotIn((today.year, today.month), activity.contributed_months(self.member))
+
     def test_current_month_never_counts_and_voluntary_savings_do_not_help(self):
         self._pay(self.member, months_ago(1))
         self._pay(self.member, months_ago(2), product=self.voluntary)

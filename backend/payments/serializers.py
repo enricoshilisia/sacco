@@ -53,6 +53,8 @@ class MyInitiateCollectionInputSerializer(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=18, decimal_places=2, min_value=Decimal("0.01"))
     phone_number = serializers.CharField()
     idempotency_key = serializers.CharField(required=False, allow_blank=True, max_length=64)
+    # Which month a monthly contribution is for (paying early is allowed).
+    for_month = serializers.DateField(required=False, allow_null=True)
 
     def validate(self, attrs):
         if attrs.get("purpose", CollectionPurpose.SAVINGS_DEPOSIT) == CollectionPurpose.SAVINGS_DEPOSIT and not attrs.get(

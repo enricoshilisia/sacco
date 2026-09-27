@@ -133,7 +133,8 @@ class SaccoApi {
   /// payment so a timed-out-then-retried request can't charge twice
   /// (CLAUDE.md rule 4).
   Future<Collection> collect({
-    required String purpose, // SAVINGS_DEPOSIT, SHARE_CONTRIBUTION or WELFARE_CONTRIBUTION
+    required String purpose, // SAVINGS_DEPOSIT, SHARE_CONTRIBUTION, WELFARE_CONTRIBUTION, FINE_PAYMENT...
+    DateTime? forMonth,
     String? productId,
     required Decimal amount,
     required String phone,
@@ -141,6 +142,7 @@ class SaccoApi {
   }) async =>
       Collection.fromJson(await client.post<Map<String, dynamic>>('/api/payments/me/collect/', data: {
         'purpose': purpose,
+        'for_month': ?forMonth?.toIso8601String().substring(0, 10),
         'product': ?productId,
         'amount': amount.toStringAsFixed(2),
         'phone_number': phone,

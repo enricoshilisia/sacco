@@ -108,6 +108,7 @@ class MyInitiateCollectionView(APIView):
                 phone_number=data["phone_number"],
                 callback_url=callback_url,
                 idempotency_key=data.get("idempotency_key") or None,
+                for_month=data.get("for_month"),
                 created_by=request.user,
             )
         except ValueError as exc:

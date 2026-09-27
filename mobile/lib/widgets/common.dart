@@ -213,3 +213,8 @@ String greeting(BuildContext context, String name) {
   if (hour < 17) return first.isEmpty ? l10n.greetAfternoonPlain : l10n.greetAfternoon(first);
   return first.isEmpty ? l10n.greetEveningPlain : l10n.greetEvening(first);
 }
+
+
+/// "October 2026" in the app's language.
+String monthName(BuildContext context, DateTime month) =>
+    DateFormat.yMMMM(Localizations.localeOf(context).toString()).format(month);

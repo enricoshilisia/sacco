@@ -925,5 +925,10 @@
   "applyFinesBody": "Toza wanachama {count} jumla ya {total}? Watadaiwa hadi walipe.",
   "finesFixAmounts": "Kila mwanachama aliyetikiwa anahitaji kiasi zaidi ya 0.",
   "finesNotesLabel": "Maelezo kwa wote",
-  "finesNotesHint": "mfano 12 Jul - 13 Sep 2026"
+  "finesNotesHint": "mfano 12 Jul - 13 Sep 2026",
+  "howToPay": "Jinsi ya kulipa",
+  "payBill": "Paybill",
+  "payAccount": "Nambari ya akaunti",
+  "payByHandHelp": "Lipa kwa M-Pesa kwa maelezo haya. Kulipa ndani ya programu kunakuja hivi karibuni.",
+  "payForMonth": "Unalipa kwa mwezi"
 }

@@ -48,6 +48,7 @@ class MyTenantProfileSerializer(serializers.Serializer):
     """Combined view: this SACCO's profile + the requesting user's role(s) in it."""
 
     tenant = serializers.SerializerMethodField()
+    payments = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
     memberships = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
@@ -55,6 +56,21 @@ class MyTenantProfileSerializer(serializers.Serializer):
     def get_tenant(self, request):
         tenant = Tenant.objects.get(schema_name=connection.schema_name)
         return TenantProfileSerializer(tenant).data
+
+    def get_payments(self, request):
+        """Where members send money (shown in the app, so nobody has to dig
+        it out of WhatsApp)."""
+        from configuration.models import TenantConfig
+        from members.models import MemberActivitySettings
+
+        config = TenantConfig.get_solo()
+        return {
+            "paybill_number": config.paybill_number,
+            "paybill_account": config.paybill_account,
+            "paybill_name": config.paybill_name,
+            "instructions": config.payment_instructions,
+            "monthly_due_day": MemberActivitySettings.get_solo().monthly_due_day,
+        }
 
     def get_user(self, request):
         return UserSerializer(request.user).data

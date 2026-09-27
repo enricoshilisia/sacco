@@ -5659,6 +5659,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'e.g. 12 Jul - 13 Sep 2026'**
   String get finesNotesHint;
+
+  /// No description provided for @howToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'How to pay'**
+  String get howToPay;
+
+  /// No description provided for @payBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Paybill'**
+  String get payBill;
+
+  /// No description provided for @payAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account no.'**
+  String get payAccount;
+
+  /// No description provided for @payByHandHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay on M-Pesa with these details. Paying inside the app is coming soon.'**
+  String get payByHandHelp;
+
+  /// No description provided for @payForMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Paying for'**
+  String get payForMonth;
 }
 
 class _AppLocalizationsDelegate

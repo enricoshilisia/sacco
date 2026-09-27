@@ -24,8 +24,23 @@ class TenantProfile {
   final bool mustChangePassword;
   final String userId;
 
+  /// Where members send money by hand today (M-Pesa paybill), and the day
+  /// of the month the monthly contribution is due.
+  final String paybillNumber;
+  final String paybillAccount;
+  final String paybillName;
+  final String paymentInstructions;
+  final int monthlyDueDay;
+
+  bool get hasPaybill => paybillNumber.isNotEmpty;
+
   TenantProfile.fromJson(Map<String, dynamic> json)
-      : userId = _str((json['user'] as Map?)?['id']),
+      : paybillNumber = _str((json['payments'] as Map?)?['paybill_number']),
+        paybillAccount = _str((json['payments'] as Map?)?['paybill_account']),
+        paybillName = _str((json['payments'] as Map?)?['paybill_name']),
+        paymentInstructions = _str((json['payments'] as Map?)?['instructions']),
+        monthlyDueDay = ((json['payments'] as Map?)?['monthly_due_day'] as num?)?.toInt() ?? 0,
+        userId = _str((json['user'] as Map?)?['id']),
         mustChangePassword = (json['user'] as Map?)?['must_change_password'] == true,
         firstName = _str((json['user'] as Map?)?['first_name']),
         lastName = _str((json['user'] as Map?)?['last_name']),

@@ -24,6 +24,16 @@ class TenantConfig(models.Model):
         max_length=5, choices=[("en", "English"), ("sw", "Kiswahili")], default="en"
     )
 
+    # Where members send money today - shown in the app so nobody has to
+    # hunt for it in WhatsApp. (STK push comes later; this is the paybill
+    # they pay by hand in the meantime.)
+    paybill_number = models.CharField(max_length=20, blank=True, help_text="M-Pesa paybill, e.g. 542542")
+    paybill_account = models.CharField(max_length=40, blank=True, help_text="Account number for the paybill")
+    paybill_name = models.CharField(max_length=120, blank=True, help_text="Account name shown to members")
+    payment_instructions = models.CharField(
+        max_length=255, blank=True, help_text="One line shown under the paybill, e.g. the monthly deadline."
+    )
+
     allowed_id_types = models.JSONField(
         default=list, help_text="e.g. ['NATIONAL_ID', 'HUDUMA'] for a Kenyan tenant"
     )

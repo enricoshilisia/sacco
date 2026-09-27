@@ -65,9 +65,20 @@ def contribute_shares(*, member, amount: Decimal, transaction_date: date, create
         )
 
 
-def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transaction_date: date, created_by=None, description: str = "") -> SavingsTransaction:
+def _month_start(value: date) -> date:
+    return value.replace(day=1)
+
+
+def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transaction_date: date, created_by=None,
+                    description: str = "", for_month: date | None = None) -> SavingsTransaction:
+    """`for_month` says which month a mandatory monthly contribution is for
+    (any day in it); leave it out and the transaction date decides."""
     if amount <= 0:
         raise ValueError("Deposit amount must be positive.")
+    if for_month is not None:
+        for_month = for_month.replace(day=1)
+        if for_month > _month_start(transaction_date.replace(year=transaction_date.year + 1)):
+            raise ValueError("That month is too far ahead.")
 
     cash = Account.objects.get(code=CASH_ACCOUNT_CODE)
     savings_control = Account.objects.get(code=SAVINGS_CONTROL_ACCOUNT_CODE)
@@ -88,6 +99,7 @@ def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transac
             transaction_type=SavingsTransactionType.DEPOSIT,
             amount=amount,
             transaction_date=transaction_date,
+            for_month=for_month,
             journal_entry=entry,
             created_by=created_by,
         )

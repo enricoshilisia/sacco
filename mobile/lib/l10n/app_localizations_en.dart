@@ -3129,4 +3129,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get finesNotesHint => 'e.g. 12 Jul - 13 Sep 2026';
+
+  @override
+  String get howToPay => 'How to pay';
+
+  @override
+  String get payBill => 'Paybill';
+
+  @override
+  String get payAccount => 'Account no.';
+
+  @override
+  String get payByHandHelp =>
+      'Pay on M-Pesa with these details. Paying inside the app is coming soon.';
+
+  @override
+  String get payForMonth => 'Paying for';
 }

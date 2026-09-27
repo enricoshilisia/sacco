@@ -105,6 +105,11 @@ class SavingsTransaction(models.Model):
     transaction_type = models.CharField(max_length=20, choices=SavingsTransactionType.choices)
     amount = models.DecimalField(max_digits=18, decimal_places=2)
     transaction_date = models.DateField()
+    # Which month a mandatory monthly contribution is for (the 1st of that
+    # month). Members may pay early - October's money handed over in
+    # September counts for October, not twice for September - so the
+    # monthly rule (members.activity) counts by this when it is set.
+    for_month = models.DateField(null=True, blank=True)
     journal_entry = models.OneToOneField(
         "accounting.JournalEntry", on_delete=models.PROTECT, related_name="savings_transaction"
     )

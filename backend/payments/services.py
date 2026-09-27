@@ -20,6 +20,7 @@ def initiate_collection(
     callback_url: str,
     savings_account=None,
     purpose: str = CollectionPurpose.SAVINGS_DEPOSIT,
+    for_month=None,
     idempotency_key: str | None = None,
     created_by=None,
 ) -> PaymentCollection:
@@ -69,6 +70,7 @@ def initiate_collection(
         member=member,
         purpose=purpose,
         savings_account=savings_account if purpose == CollectionPurpose.SAVINGS_DEPOSIT else None,
+        for_month=for_month.replace(day=1) if for_month else None,
         provider=provider.code,
         phone_number=phone_number,
         amount=amount,
@@ -202,6 +204,7 @@ def handle_collection_callback(
                 transaction_date=date.today(),
                 created_by=collection.created_by,
                 description=description,
+                for_month=collection.for_month,
             )
             collection.savings_transaction = txn
             update_fields = ["status", "provider_receipt", "savings_transaction", "raw_callback", "completed_at"]

@@ -419,6 +419,9 @@ class MemberActivitySettings(models.Model):
         max_digits=18, decimal_places=2, default=0,
         help_text="A month only counts as contributed if mandatory savings deposits reach this (0 = any amount).",
     )
+    monthly_due_day = models.PositiveSmallIntegerField(
+        default=18, help_text="Day of the month the monthly contribution is due (e.g. 18)."
+    )
     meeting_rule_enabled = models.BooleanField(default=True)
     warn_after_meetings = models.PositiveSmallIntegerField(default=2)
     inactive_after_meetings = models.PositiveSmallIntegerField(default=3)

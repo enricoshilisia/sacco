@@ -1680,5 +1680,10 @@
   },
   "finesFixAmounts": "Every ticked member needs an amount above 0.",
   "finesNotesLabel": "Note on all of them",
-  "finesNotesHint": "e.g. 12 Jul - 13 Sep 2026"
+  "finesNotesHint": "e.g. 12 Jul - 13 Sep 2026",
+  "howToPay": "How to pay",
+  "payBill": "Paybill",
+  "payAccount": "Account no.",
+  "payByHandHelp": "Pay on M-Pesa with these details. Paying inside the app is coming soon.",
+  "payForMonth": "Paying for"
 }

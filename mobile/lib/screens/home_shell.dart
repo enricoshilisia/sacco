@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -147,12 +149,16 @@ class HomeShellState extends State<HomeShell> {
 
   void _select(int i) {
     final tab = _bar[i];
-    if (tab == _current) {
-      // Tapping the tab you're on takes you back to its first screen.
-      _currentNavigator?.popUntil((route) => route.isFirst);
-    } else {
-      setState(() => _current = tab);
+    if (tab == AppTab.more) {
+      // More slides up over the current screen rather than replacing it.
+      showMoreSheet(context, _more);
+      return;
     }
+    // A tap on the bottom menu always lands on that tab's own screen - never
+    // on something opened inside it earlier, which looked like the wrong
+    // screen and took two taps to get past.
+    _navigators[tab]?.currentState?.popUntil((route) => route.isFirst);
+    if (tab != _current) setState(() => _current = tab);
   }
 
   /// Android back: step back inside the current tab first, then return to
@@ -297,56 +303,141 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
       _ => ('', ''),
     };
 
-/// The rest of this person's destinations, as a grid of glass tiles.
+/// The rest of this person's destinations, sliding up over the current
+/// screen. Choosing one opens it inside the tab you were on, so the bottom
+/// menu never disappears.
+Future<void> showMoreSheet(BuildContext context, List<AppTab> items) {
+  final shell = homeShellOf(context);
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.35),
+    builder: (sheetContext) => DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: items.length > 4 ? 0.62 : 0.45,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      builder: (context, controller) => _MoreSheet(
+        items: items,
+        controller: controller,
+        onPick: (tab) {
+          Navigator.pop(sheetContext);
+          shell?.open(context, tab);
+        },
+      ),
+    ),
+  );
+}
+
+class _MoreSheet extends StatelessWidget {
+  final List<AppTab> items;
+  final ScrollController controller;
+  final ValueChanged<AppTab> onPick;
+  const _MoreSheet({required this.items, required this.controller, required this.onPick});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withValues(alpha: 0.86),
+            border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.25))),
+          ),
+          child: Column(children: [
+            const SizedBox(height: 10),
+            Container(
+              width: 44,
+              height: 4,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+              child: Row(children: [
+                Text(l10n.navMore, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+              ]),
+            ),
+            Expanded(child: MoreGrid(items: items, controller: controller, onPick: onPick)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// The destinations as a grid of glass tiles.
+class MoreGrid extends StatelessWidget {
+  final List<AppTab> items;
+  final ScrollController? controller;
+  final ValueChanged<AppTab> onPick;
+  const MoreGrid({super.key, required this.items, required this.onPick, this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    return GridView.builder(
+      controller: controller,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 1.05,
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, i) {
+        final tab = items[i];
+        final item = navItem(l10n, tab);
+        final (title, subtitle) = _moreText(l10n, tab);
+        return Appear(
+          index: i,
+          child: GlassCard(
+            padding: const EdgeInsets.all(14),
+            onTap: () => onPick(tab),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(gradient: InukaColors.sunrise, borderRadius: BorderRadius.circular(14)),
+                  child: Icon(item.selectedIcon, color: Colors.white),
+                ),
+                const Spacer(),
+                Text(title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Fallback full screen (the sheet is what members normally see).
 class _MoreScreen extends StatelessWidget {
   final List<AppTab> items;
   const _MoreScreen({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
     return Scaffold(
-      appBar: InukaAppBar(title: l10n.navMore),
-      body: GridView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.05,
-        ),
-        itemCount: items.length,
-        itemBuilder: (context, i) {
-          final tab = items[i];
-          final item = navItem(l10n, tab);
-          final (title, subtitle) = _moreText(l10n, tab);
-          return Appear(
-            index: i,
-            child: GlassCard(
-              padding: const EdgeInsets.all(14),
-              onTap: () => homeShellOf(context)?.open(context, tab),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(gradient: InukaColors.sunrise, borderRadius: BorderRadius.circular(14)),
-                    child: Icon(item.selectedIcon, color: Colors.white),
-                  ),
-                  const Spacer(),
-                  Text(title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 2),
-                  Text(subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+      appBar: InukaAppBar(title: context.l10n.navMore),
+      body: MoreGrid(items: items, onPick: (tab) => homeShellOf(context)?.open(context, tab)),
     );
   }
 }

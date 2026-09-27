@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/session.dart';
 import '../models/models.dart';
 import '../widgets/common.dart';
+import '../widgets/paybill_card.dart';
 import '../widgets/labels.dart';
 import 'home_shell.dart';
 import 'pay_sheet.dart';
@@ -69,6 +70,8 @@ class _SavingsBody extends StatelessWidget {
           actionLabel: l10n.actionDeposit,
           onAction: () => pay(PayPurpose.savingsDeposit),
         ),
+        const SizedBox(height: 12),
+        const PaybillCard(),
         SectionTitle(l10n.savingsAccounts),
         if (accounts.isEmpty) EmptyNote(l10n.noSavingsAccounts),
         for (final account in accounts) ...[

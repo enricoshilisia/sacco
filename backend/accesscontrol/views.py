@@ -64,8 +64,15 @@ class TenantInfoView(APIView):
                 logo_url = request.build_absolute_uri(tenant.logo.url)
             except Exception:  # noqa: BLE001 - branding is best-effort
                 logo_url = None
+        from configuration.models import TenantConfig
+
+        config = TenantConfig.get_solo()
         base_domain = getattr(settings, "TENANT_BASE_DOMAIN", "localhost")
         return Response({
+            "paybill_number": config.paybill_number,
+            "paybill_account": config.paybill_account,
+            "paybill_name": config.paybill_name,
+            "payment_instructions": config.payment_instructions,
             "code": host.split(".")[0],
             "name": tenant.name,
             "country": tenant.country,

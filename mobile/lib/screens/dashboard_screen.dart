@@ -9,6 +9,7 @@ import '../models/welfare.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/glass.dart';
+import '../widgets/paybill_card.dart';
 import '../widgets/labels.dart';
 import 'apply_loan_screen.dart';
 import 'home_shell.dart';
@@ -113,6 +114,7 @@ class _DashboardBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
+        const Padding(padding: EdgeInsets.only(bottom: 12), child: PaybillCard(compact: true)),
         if (data.verification != null && !data.verification!.verified)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),

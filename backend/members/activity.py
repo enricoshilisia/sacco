@@ -45,17 +45,24 @@ def contributed_months(member: Member, *, settings=None) -> set[tuple[int, int]]
     from savings.models import SavingsProductType, SavingsTransaction, SavingsTransactionType
 
     settings = settings or MemberActivitySettings.get_solo()
+    from django.db.models import DateField
+    from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear
+
+    # A contribution counts for the month it was paid FOR (members may pay
+    # ahead of the monthly deadline); otherwise the day it was paid.
+    month_of = Coalesce("for_month", "transaction_date", output_field=DateField())
     deposits = (
         SavingsTransaction.objects.filter(
             savings_account__member=member,
             savings_account__product__product_type=SavingsProductType.MANDATORY_MONTHLY,
             transaction_type=SavingsTransactionType.DEPOSIT,
         )
-        .values("transaction_date__year", "transaction_date__month")
+        .annotate(year=ExtractYear(month_of), month=ExtractMonth(month_of))
+        .values("year", "month")
         .annotate(total=Sum("amount"))
     )
     return {
-        (row["transaction_date__year"], row["transaction_date__month"])
+        (row["year"], row["month"])
         for row in deposits
         if row["total"] >= settings.min_monthly_contribution
     }

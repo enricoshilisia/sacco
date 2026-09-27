@@ -10,6 +10,7 @@ import '../core/money.dart';
 import '../core/session.dart';
 import '../models/models.dart';
 import '../widgets/common.dart';
+import '../widgets/paybill_card.dart';
 
 enum PayPurpose { savingsDeposit, shareContribution, welfare, registrationFee, fine }
 
@@ -85,6 +86,17 @@ class _PaySheetState extends State<_PaySheet> {
 
   bool get _isDeposit => widget.purpose == PayPurpose.savingsDeposit;
 
+  /// Which month a monthly contribution is for - members may pay early.
+  DateTime _forMonth = DateTime(DateTime.now().year, DateTime.now().month);
+
+  bool get _isMonthly =>
+      _isDeposit && (_products?.where((p) => p.id == _productId).firstOrNull?.productType == 'MANDATORY_MONTHLY');
+
+  List<DateTime> get _monthChoices {
+    final now = DateTime(DateTime.now().year, DateTime.now().month);
+    return [DateTime(now.year, now.month - 1), now, DateTime(now.year, now.month + 1)];
+  }
+
   @override
   void initState() {
     super.initState();
@@ -141,6 +153,7 @@ class _PaySheetState extends State<_PaySheet> {
           PayPurpose.fine => 'FINE_PAYMENT',
         },
         productId: _isDeposit ? _productId : null,
+        forMonth: _isMonthly ? _forMonth : null,
         amount: amount,
         phone: _phone.text.trim(),
         idempotencyKey: _idempotencyKey!,
@@ -267,7 +280,9 @@ class _PaySheetState extends State<_PaySheet> {
             },
             style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+          const PaybillCard(compact: true),
+          const SizedBox(height: 16),
           if (_isDeposit) ...[
             if (_products == null && _error == null)
               const LinearProgressIndicator()
@@ -287,6 +302,20 @@ class _PaySheetState extends State<_PaySheet> {
                   _invalidateKey();
                 }),
               ),
+            if (_isMonthly) ...[
+              const SizedBox(height: 12),
+              DropdownButtonFormField<DateTime>(
+                initialValue: _forMonth,
+                decoration: InputDecoration(labelText: l10n.payForMonth),
+                items: [
+                  for (final m in _monthChoices) DropdownMenuItem(value: m, child: Text(monthName(context, m))),
+                ],
+                onChanged: (v) => setState(() {
+                  _forMonth = v ?? _forMonth;
+                  _invalidateKey();
+                }),
+              ),
+            ],
             const SizedBox(height: 12),
           ],
           TextFormField(

@@ -3131,4 +3131,20 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get finesNotesHint => 'mfano 12 Jul - 13 Sep 2026';
+
+  @override
+  String get howToPay => 'Jinsi ya kulipa';
+
+  @override
+  String get payBill => 'Paybill';
+
+  @override
+  String get payAccount => 'Nambari ya akaunti';
+
+  @override
+  String get payByHandHelp =>
+      'Lipa kwa M-Pesa kwa maelezo haya. Kulipa ndani ya programu kunakuja hivi karibuni.';
+
+  @override
+  String get payForMonth => 'Unalipa kwa mwezi';
 }

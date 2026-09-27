@@ -81,6 +81,9 @@ class PaymentCollection(models.Model):
         related_name="payment_collection",
     )
 
+    # For a mandatory monthly savings deposit: which month it is for.
+    for_month = models.DateField(null=True, blank=True)
+
     provider = models.CharField(max_length=30)
     phone_number = models.CharField(max_length=20)
     amount = models.DecimalField(max_digits=18, decimal_places=2)
