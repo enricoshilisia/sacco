@@ -358,3 +358,8 @@ GEOIP_CITY_DB = env("GEOIP_CITY_DB", default="")
 # same server - see core/webapp.py. Build it with:
 #   flutter build web --release --base-href /app/ --dart-define=DEFAULT_SACCO_CODE=<code>
 WEBAPP_ROOT = env("WEBAPP_ROOT", default=str(BASE_DIR / "webapp"))
+
+# Behind a reverse proxy that terminates TLS (Caddy on this server), so
+# Django builds https:// links and knows the connection was secure.
+if env.bool("BEHIND_TLS_PROXY", default=False):
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

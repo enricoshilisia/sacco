@@ -28,4 +28,9 @@ class AppConfig {
   /// "find your SACCO" step, and "Change SACCO" is hidden.
   static const defaultSaccoCode = String.fromEnvironment('DEFAULT_SACCO_CODE');
   static bool get isSingleSacco => defaultSaccoCode.isNotEmpty;
+
+  /// Optional, with DEFAULT_SACCO_CODE: that SACCO's own domain (e.g.
+  /// inuka.example.io). The app then asks that host who it is
+  /// (/api/tenant/info/) instead of resolving the code on the public host.
+  static const defaultSaccoDomain = String.fromEnvironment('DEFAULT_SACCO_DOMAIN');
 }

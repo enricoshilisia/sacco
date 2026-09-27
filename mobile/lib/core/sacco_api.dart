@@ -22,6 +22,20 @@ Future<Sacco> lookupSacco(String code) async {
       throw toApiException(error);
     }
   }
+  if (AppConfig.defaultSaccoDomain.isNotEmpty) {
+    // A single-SACCO build knows its SACCO's domain: ask it directly.
+    final port = AppConfig.tenantPort.isEmpty ? '' : ':${AppConfig.tenantPort}';
+    final own = Dio(BaseOptions(
+      baseUrl: '${AppConfig.tenantScheme}://${AppConfig.defaultSaccoDomain}$port',
+      connectTimeout: const Duration(seconds: 15),
+    ));
+    try {
+      final response = await own.get<Map<String, dynamic>>('/api/tenant/info/');
+      return Sacco.fromJson(response.data!);
+    } catch (error) {
+      throw toApiException(error);
+    }
+  }
   final dio = Dio(BaseOptions(baseUrl: AppConfig.publicApiBaseUrl, connectTimeout: const Duration(seconds: 15)));
   final label = code.trim().toLowerCase().split('.').first;
   try {
