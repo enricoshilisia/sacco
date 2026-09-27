@@ -62,13 +62,17 @@ def locked_pledge_total(member) -> Decimal:
 
 
 def get_available_deposits(member) -> Decimal:
-    """Member's savings balance minus whatever of it is locked pledging
-    security for someone else's loan."""
+    """What this member can borrow against, minus whatever of it is locked
+    pledging security for someone else's loan. Which pot that is - savings
+    deposits or share capital - is per-SACCO config: a group whose monthly
+    contribution is ownership money secures loans against that."""
     from accounting.models import Account
-    from savings.services import SAVINGS_CONTROL_ACCOUNT_CODE
+    from configuration.models import TenantConfig
+    from savings.services import SAVINGS_CONTROL_ACCOUNT_CODE, SHARE_CAPITAL_ACCOUNT_CODE
 
-    savings_control = Account.objects.get(code=SAVINGS_CONTROL_ACCOUNT_CODE)
-    balance = savings_control.balance(member=member)
+    code = (SHARE_CAPITAL_ACCOUNT_CODE if TenantConfig.get_solo().loan_security_base == "SHARES"
+            else SAVINGS_CONTROL_ACCOUNT_CODE)
+    balance = Account.objects.get(code=code).balance(member=member)
     return balance - locked_pledge_total(member)
 
 

@@ -3147,4 +3147,60 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get payForMonth => 'Unalipa kwa mwezi';
+
+  @override
+  String get monthlyContributions => 'Michango ya kila mwezi';
+
+  @override
+  String get monthlyContributionsHelp =>
+      'Hisa yako kwenye kikundi. Haitolewi; inapata sehemu ya faida ya mwaka.';
+
+  @override
+  String get actionPayContribution => 'Lipa mchango';
+
+  @override
+  String get recordContribution => 'Rekodi mchango';
+
+  @override
+  String get howToPayAction => 'Ona jinsi ya kulipa';
+
+  @override
+  String get howToPaySteps => 'Hatua kwenye M-Pesa';
+
+  @override
+  String get payStep1 =>
+      'Fungua M-Pesa, chagua Lipa na M-Pesa, kisha Pay Bill.';
+
+  @override
+  String payStep2(String paybill) {
+    return 'Weka nambari ya biashara $paybill.';
+  }
+
+  @override
+  String payStep3(String account) {
+    return 'Weka nambari ya akaunti $account.';
+  }
+
+  @override
+  String get payStep4 => 'Weka kiasi na PIN yako ya M-Pesa.';
+
+  @override
+  String get payStep5 => 'Hifadhi ujumbe wa M-Pesa - ndio risiti yako.';
+
+  @override
+  String get whatYouPayFor => 'Unalipia nini';
+
+  @override
+  String waitingOnYou(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count zinakusubiri',
+      one: '1 inakusubiri',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get openNow => 'Fungua';
 }

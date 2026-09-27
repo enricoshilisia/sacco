@@ -185,10 +185,12 @@ extension LeaderApi on SaccoApi {
 
   Future<void> verifyKyc(String memberId) => client.post<Object?>('/api/members/$memberId/verify-kyc/');
 
-  Future<void> counterContributeShares(String memberId, {required Decimal amount, required DateTime date, required String note}) =>
+  Future<void> counterContributeShares(String memberId,
+          {required Decimal amount, required DateTime date, required String note, DateTime? forMonth}) =>
       client.post<Object?>('/api/savings/members/$memberId/shares/contribute/', data: {
         'amount': amount.toStringAsFixed(2),
         'transaction_date': isoDate(date),
+        'for_month': ?forMonth == null ? null : isoDate(forMonth),
         'description': note,
       });
 

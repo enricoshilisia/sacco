@@ -9,11 +9,11 @@ import '../models/welfare.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/glass.dart';
-import '../widgets/paybill_card.dart';
 import '../widgets/labels.dart';
 import 'apply_loan_screen.dart';
 import 'home_shell.dart';
 import 'leader/tasks_list.dart';
+import 'home_carousel.dart';
 import '../core/governance_api.dart';
 import '../models/governance.dart';
 import 'leader/meetings_screen.dart' show meetingWhen;
@@ -22,7 +22,9 @@ import 'pay_sheet.dart';
 import '../core/admin_api.dart';
 import '../models/admin.dart';
 import '../core/fines_api.dart';
+import '../core/leader_api.dart';
 import '../models/fines.dart';
+import '../models/leader.dart';
 import 'fines/my_fines_screen.dart';
 import 'profile/my_profile_screen.dart';
 import '../widgets/inuka_app_bar.dart';
@@ -37,8 +39,9 @@ class _DashboardData {
   final MeetingItem? nextMeeting;
   final Verification? verification;
   final MemberFines? fines;
+  final List<LeaderTask> tasks;
   _DashboardData(this.statement, this.loans, this.pendingGuarantees, this.recentCollections, this.welfare,
-      this.activity, this.nextMeeting, this.verification, this.fines);
+      this.activity, this.nextMeeting, this.verification, this.fines, this.tasks);
 }
 
 class DashboardScreen extends StatelessWidget {
@@ -58,6 +61,7 @@ class DashboardScreen extends StatelessWidget {
       api.meetings(when: 'upcoming').then<List<MeetingItem>?>((m) => m, onError: (_) => null),
       api.myVerification().then<Verification?>((v) => v, onError: (_) => null),
       api.myFines().then<MemberFines?>((f) => f, onError: (_) => null),
+      api.myTasks().then<List<LeaderTask>?>((t) => t, onError: (_) => null),
     ]);
     return _DashboardData(
       results[0] as Statement,
@@ -69,6 +73,7 @@ class DashboardScreen extends StatelessWidget {
       (results[6] as List<MeetingItem>?)?.firstOrNull,
       results[7] as Verification?,
       results[8] as MemberFines?,
+      (results[9] as List<LeaderTask>?) ?? const <LeaderTask>[],
     );
   }
 
@@ -114,7 +119,11 @@ class _DashboardBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        const Padding(padding: EdgeInsets.only(bottom: 12), child: PaybillCard(compact: true)),
+        // Cards that slide: how to pay, what you owe, what's waiting on you.
+        Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: HomeCarousel(fines: data.fines, tasks: data.tasks),
+        ),
         if (data.verification != null && !data.verification!.verified)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -317,7 +326,12 @@ class _DashboardBody extends StatelessWidget {
           childAspectRatio: 0.85,
           children: [
             _QuickAction(Icons.add_card, l10n.actionDeposit, () => pay(PayPurpose.savingsDeposit)),
-            _QuickAction(Icons.pie_chart_outline, l10n.actionContribute, () => pay(PayPurpose.shareContribution)),
+            _QuickAction(
+                Icons.pie_chart_outline,
+                (context.watch<Session>().profile?.monthlyGoesToShares ?? false)
+                    ? l10n.actionPayContribution
+                    : l10n.actionContribute,
+                () => pay(PayPurpose.shareContribution)),
             _QuickAction(Icons.request_quote_outlined, l10n.actionApply, () async {
               final created = await Navigator.of(context)
                   .push<bool>(MaterialPageRoute(builder: (_) => const ApplyLoanScreen()));

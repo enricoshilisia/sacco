@@ -42,38 +42,42 @@ class _SavingsBody extends StatelessWidget {
       if (paid && context.mounted) homeShellOf(context)?.refreshAll();
     }
 
+    final toShares = context.watch<Session>().profile?.monthlyGoesToShares ?? false;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
         // Share capital and deposits are separate on purpose (CLAUDE.md
-        // rule 5): shares are ownership and earn dividends; deposits are
-        // withdrawable, earn interest, and back loans.
+        // rule 5): shares are ownership; deposits are withdrawable, earn
+        // interest and back loans. Which one a group's monthly contribution
+        // goes into is that group's own rule (TenantProfile).
         _AccountCard(
           icon: Icons.pie_chart_outline,
-          title: l10n.shareCapital,
-          help: l10n.shareCapitalHelp,
+          title: toShares ? l10n.monthlyContributions : l10n.shareCapital,
+          help: toShares ? l10n.monthlyContributionsHelp : l10n.shareCapitalHelp,
           balance: statement.sharesBalance,
-          actionLabel: l10n.actionContribute,
+          actionLabel: toShares ? l10n.actionPayContribution : l10n.actionContribute,
           onAction: () => pay(PayPurpose.shareContribution),
           historyTitle: l10n.contributions,
           history: statement.shareContributions,
         ),
         const SizedBox(height: 12),
-        _AccountCard(
-          icon: Icons.savings_outlined,
-          title: l10n.savingsTotal,
-          help: l10n.savingsHelp,
-          balance: statement.savingsTotal,
-          footnote: statement.savingsPledged > Decimal.zero
-              ? l10n.pledgedLocked(money(context, statement.savingsPledged))
-              : null,
-          actionLabel: l10n.actionDeposit,
-          onAction: () => pay(PayPurpose.savingsDeposit),
-        ),
-        const SizedBox(height: 12),
+        if (!toShares || statement.savingsTotal > Decimal.zero) ...[
+          _AccountCard(
+            icon: Icons.savings_outlined,
+            title: l10n.savingsTotal,
+            help: l10n.savingsHelp,
+            balance: statement.savingsTotal,
+            footnote: statement.savingsPledged > Decimal.zero
+                ? l10n.pledgedLocked(money(context, statement.savingsPledged))
+                : null,
+            actionLabel: l10n.actionDeposit,
+            onAction: () => pay(PayPurpose.savingsDeposit),
+          ),
+          const SizedBox(height: 12),
+        ],
         const PaybillCard(),
-        SectionTitle(l10n.savingsAccounts),
-        if (accounts.isEmpty) EmptyNote(l10n.noSavingsAccounts),
+        if (!toShares || accounts.isNotEmpty) SectionTitle(l10n.savingsAccounts),
+        if (accounts.isEmpty && !toShares) EmptyNote(l10n.noSavingsAccounts),
         for (final account in accounts) ...[
           _AccountCard(
             icon: Icons.account_balance_wallet_outlined,
@@ -91,8 +95,9 @@ class _SavingsBody extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        Text(
-          l10n.withdrawalsAtBranch,
+        if (context.watch<Session>().profile?.withdrawalsEnabled ?? true)
+          Text(
+            l10n.withdrawalsAtBranch,
           style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       ],

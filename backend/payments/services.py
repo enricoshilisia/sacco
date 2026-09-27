@@ -193,6 +193,7 @@ def handle_collection_callback(
                 transaction_date=date.today(),
                 created_by=collection.created_by,
                 description=description,
+                for_month=collection.for_month,
             )
             collection.share_contribution = contribution
             update_fields = ["status", "provider_receipt", "share_contribution", "raw_callback", "completed_at"]

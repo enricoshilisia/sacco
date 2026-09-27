@@ -38,9 +38,12 @@ def get_or_open_savings_account(member, product) -> SavingsAccount:
     return account
 
 
-def contribute_shares(*, member, amount: Decimal, transaction_date: date, created_by=None, description: str = "") -> ShareContribution:
+def contribute_shares(*, member, amount: Decimal, transaction_date: date, created_by=None, description: str = "",
+                      for_month: date | None = None) -> ShareContribution:
     if amount <= 0:
         raise ValueError("Contribution amount must be positive.")
+    if for_month is not None:
+        for_month = for_month.replace(day=1)
 
     share_account = get_or_open_share_account(member)
     cash = Account.objects.get(code=CASH_ACCOUNT_CODE)
@@ -56,13 +59,23 @@ def contribute_shares(*, member, amount: Decimal, transaction_date: date, create
             ],
             created_by=created_by,
         )
-        return ShareContribution.objects.create(
+        contribution = ShareContribution.objects.create(
             share_account=share_account,
             amount=amount,
             transaction_date=transaction_date,
+            for_month=for_month,
             journal_entry=entry,
             created_by=created_by,
         )
+        # A monthly contribution keeps a member active, wherever it is held.
+        from members.activity import note_activity
+        from members.admission import check_verification
+        from configuration.models import TenantConfig
+
+        if TenantConfig.get_solo().monthly_contribution_target == TenantConfig.MONTHLY_TO_SHARES:
+            note_activity(member, reason="made a monthly contribution", by=created_by)
+            check_verification(member)
+        return contribution
 
 
 def _month_start(value: date) -> date:
@@ -118,6 +131,10 @@ def deposit_savings(*, savings_account: SavingsAccount, amount: Decimal, transac
 
 
 def withdraw_savings(*, savings_account: SavingsAccount, amount: Decimal, transaction_date: date, created_by=None, description: str = "") -> SavingsTransaction:
+    from configuration.models import TenantConfig
+
+    if not TenantConfig.get_solo().withdrawals_enabled:
+        raise ValueError("Withdrawals are switched off for this SACCO.")
     if amount <= 0:
         raise ValueError("Withdrawal amount must be positive.")
 

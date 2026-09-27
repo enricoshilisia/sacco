@@ -90,7 +90,9 @@ class _PaySheetState extends State<_PaySheet> {
   DateTime _forMonth = DateTime(DateTime.now().year, DateTime.now().month);
 
   bool get _isMonthly =>
-      _isDeposit && (_products?.where((p) => p.id == _productId).firstOrNull?.productType == 'MANDATORY_MONTHLY');
+      (widget.purpose == PayPurpose.shareContribution &&
+          (context.read<Session>().profile?.monthlyGoesToShares ?? false)) ||
+      (_isDeposit && _products?.where((p) => p.id == _productId).firstOrNull?.productType == 'MANDATORY_MONTHLY');
 
   List<DateTime> get _monthChoices {
     final now = DateTime(DateTime.now().year, DateTime.now().month);
@@ -262,7 +264,10 @@ class _PaySheetState extends State<_PaySheet> {
           Text(
             switch (widget.purpose) {
               PayPurpose.savingsDeposit => l10n.payTitleDeposit,
-              PayPurpose.shareContribution => l10n.payTitleContribute,
+              PayPurpose.shareContribution =>
+                (context.read<Session>().profile?.monthlyGoesToShares ?? false)
+                    ? l10n.actionPayContribution
+                    : l10n.payTitleContribute,
               PayPurpose.welfare => l10n.payTitleWelfare,
               PayPurpose.registrationFee => l10n.payTitleRegistrationFee,
               PayPurpose.fine => l10n.payFines,
@@ -273,7 +278,10 @@ class _PaySheetState extends State<_PaySheet> {
           Text(
             switch (widget.purpose) {
               PayPurpose.savingsDeposit => l10n.savingsHelp,
-              PayPurpose.shareContribution => l10n.shareCapitalHelp,
+              PayPurpose.shareContribution =>
+                (context.read<Session>().profile?.monthlyGoesToShares ?? false)
+                    ? l10n.monthlyContributionsHelp
+                    : l10n.shareCapitalHelp,
               PayPurpose.welfare => l10n.welfarePayHelp,
               PayPurpose.registrationFee => l10n.registrationFeePayHelp,
               PayPurpose.fine => l10n.finesPayHelp,
@@ -283,6 +291,20 @@ class _PaySheetState extends State<_PaySheet> {
           const SizedBox(height: 16),
           const PaybillCard(compact: true),
           const SizedBox(height: 16),
+          if (!_isDeposit && _isMonthly) ...[
+            DropdownButtonFormField<DateTime>(
+              initialValue: _forMonth,
+              decoration: InputDecoration(labelText: l10n.payForMonth),
+              items: [
+                for (final m in _monthChoices) DropdownMenuItem(value: m, child: Text(monthName(context, m))),
+              ],
+              onChanged: (v) => setState(() {
+                _forMonth = v ?? _forMonth;
+                _invalidateKey();
+              }),
+            ),
+            const SizedBox(height: 12),
+          ],
           if (_isDeposit) ...[
             if (_products == null && _error == null)
               const LinearProgressIndicator()

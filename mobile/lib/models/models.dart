@@ -32,10 +32,17 @@ class TenantProfile {
   final String paymentInstructions;
   final int monthlyDueDay;
 
+  /// Some groups hold the monthly contribution as ownership money (share
+  /// capital) that is never withdrawn; others as a withdrawable deposit.
+  final bool monthlyGoesToShares;
+  final bool withdrawalsEnabled;
+
   bool get hasPaybill => paybillNumber.isNotEmpty;
 
   TenantProfile.fromJson(Map<String, dynamic> json)
-      : paybillNumber = _str((json['payments'] as Map?)?['paybill_number']),
+      : monthlyGoesToShares = _str((json['payments'] as Map?)?['monthly_contribution_target']) == 'SHARES',
+        withdrawalsEnabled = (json['payments'] as Map?)?['withdrawals_enabled'] != false,
+        paybillNumber = _str((json['payments'] as Map?)?['paybill_number']),
         paybillAccount = _str((json['payments'] as Map?)?['paybill_account']),
         paybillName = _str((json['payments'] as Map?)?['paybill_name']),
         paymentInstructions = _str((json['payments'] as Map?)?['instructions']),

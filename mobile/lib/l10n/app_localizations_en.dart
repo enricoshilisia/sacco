@@ -3145,4 +3145,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get payForMonth => 'Paying for';
+
+  @override
+  String get monthlyContributions => 'Monthly contributions';
+
+  @override
+  String get monthlyContributionsHelp =>
+      'Your share of the group. Not withdrawn; it earns a share of the year\'s profit.';
+
+  @override
+  String get actionPayContribution => 'Pay contribution';
+
+  @override
+  String get recordContribution => 'Record contribution';
+
+  @override
+  String get howToPayAction => 'See how to pay';
+
+  @override
+  String get howToPaySteps => 'Steps on M-Pesa';
+
+  @override
+  String get payStep1 =>
+      'Open M-Pesa and choose Lipa na M-Pesa, then Pay Bill.';
+
+  @override
+  String payStep2(String paybill) {
+    return 'Enter business number $paybill.';
+  }
+
+  @override
+  String payStep3(String account) {
+    return 'Enter account number $account.';
+  }
+
+  @override
+  String get payStep4 => 'Enter the amount and your M-Pesa PIN.';
+
+  @override
+  String get payStep5 => 'Keep the M-Pesa message - it is your receipt.';
+
+  @override
+  String get whatYouPayFor => 'What you pay for';
+
+  @override
+  String waitingOnYou(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count waiting on you',
+      one: '1 waiting on you',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get openNow => 'Open';
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/leader_api.dart';
 import '../../core/session.dart';
+import '../../models/leader.dart';
 import '../../widgets/common.dart';
 import '../../widgets/glass.dart';
 import '../../widgets/inuka_app_bar.dart';
+import '../home_carousel.dart';
 import '../home_shell.dart';
 import 'tasks_list.dart';
 
@@ -44,10 +47,31 @@ class LeaderHubScreen extends StatelessWidget {
                 ]),
               ),
             ),
-            const Appear(index: 1, child: LeaderTasksList()),
+            const SizedBox(height: 14),
+            Appear(index: 1, child: _HubCarousel()),
+            const Appear(index: 2, child: LeaderTasksList()),
           ],
         ),
       ),
     );
   }
+}
+
+
+/// The same sliding cards as a member's Home, for a leader who isn't one.
+class _HubCarousel extends StatefulWidget {
+  const _HubCarousel();
+
+  @override
+  State<_HubCarousel> createState() => _HubCarouselState();
+}
+
+class _HubCarouselState extends State<_HubCarousel> {
+  late final Future<List<LeaderTask>> _tasks = context.read<Session>().api!.myTasks();
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<List<LeaderTask>>(
+        future: _tasks,
+        builder: (context, snap) => HomeCarousel(tasks: snap.data ?? const []),
+      );
 }

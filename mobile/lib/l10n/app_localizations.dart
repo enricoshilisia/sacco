@@ -5689,6 +5689,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paying for'**
   String get payForMonth;
+
+  /// No description provided for @monthlyContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly contributions'**
+  String get monthlyContributions;
+
+  /// No description provided for @monthlyContributionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your share of the group. Not withdrawn; it earns a share of the year\'s profit.'**
+  String get monthlyContributionsHelp;
+
+  /// No description provided for @actionPayContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay contribution'**
+  String get actionPayContribution;
+
+  /// No description provided for @recordContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Record contribution'**
+  String get recordContribution;
+
+  /// No description provided for @howToPayAction.
+  ///
+  /// In en, this message translates to:
+  /// **'See how to pay'**
+  String get howToPayAction;
+
+  /// No description provided for @howToPaySteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps on M-Pesa'**
+  String get howToPaySteps;
+
+  /// No description provided for @payStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open M-Pesa and choose Lipa na M-Pesa, then Pay Bill.'**
+  String get payStep1;
+
+  /// No description provided for @payStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter business number {paybill}.'**
+  String payStep2(String paybill);
+
+  /// No description provided for @payStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter account number {account}.'**
+  String payStep3(String account);
+
+  /// No description provided for @payStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the amount and your M-Pesa PIN.'**
+  String get payStep4;
+
+  /// No description provided for @payStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the M-Pesa message - it is your receipt.'**
+  String get payStep5;
+
+  /// No description provided for @whatYouPayFor.
+  ///
+  /// In en, this message translates to:
+  /// **'What you pay for'**
+  String get whatYouPayFor;
+
+  /// No description provided for @waitingOnYou.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 waiting on you} other{{count} waiting on you}}'**
+  String waitingOnYou(int count);
+
+  /// No description provided for @openNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openNow;
 }
 
 class _AppLocalizationsDelegate

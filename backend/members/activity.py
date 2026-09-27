@@ -40,9 +40,16 @@ def _previous_month(d: date) -> date:
 
 
 def contributed_months(member: Member, *, settings=None) -> set[tuple[int, int]]:
-    """(year, month) pairs in which the member's mandatory monthly savings
-    deposits reached the minimum monthly contribution."""
-    from savings.models import SavingsProductType, SavingsTransaction, SavingsTransactionType
+    """(year, month) pairs in which the member's monthly contribution
+    reached the minimum - from share capital or from mandatory monthly
+    savings, whichever this SACCO uses (configuration.TenantConfig)."""
+    from configuration.models import TenantConfig
+    from savings.models import (
+        SavingsProductType,
+        SavingsTransaction,
+        SavingsTransactionType,
+        ShareContribution,
+    )
 
     settings = settings or MemberActivitySettings.get_solo()
     from django.db.models import DateField
@@ -51,6 +58,14 @@ def contributed_months(member: Member, *, settings=None) -> set[tuple[int, int]]
     # A contribution counts for the month it was paid FOR (members may pay
     # ahead of the monthly deadline); otherwise the day it was paid.
     month_of = Coalesce("for_month", "transaction_date", output_field=DateField())
+    if TenantConfig.get_solo().monthly_contribution_target == TenantConfig.MONTHLY_TO_SHARES:
+        rows = (
+            ShareContribution.objects.filter(share_account__member=member)
+            .annotate(year=ExtractYear(month_of), month=ExtractMonth(month_of))
+            .values("year", "month")
+            .annotate(total=Sum("amount"))
+        )
+        return {(r["year"], r["month"]) for r in rows if r["total"] >= settings.min_monthly_contribution}
     deposits = (
         SavingsTransaction.objects.filter(
             savings_account__member=member,

@@ -370,10 +370,17 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
           final theme = Theme.of(context);
           final actions = <(IconData, String, VoidCallback)>[
             if (session.can('savings.deposit')) ...[
-              (Icons.add_card, l10n.actionDeposit, () => _counter(_CounterAction.deposit, data)),
-              (Icons.pie_chart_outline, l10n.actionContribute, () => _counter(_CounterAction.shares, data)),
+              if (!(session.profile?.monthlyGoesToShares ?? false))
+                (Icons.add_card, l10n.actionDeposit, () => _counter(_CounterAction.deposit, data)),
+              (
+                Icons.pie_chart_outline,
+                (session.profile?.monthlyGoesToShares ?? false) ? l10n.recordContribution : l10n.actionContribute,
+                () => _counter(_CounterAction.shares, data)
+              ),
             ],
-            if (session.can('savings.withdraw') && (data.statement?.savingsAccounts.isNotEmpty ?? false))
+            if (session.can('savings.withdraw') &&
+                (session.profile?.withdrawalsEnabled ?? true) &&
+                (data.statement?.savingsAccounts.isNotEmpty ?? false))
               (Icons.outbox_outlined, l10n.counterWithdraw, () => _counter(_CounterAction.withdraw, data)),
             if (session.can('welfare.record_payment'))
               (Icons.volunteer_activism_outlined, l10n.welfareRecordPayment, () async {
@@ -509,6 +516,15 @@ class _CounterSheetState extends State<_CounterSheet> {
         _CounterAction.withdraw => context.l10n.counterWithdraw,
       };
 
+  /// Which month a monthly contribution is for (they may pay late, or pay
+  /// next month early).
+  DateTime _forMonth = DateTime(DateTime.now().year, DateTime.now().month);
+
+  List<DateTime> get _monthChoices {
+    final now = DateTime.now();
+    return [for (var back = 2; back >= -1; back--) DateTime(now.year, now.month - back)];
+  }
+
   Future<void> _submit() async {
     final l10n = context.l10n;
     final amount = Money.parseUserInput(_amount.text);
@@ -533,7 +549,8 @@ class _CounterSheetState extends State<_CounterSheet> {
         case _CounterAction.deposit:
           await api.counterDeposit(widget.member.id, productId: _product!.id, amount: amount, date: _date, note: note);
         case _CounterAction.shares:
-          await api.counterContributeShares(widget.member.id, amount: amount, date: _date, note: note);
+          await api.counterContributeShares(widget.member.id, amount: amount, date: _date, note: note,
+              forMonth: context.read<Session>().profile?.monthlyGoesToShares ?? false ? _forMonth : null);
         case _CounterAction.withdraw:
           await api.counterWithdraw(widget.member.id, savingsAccountId: _account!.id, amount: amount, date: _date, note: note);
       }
@@ -588,6 +605,19 @@ class _CounterSheetState extends State<_CounterSheet> {
               decoration: InputDecoration(labelText: l10n.amount, prefixText: '${context.read<Session>().currency} '),
             ),
             DateField(label: l10n.journalDate, value: _date, lastDate: DateTime.now(), onChanged: (d) => setState(() => _date = d)),
+            // A monthly contribution says which month it is for: a member may
+            // pay late, or pay the next month early.
+            if (widget.action == _CounterAction.shares &&
+                (context.read<Session>().profile?.monthlyGoesToShares ?? false))
+              DropdownButtonFormField<DateTime>(
+                initialValue: _forMonth,
+                decoration: InputDecoration(labelText: l10n.payForMonth),
+                items: [
+                  for (final month in _monthChoices)
+                    DropdownMenuItem(value: month, child: Text(monthName(context, month))),
+                ],
+                onChanged: (v) => setState(() => _forMonth = v ?? _forMonth),
+              ),
             TextField(controller: _note, decoration: InputDecoration(labelText: l10n.welfareReference)),
             if (_error != null) ...[
               const SizedBox(height: 12),

@@ -24,6 +24,28 @@ class TenantConfig(models.Model):
         max_length=5, choices=[("en", "English"), ("sw", "Kiswahili")], default="en"
     )
 
+    # Some groups (Inuka West) treat the monthly contribution as ownership:
+    # it is never withdrawn, it earns a share of the year's profit rather
+    # than interest, and it is what a loan is secured against. Others hold
+    # it as a withdrawable deposit. Config, not a branch in the code.
+    MONTHLY_TO_SHARES = "SHARES"
+    MONTHLY_TO_SAVINGS = "SAVINGS"
+    monthly_contribution_target = models.CharField(
+        max_length=10,
+        choices=[(MONTHLY_TO_SAVINGS, "Mandatory monthly savings"), (MONTHLY_TO_SHARES, "Share capital")],
+        default=MONTHLY_TO_SAVINGS,
+        help_text="Where a member's monthly contribution goes.",
+    )
+    loan_security_base = models.CharField(
+        max_length=10,
+        choices=[("DEPOSITS", "Savings deposits"), ("SHARES", "Share capital")],
+        default="DEPOSITS",
+        help_text="What the loan multiplier is applied to.",
+    )
+    withdrawals_enabled = models.BooleanField(
+        default=True, help_text="Turn off while no member may take money out."
+    )
+
     # Where members send money today - shown in the app so nobody has to
     # hunt for it in WhatsApp. (STK push comes later; this is the paybill
     # they pay by hand in the meantime.)

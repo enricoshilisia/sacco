@@ -1685,5 +1685,40 @@
   "payBill": "Paybill",
   "payAccount": "Account no.",
   "payByHandHelp": "Pay on M-Pesa with these details. Paying inside the app is coming soon.",
-  "payForMonth": "Paying for"
+  "payForMonth": "Paying for",
+  "monthlyContributions": "Monthly contributions",
+  "monthlyContributionsHelp": "Your share of the group. Not withdrawn; it earns a share of the year's profit.",
+  "actionPayContribution": "Pay contribution",
+  "recordContribution": "Record contribution",
+  "howToPayAction": "See how to pay",
+  "howToPaySteps": "Steps on M-Pesa",
+  "payStep1": "Open M-Pesa and choose Lipa na M-Pesa, then Pay Bill.",
+  "payStep2": "Enter business number {paybill}.",
+  "@payStep2": {
+    "placeholders": {
+      "paybill": {
+        "type": "String"
+      }
+    }
+  },
+  "payStep3": "Enter account number {account}.",
+  "@payStep3": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "payStep4": "Enter the amount and your M-Pesa PIN.",
+  "payStep5": "Keep the M-Pesa message - it is your receipt.",
+  "whatYouPayFor": "What you pay for",
+  "waitingOnYou": "{count, plural, =1{1 waiting on you} other{{count} waiting on you}}",
+  "@waitingOnYou": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "openNow": "Open"
 }

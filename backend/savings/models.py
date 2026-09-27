@@ -78,6 +78,9 @@ class ShareContribution(models.Model):
     share_account = models.ForeignKey(ShareAccount, on_delete=models.PROTECT, related_name="contributions")
     amount = models.DecimalField(max_digits=18, decimal_places=2)
     transaction_date = models.DateField()
+    # Which month a monthly contribution is for, when the SACCO's monthly
+    # contribution goes to share capital (configuration.TenantConfig).
+    for_month = models.DateField(null=True, blank=True)
     journal_entry = models.OneToOneField(
         "accounting.JournalEntry", on_delete=models.PROTECT, related_name="share_contribution"
     )

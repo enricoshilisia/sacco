@@ -52,7 +52,7 @@ class SavingsAccountSerializer(serializers.ModelSerializer):
 class ShareContributionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShareContribution
-        fields = ["id", "amount", "transaction_date", "created_at", "created_by"]
+        fields = ["id", "amount", "transaction_date", "for_month", "created_at", "created_by"]
 
 
 class SavingsTransactionSerializer(serializers.ModelSerializer):
@@ -62,6 +62,8 @@ class SavingsTransactionSerializer(serializers.ModelSerializer):
 
 
 class ContributeSharesInputSerializer(serializers.Serializer):
+    # Any day in the month this contribution is for (monthly contributions).
+    for_month = serializers.DateField(required=False, allow_null=True)
     amount = serializers.DecimalField(max_digits=18, decimal_places=2, min_value=Decimal("0.01"))
     transaction_date = serializers.DateField()
     description = serializers.CharField(required=False, allow_blank=True, default="")

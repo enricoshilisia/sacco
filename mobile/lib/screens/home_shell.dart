@@ -151,7 +151,7 @@ class HomeShellState extends State<HomeShell> {
     final tab = _bar[i];
     if (tab == AppTab.more) {
       // More slides up over the current screen rather than replacing it.
-      showMoreSheet(context, _more);
+      showMoreSheet(context, _more, shell: this);
       return;
     }
     // A tap on the bottom menu always lands on that tab's own screen - never
@@ -306,8 +306,10 @@ GlassNavItem navItem(AppLocalizations l, AppTab tab) => switch (tab) {
 /// The rest of this person's destinations, sliding up over the current
 /// screen. Choosing one opens it inside the tab you were on, so the bottom
 /// menu never disappears.
-Future<void> showMoreSheet(BuildContext context, List<AppTab> items) {
-  final shell = homeShellOf(context);
+Future<void> showMoreSheet(BuildContext context, List<AppTab> items, {HomeShellState? shell}) {
+  // The shell passes itself: looking it up from its own context would search
+  // its ancestors and find nothing, so the tap did nothing at all.
+  final state = shell ?? homeShellOf(context);
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -324,7 +326,7 @@ Future<void> showMoreSheet(BuildContext context, List<AppTab> items) {
         controller: controller,
         onPick: (tab) {
           Navigator.pop(sheetContext);
-          shell?.open(context, tab);
+          state?.goTo(tab);
         },
       ),
     ),

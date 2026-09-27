@@ -70,6 +70,8 @@ class MyTenantProfileSerializer(serializers.Serializer):
             "paybill_name": config.paybill_name,
             "instructions": config.payment_instructions,
             "monthly_due_day": MemberActivitySettings.get_solo().monthly_due_day,
+            "monthly_contribution_target": config.monthly_contribution_target,
+            "withdrawals_enabled": config.withdrawals_enabled,
         }
 
     def get_user(self, request):
