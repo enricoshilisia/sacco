@@ -1720,5 +1720,15 @@
       }
     }
   },
-  "openNow": "Open"
+  "openNow": "Open",
+  "reportSavingsRegister": "Savings by month",
+  "reportSavingsRegisterHelp": "Who has paid each month, and each member's total",
+  "reportFinesRegister": "Fines register",
+  "reportFinesRegisterHelp": "Who was fined, for what, paid and still owing",
+  "reportWelfareRegister": "Welfare contributions",
+  "reportWelfareRegisterHelp": "Who has paid the yearly amount, and who is short",
+  "reportMemberRegister": "Member register",
+  "reportMemberRegisterHelp": "Everyone, their status and what they hold",
+  "exportPdf": "PDF",
+  "exportCsv": "CSV"
 }

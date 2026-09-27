@@ -50,11 +50,16 @@ extension LeaderApi on SaccoApi {
       Report.fromJson(await client.get<Map<String, dynamic>>('/api/reports/$key/', query: params.toQuery()));
 
   /// The official CSV (with audit header) for handing to auditors.
-  Future<Uint8List> reportCsv(String key, ReportParams params) async {
+  /// The same report as a printable PDF (auditors, meetings, the file copy).
+  Future<Uint8List> reportPdf(String key, ReportParams params) => _reportFile(key, params, 'pdf');
+
+  Future<Uint8List> reportCsv(String key, ReportParams params) => _reportFile(key, params, 'csv');
+
+  Future<Uint8List> _reportFile(String key, ReportParams params, String format) async {
     try {
       final response = await client.dio.get<List<int>>(
         '/api/reports/$key/',
-        queryParameters: {...params.toQuery(), 'export': 'csv'},
+        queryParameters: {...params.toQuery(), 'export': format},
         options: Options(responseType: ResponseType.bytes),
       );
       return Uint8List.fromList(response.data ?? const []);

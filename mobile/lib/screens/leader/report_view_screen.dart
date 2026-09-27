@@ -61,14 +61,21 @@ class _ReportViewScreenState extends State<ReportViewScreen> {
       ? ReportParams(asOf: _asOf)
       : ReportParams(start: _start, end: _end, accountCode: _needsAccount ? _account?.code : null);
 
-  Future<void> _export() async {
+  Future<void> _export({bool pdf = false}) async {
     final l10n = context.l10n;
     setState(() => _exporting = true);
     try {
-      final bytes = await context.read<Session>().api!.reportCsv(widget.reportKey, _query);
+      final api = context.read<Session>().api!;
+      final bytes = pdf
+          ? await api.reportPdf(widget.reportKey, _query)
+          : await api.reportCsv(widget.reportKey, _query);
       final (title, _, _) = reportInfo(l10n, widget.reportKey);
-      await shareFile(bytes, '${widget.reportKey}_${isoDate(DateTime.now())}.csv',
-          mimeType: 'text/csv', subject: title);
+      final name = '${widget.reportKey}_${isoDate(DateTime.now())}.${pdf ? 'pdf' : 'csv'}';
+      if (pdf) {
+        await openFile(bytes, name, mimeType: 'application/pdf');
+      } else {
+        await shareFile(bytes, name, mimeType: 'text/csv', subject: title);
+      }
     } catch (e) {
       if (mounted) showSnack(context, errorText(context, e), error: true);
     } finally {
@@ -86,14 +93,21 @@ class _ReportViewScreenState extends State<ReportViewScreen> {
       appBar: InukaAppBar(
         title: title,
         actions: [
-          if (canExport)
+          if (canExport) ...[
+            // PDF to print or hand to an auditor; CSV to work on in Excel.
             IconButton(
-              tooltip: l10n.reportExport,
+              tooltip: l10n.exportPdf,
               icon: _exporting
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.ios_share),
-              onPressed: _exporting || (_needsAccount && _account == null) ? null : _export,
+                  : const Icon(Icons.picture_as_pdf_outlined),
+              onPressed: _exporting || (_needsAccount && _account == null) ? null : () => _export(pdf: true),
             ),
+            IconButton(
+              tooltip: l10n.exportCsv,
+              icon: const Icon(Icons.ios_share),
+              onPressed: _exporting || (_needsAccount && _account == null) ? null : () => _export(),
+            ),
+          ],
         ],
       ),
       body: Column(

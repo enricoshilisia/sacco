@@ -5773,6 +5773,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get openNow;
+
+  /// No description provided for @reportSavingsRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings by month'**
+  String get reportSavingsRegister;
+
+  /// No description provided for @reportSavingsRegisterHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Who has paid each month, and each member\'s total'**
+  String get reportSavingsRegisterHelp;
+
+  /// No description provided for @reportFinesRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Fines register'**
+  String get reportFinesRegister;
+
+  /// No description provided for @reportFinesRegisterHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Who was fined, for what, paid and still owing'**
+  String get reportFinesRegisterHelp;
+
+  /// No description provided for @reportWelfareRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Welfare contributions'**
+  String get reportWelfareRegister;
+
+  /// No description provided for @reportWelfareRegisterHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Who has paid the yearly amount, and who is short'**
+  String get reportWelfareRegisterHelp;
+
+  /// No description provided for @reportMemberRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Member register'**
+  String get reportMemberRegister;
+
+  /// No description provided for @reportMemberRegisterHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone, their status and what they hold'**
+  String get reportMemberRegisterHelp;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF'**
+  String get exportPdf;
+
+  /// No description provided for @exportCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV'**
+  String get exportCsv;
 }
 
 class _AppLocalizationsDelegate

@@ -201,3 +201,51 @@ class TaskAndApprovalTests(ReportsTestBase):
         tasks = {t["key"]: t["count"] for t in services.my_tasks(self.treasurer)}
         self.assertEqual(tasks.get("loans_to_disburse"), 1)
         self.assertNotIn("loans_to_disburse", {t["key"] for t in services.my_tasks(self.teller)})
+
+
+class ReportPdfTests(TenantTestCase):
+    """Every report can be handed over as a PDF."""
+
+    @classmethod
+    def setup_tenant(cls, tenant):
+        tenant.name = "Test SACCO"
+        tenant.country = "KE"
+        tenant.currency = "KES"
+
+    def test_reports_render_as_pdf(self):
+        from datetime import date
+
+        from reports import services
+        from reports.pdf import render_report
+
+        for report in (services.savings_register(start=date(2026, 4, 1), end=date(2026, 9, 30)),
+                       services.fines_register(start=date(2026, 1, 1), end=date(2026, 12, 31)),
+                       services.welfare_register(as_of=date(2026, 9, 30)),
+                       services.member_register(as_of=date(2026, 9, 30)),
+                       services.trial_balance(as_of=date(2026, 9, 30))):
+            report["key"] = "test"
+            report["generated_at"] = "2026-09-27T10:00:00"
+            report["generated_by"] = "Tester"
+            pdf = render_report(report, sacco_name="Test SACCO", currency="KES")
+            self.assertTrue(pdf.startswith(b"%PDF"), report["title"])
+            self.assertGreater(len(pdf), 1000)
+
+    def test_savings_register_counts_the_month_paid_for(self):
+        from datetime import date
+        from decimal import Decimal
+
+        from configuration.models import TenantConfig
+        from members.models import Member
+        from reports import services
+        from savings.services import contribute_shares
+
+        config = TenantConfig.get_solo()
+        config.monthly_contribution_target = TenantConfig.MONTHLY_TO_SHARES
+        config.save()
+        member = Member.objects.create(member_number="IW-26-00001", first_name="Koko", last_name="Faith",
+                                       id_type="NATIONAL_ID", id_number="9", phone_number="")
+        contribute_shares(member=member, amount=Decimal("500"), transaction_date=date(2026, 9, 27),
+                          for_month=date(2026, 11, 1))
+        report = services.savings_register(start=date(2026, 9, 1), end=date(2026, 11, 30))
+        row = next(r for r in report["sections"][0]["rows"] if r[0] == "IW-26-00001")
+        self.assertEqual(row[2:5], ["-", "-", "500.00"])  # Sep, Oct, Nov

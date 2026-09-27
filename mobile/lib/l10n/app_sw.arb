@@ -944,5 +944,15 @@
   "payStep5": "Hifadhi ujumbe wa M-Pesa - ndio risiti yako.",
   "whatYouPayFor": "Unalipia nini",
   "waitingOnYou": "{count, plural, =1{1 inakusubiri} other{{count} zinakusubiri}}",
-  "openNow": "Fungua"
+  "openNow": "Fungua",
+  "reportSavingsRegister": "Akiba kwa mwezi",
+  "reportSavingsRegisterHelp": "Nani amelipa kila mwezi, na jumla ya kila mwanachama",
+  "reportFinesRegister": "Rejista ya faini",
+  "reportFinesRegisterHelp": "Nani alitozwa, kwa nini, amelipa na anadaiwa",
+  "reportWelfareRegister": "Michango ya ustawi",
+  "reportWelfareRegisterHelp": "Nani amelipa kiasi cha mwaka, na nani hajakamilisha",
+  "reportMemberRegister": "Rejista ya wanachama",
+  "reportMemberRegisterHelp": "Wote, hali yao na walicho nacho",
+  "exportPdf": "PDF",
+  "exportCsv": "CSV"
 }

@@ -19,6 +19,10 @@ import '../../widgets/inuka_app_bar.dart';
       'loan_portfolio' => (l.reportLoanPortfolio, l.reportLoanPortfolioHelp, Icons.request_quote_outlined),
       'collections' => (l.reportCollections, l.reportCollectionsHelp, Icons.phone_android),
       'distribution_register' => (l.reportDistributions, l.reportDistributionsHelp, Icons.card_giftcard),
+      'savings_register' => (l.reportSavingsRegister, l.reportSavingsRegisterHelp, Icons.savings_outlined),
+      'fines_register' => (l.reportFinesRegister, l.reportFinesRegisterHelp, Icons.gavel_outlined),
+      'welfare_register' => (l.reportWelfareRegister, l.reportWelfareRegisterHelp, Icons.volunteer_activism_outlined),
+      'member_register' => (l.reportMemberRegister, l.reportMemberRegisterHelp, Icons.groups_outlined),
       _ => (key, '', Icons.description_outlined),
     };
 

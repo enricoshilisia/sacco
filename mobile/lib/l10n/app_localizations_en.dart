@@ -3201,4 +3201,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openNow => 'Open';
+
+  @override
+  String get reportSavingsRegister => 'Savings by month';
+
+  @override
+  String get reportSavingsRegisterHelp =>
+      'Who has paid each month, and each member\'s total';
+
+  @override
+  String get reportFinesRegister => 'Fines register';
+
+  @override
+  String get reportFinesRegisterHelp =>
+      'Who was fined, for what, paid and still owing';
+
+  @override
+  String get reportWelfareRegister => 'Welfare contributions';
+
+  @override
+  String get reportWelfareRegisterHelp =>
+      'Who has paid the yearly amount, and who is short';
+
+  @override
+  String get reportMemberRegister => 'Member register';
+
+  @override
+  String get reportMemberRegisterHelp =>
+      'Everyone, their status and what they hold';
+
+  @override
+  String get exportPdf => 'PDF';
+
+  @override
+  String get exportCsv => 'CSV';
 }

@@ -578,3 +578,213 @@ def my_tasks(user) -> list[dict]:
         InactivityFlag.objects.filter(status=InactivityFlag.PENDING).count())
     return tasks
 
+
+
+# --- Members: savings, fines and welfare ----------------------------------------
+
+
+def _months_between(start: date, end: date) -> list[date]:
+    months, month = [], start.replace(day=1)
+    while month <= end and len(months) < 24:
+        months.append(month)
+        month = (month.replace(day=28) + timedelta(days=7)).replace(day=1)
+    return months
+
+
+def savings_register(*, start: date, end: date) -> dict:
+    """Who has paid their monthly savings, month by month, with each
+    member's total. The contribution counts for the month it was paid FOR,
+    so paying early shows in that month, not the month it arrived."""
+    from configuration.models import TenantConfig
+    from members.models import Member, MemberStatus
+    from savings.models import SavingsProductType, SavingsTransaction, SavingsTransactionType, ShareContribution
+
+    config = TenantConfig.get_solo()
+    to_shares = config.monthly_contribution_target == TenantConfig.MONTHLY_TO_SHARES
+    months = _months_between(start, end)
+    paid = defaultdict(lambda: defaultdict(lambda: ZERO))
+
+    if to_shares:
+        rows_q = ShareContribution.objects.select_related("share_account").values(
+            "share_account__member_id", "for_month", "transaction_date", "amount")
+        member_key = "share_account__member_id"
+    else:
+        rows_q = SavingsTransaction.objects.filter(
+            savings_account__product__product_type=SavingsProductType.MANDATORY_MONTHLY,
+            transaction_type=SavingsTransactionType.DEPOSIT,
+        ).values("savings_account__member_id", "for_month", "transaction_date", "amount")
+        member_key = "savings_account__member_id"
+    for row in rows_q:
+        month = (row["for_month"] or row["transaction_date"]).replace(day=1)
+        paid[row[member_key]][month] += row["amount"]
+
+    rows, month_totals, grand = [], {m: ZERO for m in months}, ZERO
+    members = Member.objects.exclude(status=MemberStatus.EXITED).order_by("member_number")
+    for member in members:
+        member_paid = paid.get(member.pk, {})
+        values, total = [], ZERO
+        for month in months:
+            amount = member_paid.get(month, ZERO)
+            month_totals[month] += amount
+            total += amount
+            values.append(money(amount) if amount else "-")
+        grand += total
+        rows.append([member.member_number, member.full_name, *values, money(total)])
+
+    unpaid_last = [r for r in rows if months and r[2 + len(months) - 1] == "-"]
+    label = _("Savings") if to_shares else _("Monthly savings")
+    return {
+        "title": _("%(label)s by month") % {"label": label},
+        "period": _("%(start)s to %(end)s") % {"start": start.isoformat(), "end": end.isoformat()},
+        "summary": [
+            {"label": _("Members"), "value": str(len(rows)), "kind": "number"},
+            {"label": _("Collected"), "value": money(grand), "kind": "money"},
+            *[{"label": m.strftime("%B %Y"), "value": money(month_totals[m]), "kind": "money"} for m in months],
+        ],
+        "sections": [{
+            "title": _("Member by member"),
+            "columns": [col("number", _("Member no.")), col("name", _("Name")),
+                        *[col(m.isoformat(), m.strftime("%b %y"), "money") for m in months],
+                        col("total", _("Total"), "money")],
+            "rows": rows,
+            "totals": ["", _("Total"), *[money(month_totals[m]) for m in months], money(grand)],
+        }, {
+            "title": _("Not paid for %(month)s") % {"month": months[-1].strftime("%B %Y")} if months else _("Not paid"),
+            "columns": [col("number", _("Member no.")), col("name", _("Name"))],
+            "rows": [[r[0], r[1]] for r in unpaid_last],
+            "totals": None,
+        }],
+        "checks": [],
+    }
+
+
+def fines_register(*, start: date, end: date) -> dict:
+    """Who was fined, for what, what they have paid and what they still
+    owe - the disciplinary committee's working list."""
+    from fines.models import Fine, FineStatus
+
+    fines = (Fine.objects.filter(incurred_on__gte=start, incurred_on__lte=end)
+             .select_related("member", "offence_type").order_by("member__member_number", "incurred_on"))
+    per_member = defaultdict(lambda: {"charged": ZERO, "paid": ZERO, "waived": ZERO, "count": 0})
+    detail_rows = []
+    for fine in fines:
+        bucket = per_member[fine.member]
+        bucket["count"] += 1
+        if fine.status == FineStatus.WAIVED:
+            bucket["waived"] += fine.amount
+        else:
+            bucket["charged"] += fine.amount
+            bucket["paid"] += fine.paid
+        detail_rows.append([
+            fine.incurred_on.isoformat(), fine.member.member_number, fine.member.full_name,
+            fine.offence_type.name, money(fine.amount), money(fine.paid),
+            money(fine.outstanding), fine.get_status_display(),
+        ])
+
+    rows, totals = [], {"charged": ZERO, "paid": ZERO, "waived": ZERO}
+    for member, bucket in sorted(per_member.items(), key=lambda kv: kv[0].member_number):
+        outstanding = bucket["charged"] - bucket["paid"]
+        for key in totals:
+            totals[key] += bucket[key]
+        rows.append([member.member_number, member.full_name, str(bucket["count"]),
+                     money(bucket["charged"]), money(bucket["paid"]), money(outstanding)])
+    owing = [r for r in rows if Decimal(r[5]) > 0]
+
+    return {
+        "title": _("Fines register"),
+        "period": _("%(start)s to %(end)s") % {"start": start.isoformat(), "end": end.isoformat()},
+        "summary": [
+            {"label": _("Members fined"), "value": str(len(rows)), "kind": "number"},
+            {"label": _("Charged"), "value": money(totals["charged"]), "kind": "money"},
+            {"label": _("Paid"), "value": money(totals["paid"]), "kind": "money"},
+            {"label": _("Outstanding"), "value": money(totals["charged"] - totals["paid"]), "kind": "money"},
+            {"label": _("Waived"), "value": money(totals["waived"]), "kind": "money"},
+        ],
+        "sections": [{
+            "title": _("Who owes"),
+            "columns": [col("number", _("Member no.")), col("name", _("Name")), col("count", _("Fines"), "number"),
+                        col("charged", _("Charged"), "money"), col("paid", _("Paid"), "money"),
+                        col("outstanding", _("Outstanding"), "money")],
+            "rows": owing,
+            "totals": ["", _("Total"), "", money(totals["charged"]), money(totals["paid"]),
+                       money(totals["charged"] - totals["paid"])],
+        }, {
+            "title": _("Every fine"),
+            "columns": [col("date", _("Date"), "date"), col("number", _("Member no.")), col("name", _("Name")),
+                        col("offence", _("Offence")), col("amount", _("Amount"), "money"),
+                        col("paid", _("Paid"), "money"), col("outstanding", _("Outstanding"), "money"),
+                        col("status", _("Status"))],
+            "rows": detail_rows,
+            "totals": None,
+        }],
+        "checks": [],
+    }
+
+
+def welfare_register(*, as_of: date) -> dict:
+    """This year's welfare (benevolent) contributions: who has paid the
+    yearly amount, who is short, and what each member still owes on cases."""
+    from members.models import Member, MemberStatus
+    from welfare.models import WelfareSettings
+
+    yearly = WelfareSettings.get_solo().yearly_contribution
+    prepaid = Account.objects.get(code=WELFARE_PREPAID)
+    dues = Account.objects.get(code=WELFARE_DUES)
+    rows, paid_total, owed_total, short_total = [], ZERO, ZERO, ZERO
+    for member in Member.objects.exclude(status=MemberStatus.EXITED).order_by("member_number"):
+        balance = prepaid.balance(member=member, as_of=as_of)
+        owed = dues.balance(member=member, as_of=as_of)
+        short = max(yearly - balance, ZERO) if yearly else ZERO
+        paid_total += balance
+        owed_total += owed
+        short_total += short
+        rows.append([member.member_number, member.full_name, money(balance), money(short), money(owed)])
+    return {
+        "title": _("Welfare contributions"),
+        "period": _("As at %(date)s") % {"date": as_of.isoformat()},
+        "summary": [
+            {"label": _("Yearly amount"), "value": money(yearly), "kind": "money"},
+            {"label": _("Held for members"), "value": money(paid_total), "kind": "money"},
+            {"label": _("Short of the yearly amount"), "value": money(short_total), "kind": "money"},
+            {"label": _("Owed on cases"), "value": money(owed_total), "kind": "money"},
+        ],
+        "sections": [{
+            "title": _("Members"),
+            "columns": [col("number", _("Member no.")), col("name", _("Name")),
+                        col("balance", _("Welfare balance"), "money"),
+                        col("short", _("Still to pay"), "money"), col("owed", _("Owed on cases"), "money")],
+            "rows": rows,
+            "totals": ["", _("Total"), money(paid_total), money(short_total), money(owed_total)],
+        }],
+        "checks": [],
+    }
+
+
+def member_register(*, as_of: date) -> dict:
+    """The register itself: everyone, their status and what they hold."""
+    from members.models import Member
+
+    savings = Account.objects.get(code=SHARES)
+    deposits = Account.objects.get(code=SAVINGS)
+    rows = []
+    for member in Member.objects.order_by("member_number"):
+        rows.append([
+            member.member_number, member.full_name, member.get_status_display(),
+            _("Yes") if member.is_verified else _("No"),
+            member.phone_number or "-", member.date_joined.isoformat(),
+            money(savings.balance(member=member, as_of=as_of) + deposits.balance(member=member, as_of=as_of)),
+        ])
+    return {
+        "title": _("Member register"),
+        "period": _("As at %(date)s") % {"date": as_of.isoformat()},
+        "summary": [{"label": _("Members"), "value": str(len(rows)), "kind": "number"}],
+        "sections": [{
+            "title": _("Members"),
+            "columns": [col("number", _("Member no.")), col("name", _("Name")), col("status", _("Status")),
+                        col("verified", _("Verified")), col("phone", _("Phone")),
+                        col("joined", _("Joined"), "date"), col("savings", _("Savings"), "money")],
+            "rows": rows,
+            "totals": None,
+        }],
+        "checks": [],
+    }

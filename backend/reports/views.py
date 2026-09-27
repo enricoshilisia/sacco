@@ -29,6 +29,10 @@ REPORTS = {
     "loan_portfolio": (services.loan_portfolio, "as_of", "loans.view"),
     "collections": (services.collections, "period", "payments.view_transactions"),
     "distribution_register": (services.distribution_register, "period", "distributions.view"),
+    "savings_register": (services.savings_register, "period", "savings.view"),
+    "fines_register": (services.fines_register, "period", "fines.view"),
+    "welfare_register": (services.welfare_register, "as_of", "welfare.view"),
+    "member_register": (services.member_register, "as_of", "members.view"),
 }
 
 
@@ -69,7 +73,9 @@ class ReportView(APIView):
         builder, params, permission = REPORTS[key]
         if not user_has_permission(request.user, permission):
             raise PermissionDenied()
-        export = request.query_params.get("export") == "csv"
+        export = request.query_params.get("export", "")
+        if export not in ("", "csv", "pdf"):
+            return Response({"detail": _("Unknown export format.")}, status=status.HTTP_400_BAD_REQUEST)
         if export and not user_has_permission(request.user, "reports.export"):
             raise PermissionDenied(_("Exporting reports needs the reports.export permission."))
 
@@ -95,9 +101,23 @@ class ReportView(APIView):
         report["key"] = key
         report["generated_at"] = timezone.now().isoformat()
         report["generated_by"] = request.user.get_full_name()
-        if export:
+        if export == "csv":
             return _csv_response(report)
+        if export == "pdf":
+            return _pdf_response(report)
         return Response(report)
+
+
+def _pdf_response(report) -> HttpResponse:
+    from tenants.models import Tenant
+
+    from .pdf import filename_for, render_report
+
+    tenant = Tenant.objects.filter(schema_name=connection.schema_name).first()
+    pdf = render_report(report, sacco_name=tenant.name if tenant else "", currency=tenant.currency if tenant else "")
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = f'inline; filename="{filename_for(report)}"'
+    return response
 
 
 def _csv_response(report) -> HttpResponse:

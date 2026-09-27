@@ -3203,4 +3203,37 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get openNow => 'Fungua';
+
+  @override
+  String get reportSavingsRegister => 'Akiba kwa mwezi';
+
+  @override
+  String get reportSavingsRegisterHelp =>
+      'Nani amelipa kila mwezi, na jumla ya kila mwanachama';
+
+  @override
+  String get reportFinesRegister => 'Rejista ya faini';
+
+  @override
+  String get reportFinesRegisterHelp =>
+      'Nani alitozwa, kwa nini, amelipa na anadaiwa';
+
+  @override
+  String get reportWelfareRegister => 'Michango ya ustawi';
+
+  @override
+  String get reportWelfareRegisterHelp =>
+      'Nani amelipa kiasi cha mwaka, na nani hajakamilisha';
+
+  @override
+  String get reportMemberRegister => 'Rejista ya wanachama';
+
+  @override
+  String get reportMemberRegisterHelp => 'Wote, hali yao na walicho nacho';
+
+  @override
+  String get exportPdf => 'PDF';
+
+  @override
+  String get exportCsv => 'CSV';
 }
