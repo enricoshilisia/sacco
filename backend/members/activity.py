@@ -137,15 +137,28 @@ def evaluate_member(member: Member, *, settings=None, today=None) -> dict:
     return result
 
 
+def _has_grace(member: Member, today: date) -> bool:
+    return member.inactivity_grace_until is not None and member.inactivity_grace_until >= today
+
+
 def run_activity_check(*, today=None, send_warnings=True) -> dict:
     """The monthly check over every active member. Idempotent: an existing
     pending flag isn't duplicated, and a member is warned at most once per
     streak length (last_warning_key)."""
     from notifications.services import queue_sms
 
+    from .exit_services import lift_expired_suspensions
+
     settings = MemberActivitySettings.get_solo()
-    flagged = warned = 0
+    at = today or date.today()
+    lifted = lift_expired_suspensions(at)
+    flagged = warned = skipped = 0
     for member in Member.objects.filter(status=MemberStatus.ACTIVE).order_by("member_number"):
+        if _has_grace(member, at):
+            # The committee gave this member more time after they explained
+            # their situation - don't flag them again until it runs out.
+            skipped += 1
+            continue
         r = evaluate_member(member, settings=settings, today=today)
         for reason in r["reasons"]:
             detail = (
@@ -173,7 +186,9 @@ def run_activity_check(*, today=None, send_warnings=True) -> dict:
                 member.last_warning_key = key
                 member.save(update_fields=["last_warning_key"])
                 warned += 1
-    return {"flagged": flagged, "warned": warned}
+    settings.last_run_at = timezone.now()
+    settings.save(update_fields=["last_run_at"])
+    return {"flagged": flagged, "warned": warned, "given_more_time": skipped, "suspensions_lifted": lifted}
 
 
 def _change_status(member: Member, new_status: str, *, reason: str, by=None) -> None:
@@ -203,14 +218,23 @@ def confirm_flag(flag: InactivityFlag, *, confirmed_by, notes: str = "") -> Inac
     return flag
 
 
-def dismiss_flag(flag: InactivityFlag, *, dismissed_by, notes: str) -> InactivityFlag:
+def dismiss_flag(flag: InactivityFlag, *, dismissed_by, notes: str, grace_until=None) -> InactivityFlag:
+    """Keeps the member active. `grace_until` gives them until that date
+    before the rule can flag them again - the committee's answer to a
+    member who has explained what they are going through."""
     if flag.status != InactivityFlag.PENDING:
         raise ValueError("This flag has already been decided.")
+    if grace_until is not None and grace_until < date.today():
+        raise ValueError("The extension must be a date in the future.")
     flag.status = InactivityFlag.DISMISSED
     flag.decided_by = dismissed_by
     flag.decided_at = timezone.now()
     flag.notes = notes
     flag.save(update_fields=["status", "decided_by", "decided_at", "notes"])
+    if grace_until is not None:
+        member = flag.member
+        member.inactivity_grace_until = grace_until
+        member.save(update_fields=["inactivity_grace_until"])
     return flag
 
 

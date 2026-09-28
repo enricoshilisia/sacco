@@ -569,6 +569,12 @@ def my_tasks(user) -> list[dict]:
 
     add("minutes_to_approve", "governance.approve_minutes",
         MeetingMinutes.objects.filter(status=MinutesStatus.SUBMITTED).exclude(submitted_by=user).count())
+    from members.models import Resignation, ResignationStatus
+
+    add("notices_to_decide", "members.approve_admission",
+        Resignation.objects.filter(status=ResignationStatus.NOTICE).exclude(requested_by=user).count())
+    add("refunds_due", "payments.initiate_disbursement",
+        Resignation.objects.filter(status=ResignationStatus.APPROVED, leaving_on__lte=date.today()).count())
     add("applications_to_approve", "members.approve_admission",
         MemberApplication.objects.filter(status=ApplicationStatus.PENDING).exclude(submitted_by=user).count())
 

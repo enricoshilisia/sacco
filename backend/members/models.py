@@ -20,6 +20,8 @@ class MemberCategory(models.TextChoices):
 class MemberStatus(models.TextChoices):
     ACTIVE = "ACTIVE", "Active"
     DORMANT = "DORMANT", "Dormant"
+    SUSPENDED = "SUSPENDED", "Suspended"
+    NOTICE = "NOTICE", "Serving notice"
     EXITED = "EXITED", "Exited"
 
 
@@ -105,6 +107,12 @@ class Member(AuditMixin, models.Model):
     # joins - an approved application or staff registration - start them
     # on probation (verified_at=None).
     verified_at = models.DateTimeField(null=True, blank=True, default=timezone.now)
+    # Discipline and leaving (members.discipline, members.exit).
+    suspended_until = models.DateField(null=True, blank=True)
+    suspension_reason = models.CharField(max_length=255, blank=True)
+    # The committee can give someone longer before the inactivity rule bites
+    # - a member who has explained their situation.
+    inactivity_grace_until = models.DateField(null=True, blank=True)
 
     is_kyc_verified = models.BooleanField(default=False)
     kyc_verified_at = models.DateTimeField(null=True, blank=True)
@@ -422,6 +430,10 @@ class MemberActivitySettings(models.Model):
     monthly_due_day = models.PositiveSmallIntegerField(
         default=18, help_text="Day of the month the monthly contribution is due (e.g. 18)."
     )
+    # How long before a meeting an apology must be sent (the constitution:
+    # three days for a physical meeting, three hours for an online one).
+    apology_days_before_physical = models.PositiveSmallIntegerField(default=0)
+    apology_hours_before_online = models.PositiveSmallIntegerField(default=0)
     meeting_rule_enabled = models.BooleanField(default=True)
     warn_after_meetings = models.PositiveSmallIntegerField(default=2)
     inactive_after_meetings = models.PositiveSmallIntegerField(default=3)
@@ -493,6 +505,20 @@ class MembershipSettings(models.Model):
     )
     verification_months = models.PositiveSmallIntegerField(
         default=3, help_text="Consecutive months of mandatory monthly contributions needed to be verified.",
+    )
+    probation_days = models.PositiveSmallIntegerField(
+        default=0, help_text="Days from registration before a member can be full (e.g. 90).",
+    )
+    # Resignation: how much notice, and how much of their savings comes back.
+    notice_months = models.PositiveSmallIntegerField(
+        default=3, help_text="Months of notice a resigning member must give.",
+    )
+    exit_refund_percent = models.DecimalField(
+        max_digits=5, decimal_places=2, default=100,
+        help_text="Percentage of a resigning member's savings refunded (e.g. 90).",
+    )
+    exit_deducts_debts = models.BooleanField(
+        default=True, help_text="Take unpaid fines and welfare dues out of the refund.",
     )
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -589,3 +615,58 @@ class MemberApplication(models.Model):
     @property
     def full_name(self):
         return " ".join(filter(None, [self.first_name, self.other_names, self.last_name]))
+
+
+class ResignationStatus(models.TextChoices):
+    NOTICE = "NOTICE", "Notice given"
+    APPROVED = "APPROVED", "Approved - serving notice"
+    PAID = "PAID", "Refunded and closed"
+    CANCELLED = "CANCELLED", "Cancelled"
+    REJECTED = "REJECTED", "Rejected"
+
+
+class Resignation(models.Model):
+    """
+    A member leaving. They give notice (three months in Inuka West), the
+    committee approves, and only once the notice has run does the refund
+    happen: a percentage of their savings, less anything they still owe.
+    The percentage kept stays with the group.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    member = models.ForeignKey(Member, on_delete=models.PROTECT, related_name="resignations")
+    status = models.CharField(max_length=10, choices=ResignationStatus.choices, default=ResignationStatus.NOTICE)
+    reason = models.TextField(blank=True)
+
+    notice_given_on = models.DateField()
+    leaving_on = models.DateField(help_text="When the notice period ends and a refund may be paid.")
+
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    decided_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decision_notes = models.TextField(blank=True)
+
+    # Filled in when the refund is paid.
+    savings_at_exit = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    refund_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    debts_deducted = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    refund_paid = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    retained_by_group = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    paid_on = models.DateField(null=True, blank=True)
+    paid_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    journal_entry = models.OneToOneField(
+        "accounting.JournalEntry", null=True, blank=True, on_delete=models.PROTECT, related_name="+"
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.member.member_number} leaving on {self.leaving_on}"

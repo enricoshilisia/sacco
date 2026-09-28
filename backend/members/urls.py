@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import activity_views, admission_views, profile_views, views
+from . import activity_views, admission_views, exit_views, profile_views, views
 
 app_name = "members"
 
@@ -16,6 +16,15 @@ urlpatterns = [
          name="application_reject"),
     path("applications/<uuid:pk>/cancel/", admission_views.ApplicationCancelView.as_view(), name="application_cancel"),
     path("membership-settings/", admission_views.MembershipSettingsView.as_view(), name="membership_settings"),
+    path("me/leaving/", exit_views.MyExitQuoteView.as_view(), name="my_exit"),
+    path("resignations/", exit_views.ResignationListView.as_view(), name="resignation_list"),
+    path("resignations/<uuid:pk>/approve/", exit_views.ResignationDecisionView.as_view(approve=True),
+         name="resignation_approve"),
+    path("resignations/<uuid:pk>/reject/", exit_views.ResignationDecisionView.as_view(approve=False),
+         name="resignation_reject"),
+    path("resignations/<uuid:pk>/cancel/", exit_views.ResignationCancelView.as_view(), name="resignation_cancel"),
+    path("resignations/<uuid:pk>/payout/", exit_views.ResignationPayoutView.as_view(), name="resignation_payout"),
+    path("<uuid:pk>/suspend/", exit_views.SuspendMemberView.as_view(), name="member_suspend"),
     path("me/photo/", views.MyMemberPhotoUploadView.as_view(), name="my_member_photo_upload"),
     path("me/profile/", profile_views.MyProfileView.as_view(), name="my_profile"),
     path("me/activity/", activity_views.MyActivityView.as_view(), name="my_activity"),

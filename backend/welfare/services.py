@@ -108,6 +108,8 @@ def create_case(
         raise ValueError("Welfare cases can't be opened for a member who has exited.")
     if beneficiary.status == MemberStatus.DORMANT:
         raise ValueError("This member is dormant, so welfare doesn't cover them until they're reactivated.")
+    if beneficiary.status == MemberStatus.SUSPENDED:
+        raise ValueError("This member is suspended, so welfare doesn't cover them until the suspension ends.")
     from members.admission import require_verified
 
     require_verified(beneficiary, "be covered by welfare")

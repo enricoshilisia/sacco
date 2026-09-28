@@ -23,9 +23,11 @@ class FinesTests(TenantTestCase):
 
     def setUp(self):
         super().setUp()
-        self.absence = OffenceType.objects.create(name="Absent without apology", amount=D("200"),
-                                                  from_attendance="ABSENT")
-        self.late = OffenceType.objects.create(name="Late to meeting", amount=D("100"), from_attendance="LATE")
+        # These two ship with the SACCO's rule book (members migration 0012).
+        self.absence = OffenceType.objects.get(name="Absent without apology")
+        self.absence.amount = D("200")
+        self.absence.save(update_fields=["amount"])
+        self.late = OffenceType.objects.get(name="Late to meeting")
         self.member = self._member("IW-26-00001", "Mary")
         self.other = self._member("IW-26-00002", "John")
         self.clerk = self._user("+254711444001", "Secretary")

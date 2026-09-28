@@ -265,7 +265,12 @@ def longest_contribution_run(member: Member) -> int:
 def verification_status(member: Member) -> dict:
     settings = MembershipSettings.get_solo()
     paid = fee_paid(member)
+    days_in = (date.today() - member.date_joined).days
+    days_left = max(settings.probation_days - days_in, 0)
     return {
+        "probation_days": settings.probation_days,
+        "days_since_joining": days_in,
+        "days_left": days_left,
         "verified": member.is_verified,
         "verified_at": member.verified_at,
         "registration_fee": settings.registration_fee,
@@ -282,7 +287,9 @@ def check_verification(member: Member) -> bool:
     if member.is_verified:
         return True
     status = verification_status(member)
-    if status["fee_outstanding"] > 0 or status["months_done"] < status["months_required"]:
+    if (status["fee_outstanding"] > 0
+            or status["months_done"] < status["months_required"]
+            or status["days_left"] > 0):
         return False
     member.verified_at = timezone.now()
     member.save(update_fields=["verified_at"])
@@ -298,8 +305,12 @@ def check_verification(member: Member) -> bool:
 def require_verified(member: Member, what: str) -> None:
     """what: e.g. 'borrow', 'guarantee loans'."""
     if not member.is_verified:
+        settings = MembershipSettings.get_solo()
+        waits = [f"{settings.probation_days} days from registration"] if settings.probation_days else []
+        waits.append(f"{settings.verification_months} consecutive monthly contributions")
+        if settings.registration_fee > 0:
+            waits.append("the registration fee")
         raise ValueError(
             f"{member.full_name} is still a new member on probation, so can't {what} yet. "
-            f"Membership is verified after the registration fee and "
-            f"{MembershipSettings.get_solo().verification_months} consecutive monthly contributions."
+            f"Full membership comes after {', '.join(waits)}."
         )

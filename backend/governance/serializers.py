@@ -17,6 +17,7 @@ class MeetingSerializer(serializers.ModelSerializer):
         fields = [
             "id", "meeting_type", "meeting_type_label", "title", "scheduled_at", "venue", "agenda",
             "counts_for_attendance", "status", "status_label", "notice_sent_at", "closed_at", "counts", "my_attendance",
+            "is_online",
             "document_count", "minutes_status", "confidential",
         ]
 
@@ -47,6 +48,7 @@ class MeetingSerializer(serializers.ModelSerializer):
 
 
 class ScheduleMeetingSerializer(serializers.Serializer):
+    is_online = serializers.BooleanField(required=False, default=False)
     meeting_type = serializers.ChoiceField(choices=MeetingType.choices)
     title = serializers.CharField(max_length=200)
     scheduled_at = serializers.DateTimeField()

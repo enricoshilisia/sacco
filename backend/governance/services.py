@@ -41,12 +41,35 @@ def send_notice_sms(meeting: Meeting) -> int:
     return len(members)
 
 
+def apology_deadline(meeting: Meeting):
+    """The last moment an apology counts, from the SACCO's own rule."""
+    from datetime import timedelta
+
+    from members.models import MemberActivitySettings
+
+    settings = MemberActivitySettings.get_solo()
+    if meeting.is_online:
+        hours = settings.apology_hours_before_online
+        return meeting.scheduled_at - timedelta(hours=hours) if hours else None
+    days = settings.apology_days_before_physical
+    return meeting.scheduled_at - timedelta(days=days) if days else None
+
+
 def send_apology(*, meeting: Meeting, member: Member, reason: str) -> MeetingAttendance:
-    """A member saying in advance they can't attend."""
+    """A member saying in advance they can't attend. Late apologies are
+    refused: the constitution sets how much warning the group expects."""
+    from django.utils import timezone as tz
+
     if meeting.status != MeetingStatus.SCHEDULED:
         raise ValueError("Apologies can only be sent before the register is closed.")
     if not reason.strip():
         raise ValueError("Give a short reason for your apology.")
+    deadline = apology_deadline(meeting)
+    if deadline is not None and tz.now() > deadline:
+        raise ValueError(
+            f"Apologies for this meeting closed on {timezone.localtime(deadline):%d %b %Y at %H:%M}. "
+            f"Speak to the Secretary."
+        )
     attendance, _ = MeetingAttendance.objects.update_or_create(
         meeting=meeting, member=member,
         defaults={"status": AttendanceStatus.APOLOGY, "apology_reason": reason.strip()[:255]},

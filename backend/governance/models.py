@@ -37,6 +37,9 @@ class Meeting(models.Model):
     title = models.CharField(max_length=200)
     scheduled_at = models.DateTimeField()
     venue = models.CharField(max_length=200, blank=True)
+    is_online = models.BooleanField(
+        default=False, help_text="An online meeting - apologies are due closer to the start."
+    )
     agenda = models.TextField(blank=True)
     counts_for_attendance = models.BooleanField(
         default=True, help_text="Whether absences here count towards the inactivity rule."
