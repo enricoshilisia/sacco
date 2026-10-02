@@ -217,6 +217,8 @@ class LoanProduct {
   final String name;
   final String interestMethod;
   final Decimal interestRate;
+  /// PER_MONTH ("10% p.m.", what a chama usually quotes) or PER_YEAR.
+  final String interestPeriod;
   final int minTermMonths;
   final int maxTermMonths;
   /// Null = the SACCO's default multiplier applies (TenantConfig).
@@ -229,6 +231,7 @@ class LoanProduct {
       : id = _str(json['id']),
         name = _str(json['name']),
         interestMethod = _str(json['interest_method']),
+        interestPeriod = _str(json['interest_period']).isEmpty ? 'PER_YEAR' : _str(json['interest_period']),
         interestRate = Money.parse(json['interest_rate']),
         minTermMonths = (json['min_term_months'] as num?)?.toInt() ?? 1,
         maxTermMonths = (json['max_term_months'] as num?)?.toInt() ?? 1,

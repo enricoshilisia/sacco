@@ -6,6 +6,7 @@ app_name = "loans"
 
 urlpatterns = [
     path("products/", views.LoanProductListCreateView.as_view(), name="product_list_create"),
+    path("products/<uuid:pk>/", views.LoanProductDetailView.as_view(), name="product_detail"),
     path("me/", views.MyLoansListView.as_view(), name="my_loans"),
     path("me/apply/", views.MyLoanApplyView.as_view(), name="my_apply"),
     path("me/guarantee-requests/", views.MyGuaranteeRequestsView.as_view(), name="my_guarantee_requests"),

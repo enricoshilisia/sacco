@@ -1730,5 +1730,64 @@
   "reportMemberRegister": "Member register",
   "reportMemberRegisterHelp": "Everyone, their status and what they hold",
   "exportPdf": "PDF",
-  "exportCsv": "CSV"
+  "exportCsv": "CSV",
+  "newLoan": "New loan for a member",
+  "newLoanHelp": "The member still needs guarantors and the committee's approval before any money moves.",
+  "loanCreated": "Loan application created",
+  "loanAmount": "Amount",
+  "loanTermMonths": "Months to repay",
+  "loanPurpose": "What it is for",
+  "interestRate": "Interest",
+  "interestPeriod": "Per",
+  "interestMethodLabel": "How interest is worked out",
+  "perMonth": "month (p.m.)",
+  "perYear": "year (p.a.)",
+  "pmShort": "p.m.",
+  "paShort": "p.a.",
+  "interestRateHelp": "Starts at the standard rate; change it if the committee agreed another for this loan.",
+  "rateInvalid": "Enter the interest as a number, e.g. 10.",
+  "chooseMemberAndAmount": "Choose the member, the loan type and the amount.",
+  "memberSavingsIs": "Savings: {amount}",
+  "@memberSavingsIs": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "memberCanBorrowUpTo": "Savings {amount} – can borrow up to {max}",
+  "@memberCanBorrowUpTo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "loanRules": "Loan rules",
+  "loanRulesHelp": "The standard rate, how much of their savings a member may borrow, how long they have, and whether guarantors are needed. The Chairperson and the Loans Officer keep these up to date.",
+  "upToTimesSavings": "up to {times}× savings",
+  "@upToTimesSavings": {
+    "placeholders": {
+      "times": {
+        "type": "String"
+      }
+    }
+  },
+  "monthsRange": "{min}–{max} months",
+  "@monthsRange": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "guarantorsRequired": "Guarantors required",
+  "maxMultipleOfSavings": "How many times their savings",
+  "maxMultipleHelp": "e.g. 3 means a member may borrow three times what they have saved."
 }

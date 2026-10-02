@@ -17,6 +17,7 @@ from .serializers import (
     LoanGuarantorSerializer,
     LoanProductSerializer,
     LoanSerializer,
+    StaffLoanApplyInputSerializer,
     MarkDefaultedInputSerializer,
     RecordRepaymentInputSerializer,
     RespondGuaranteeInputSerializer,
@@ -55,6 +56,16 @@ class LoanProductListCreateView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return [IsAuthenticated(), require_permission("loans.manage_products")()]
         return [IsAuthenticated()]
+
+
+class LoanProductDetailView(generics.RetrieveUpdateAPIView):
+    """The loan rules: the standard rate, how much of a member's savings
+    they may borrow, over how long, and whether guarantors are needed.
+    The Chairperson and the Loans Officer keep these up to date."""
+
+    serializer_class = LoanProductSerializer
+    queryset = LoanProduct.objects.all()
+    permission_classes = [IsAuthenticated, require_permission("loans.manage_products")]
 
 
 class LoanListView(generics.ListAPIView):
@@ -133,7 +144,7 @@ class LoanApplyOnBehalfView(APIView):
 
     def post(self, request, member_id):
         member = generics.get_object_or_404(Member, pk=member_id)
-        serializer = LoanApplyInputSerializer(data=request.data)
+        serializer = StaffLoanApplyInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
             loan = apply_for_loan(member=member, created_by=request.user, **serializer.validated_data)

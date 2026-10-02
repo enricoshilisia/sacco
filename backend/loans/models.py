@@ -9,6 +9,15 @@ class InterestMethod(models.TextChoices):
     FLAT = "FLAT", "Flat"
 
 
+class InterestPeriod(models.TextChoices):
+    """Chamas usually quote a rate per month ("10% p.m."), banks per year.
+    The rate is stored exactly as the SACCO quotes it; the schedule
+    converts it (loans/services.py:_annual_rate)."""
+
+    PER_MONTH = "PER_MONTH", "Per month (p.m.)"
+    PER_YEAR = "PER_YEAR", "Per year (p.a.)"
+
+
 class LoanProduct(models.Model):
     """A loan product definition - term/rate/eligibility rules. The actual
     method (reducing-balance vs flat) is per-product config, never a code
@@ -21,7 +30,11 @@ class LoanProduct(models.Model):
 
     interest_method = models.CharField(max_length=20, choices=InterestMethod.choices)
     interest_rate = models.DecimalField(
-        max_digits=6, decimal_places=4, help_text="Annual rate, e.g. 0.1200 = 12%"
+        max_digits=6, decimal_places=4, help_text="Rate as quoted, e.g. 0.1000 = 10% (see interest_period)"
+    )
+    interest_period = models.CharField(
+        max_length=10, choices=InterestPeriod.choices, default=InterestPeriod.PER_YEAR,
+        help_text="Whether the rate is per month (p.m.) or per year (p.a.).",
     )
 
     min_term_months = models.PositiveSmallIntegerField(default=1)
@@ -79,6 +92,9 @@ class Loan(models.Model):
 
     interest_method = models.CharField(max_length=20, choices=InterestMethod.choices)
     interest_rate = models.DecimalField(max_digits=6, decimal_places=4)
+    interest_period = models.CharField(
+        max_length=10, choices=InterestPeriod.choices, default=InterestPeriod.PER_YEAR
+    )
 
     status = models.CharField(max_length=20, choices=LoanStatus.choices, default=LoanStatus.PENDING_GUARANTORS)
 

@@ -524,6 +524,11 @@ def finance_summary() -> dict:
         "loans_outstanding": money(_balance(LOANS)),
         "welfare_fund": money(_balance(WELFARE_FUND)),
         "income_ytd": money(income),
+        # The year's earnings, each source named - interest on loans is part
+        # of the total, not something separate.
+        "earnings_breakdown": [
+            {"label": row[1], "value": row[2]} for row in earnings(start=year_start, end=today)["sections"][0]["rows"]
+        ],
         "expenses_ytd": money(expense),
         "surplus_ytd": money(income - expense),
         "par30": par,
@@ -791,6 +796,53 @@ def member_register(*, as_of: date) -> dict:
                         col("joined", _("Joined"), "date"), col("savings", _("Savings"), "money")],
             "rows": rows,
             "totals": None,
+        }],
+        "checks": [],
+    }
+
+
+def earnings(*, start: date, end: date) -> dict:
+    """What the group earned in the period, and where each shilling came
+    from: interest on loans, fines, registration fees, what was kept when
+    members left. Interest is part of the total, and named on its own line
+    so the meeting can see how much the loans brought in."""
+    rows, total = [], ZERO
+    for account in Account.objects.filter(account_type=AccountType.INCOME).order_by("code"):
+        amount = ZERO
+        totals = _totals_by_account(start=start, end=end).get(account.code)
+        if totals:
+            amount = _signed(AccountType.INCOME, totals["debit"], totals["credit"])
+        if amount == 0:
+            continue
+        rows.append([account.code, account.name, money(amount)])
+        total += amount
+    for row in rows:
+        share = (Decimal(row[2]) / total * 100).quantize(Decimal("0.1")) if total else ZERO
+        row.append(f"{share}%")
+
+    expenses = ZERO
+    for account in Account.objects.filter(account_type=AccountType.EXPENSE):
+        totals = _totals_by_account(start=start, end=end).get(account.code)
+        if totals:
+            expenses += _signed(AccountType.EXPENSE, totals["debit"], totals["credit"])
+
+    interest = next((Decimal(r[2]) for r in rows if r[0] == "5000"), ZERO)
+    return {
+        "title": _("Group earnings"),
+        "period": _("%(start)s to %(end)s") % {"start": start.isoformat(), "end": end.isoformat()},
+        "summary": [
+            {"label": _("Total earnings"), "value": money(total), "kind": "money"},
+            {"label": _("Interest on loans"), "value": money(interest), "kind": "money"},
+            {"label": _("Other earnings"), "value": money(total - interest), "kind": "money"},
+            {"label": _("Costs"), "value": money(expenses), "kind": "money"},
+            {"label": _("Left for members"), "value": money(total - expenses), "kind": "money"},
+        ],
+        "sections": [{
+            "title": _("Where the earnings came from"),
+            "columns": [col("code", _("Code")), col("name", _("Source")), col("amount", _("Amount"), "money"),
+                        col("share", _("Share"))],
+            "rows": rows,
+            "totals": ["", _("Total earnings"), money(total), "100%"],
         }],
         "checks": [],
     }

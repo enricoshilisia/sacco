@@ -3235,4 +3235,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportCsv => 'CSV';
+
+  @override
+  String get newLoan => 'New loan for a member';
+
+  @override
+  String get newLoanHelp =>
+      'The member still needs guarantors and the committee\'s approval before any money moves.';
+
+  @override
+  String get loanCreated => 'Loan application created';
+
+  @override
+  String get loanAmount => 'Amount';
+
+  @override
+  String get loanTermMonths => 'Months to repay';
+
+  @override
+  String get loanPurpose => 'What it is for';
+
+  @override
+  String get interestRate => 'Interest';
+
+  @override
+  String get interestPeriod => 'Per';
+
+  @override
+  String get interestMethodLabel => 'How interest is worked out';
+
+  @override
+  String get perMonth => 'month (p.m.)';
+
+  @override
+  String get perYear => 'year (p.a.)';
+
+  @override
+  String get pmShort => 'p.m.';
+
+  @override
+  String get paShort => 'p.a.';
+
+  @override
+  String get interestRateHelp =>
+      'Starts at the standard rate; change it if the committee agreed another for this loan.';
+
+  @override
+  String get rateInvalid => 'Enter the interest as a number, e.g. 10.';
+
+  @override
+  String get chooseMemberAndAmount =>
+      'Choose the member, the loan type and the amount.';
+
+  @override
+  String memberSavingsIs(String amount) {
+    return 'Savings: $amount';
+  }
+
+  @override
+  String memberCanBorrowUpTo(String amount, String max) {
+    return 'Savings $amount – can borrow up to $max';
+  }
+
+  @override
+  String get loanRules => 'Loan rules';
+
+  @override
+  String get loanRulesHelp =>
+      'The standard rate, how much of their savings a member may borrow, how long they have, and whether guarantors are needed. The Chairperson and the Loans Officer keep these up to date.';
+
+  @override
+  String upToTimesSavings(String times) {
+    return 'up to $times× savings';
+  }
+
+  @override
+  String monthsRange(int min, int max) {
+    return '$min–$max months';
+  }
+
+  @override
+  String get guarantorsRequired => 'Guarantors required';
+
+  @override
+  String get maxMultipleOfSavings => 'How many times their savings';
+
+  @override
+  String get maxMultipleHelp =>
+      'e.g. 3 means a member may borrow three times what they have saved.';
 }

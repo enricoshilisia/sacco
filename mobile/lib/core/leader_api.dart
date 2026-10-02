@@ -157,6 +157,46 @@ extension LeaderApi on SaccoApi {
   Future<List<Loan>> memberLoans(String memberId) async =>
       results(await client.get<Object?>('/api/loans/', query: {'member': memberId})).map(Loan.fromJson).toList();
 
+  /// The Loans Officer writing a loan for a member, at the agreed rate.
+  Future<void> createLoanForMember({
+    required String memberId,
+    required String productId,
+    required Decimal amount,
+    required int termMonths,
+    required Decimal interestRate,
+    required String interestPeriod,
+    String purpose = '',
+  }) =>
+      client.post<Object?>('/api/loans/members/$memberId/apply/', data: {
+        'product': productId,
+        'amount_requested': amount.toStringAsFixed(2),
+        'term_months': termMonths,
+        'purpose': purpose,
+        'interest_rate': interestRate.toString(),
+        'interest_period': interestPeriod,
+      });
+
+  /// The loan rules: rate, how much of their savings, how long, guarantors.
+  Future<void> saveLoanProduct(
+    String id, {
+    required Decimal interestRate,
+    required String interestPeriod,
+    required String interestMethod,
+    Decimal? maxMultipleOfDeposits,
+    required int minTermMonths,
+    required int maxTermMonths,
+    required bool requiresGuarantors,
+  }) =>
+      client.patch<Object?>('/api/loans/products/$id/', data: {
+        'interest_rate': interestRate.toString(),
+        'interest_period': interestPeriod,
+        'interest_method': interestMethod,
+        'max_multiple_of_deposits': maxMultipleOfDeposits?.toString(),
+        'min_term_months': minTermMonths,
+        'max_term_months': maxTermMonths,
+        'requires_guarantors': requiresGuarantors,
+      });
+
   Future<void> appraiseLoan(String id, String notes) =>
       client.post<Object?>('/api/loans/$id/appraise/', data: {'notes': notes});
 

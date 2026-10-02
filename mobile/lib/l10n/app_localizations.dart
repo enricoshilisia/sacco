@@ -5833,6 +5833,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CSV'**
   String get exportCsv;
+
+  /// No description provided for @newLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'New loan for a member'**
+  String get newLoan;
+
+  /// No description provided for @newLoanHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The member still needs guarantors and the committee\'s approval before any money moves.'**
+  String get newLoanHelp;
+
+  /// No description provided for @loanCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan application created'**
+  String get loanCreated;
+
+  /// No description provided for @loanAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get loanAmount;
+
+  /// No description provided for @loanTermMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Months to repay'**
+  String get loanTermMonths;
+
+  /// No description provided for @loanPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'What it is for'**
+  String get loanPurpose;
+
+  /// No description provided for @interestRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest'**
+  String get interestRate;
+
+  /// No description provided for @interestPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Per'**
+  String get interestPeriod;
+
+  /// No description provided for @interestMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How interest is worked out'**
+  String get interestMethodLabel;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'month (p.m.)'**
+  String get perMonth;
+
+  /// No description provided for @perYear.
+  ///
+  /// In en, this message translates to:
+  /// **'year (p.a.)'**
+  String get perYear;
+
+  /// No description provided for @pmShort.
+  ///
+  /// In en, this message translates to:
+  /// **'p.m.'**
+  String get pmShort;
+
+  /// No description provided for @paShort.
+  ///
+  /// In en, this message translates to:
+  /// **'p.a.'**
+  String get paShort;
+
+  /// No description provided for @interestRateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts at the standard rate; change it if the committee agreed another for this loan.'**
+  String get interestRateHelp;
+
+  /// No description provided for @rateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the interest as a number, e.g. 10.'**
+  String get rateInvalid;
+
+  /// No description provided for @chooseMemberAndAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the member, the loan type and the amount.'**
+  String get chooseMemberAndAmount;
+
+  /// No description provided for @memberSavingsIs.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings: {amount}'**
+  String memberSavingsIs(String amount);
+
+  /// No description provided for @memberCanBorrowUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings {amount} – can borrow up to {max}'**
+  String memberCanBorrowUpTo(String amount, String max);
+
+  /// No description provided for @loanRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan rules'**
+  String get loanRules;
+
+  /// No description provided for @loanRulesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The standard rate, how much of their savings a member may borrow, how long they have, and whether guarantors are needed. The Chairperson and the Loans Officer keep these up to date.'**
+  String get loanRulesHelp;
+
+  /// No description provided for @upToTimesSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'up to {times}× savings'**
+  String upToTimesSavings(String times);
+
+  /// No description provided for @monthsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{min}–{max} months'**
+  String monthsRange(int min, int max);
+
+  /// No description provided for @guarantorsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Guarantors required'**
+  String get guarantorsRequired;
+
+  /// No description provided for @maxMultipleOfSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'How many times their savings'**
+  String get maxMultipleOfSavings;
+
+  /// No description provided for @maxMultipleHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 3 means a member may borrow three times what they have saved.'**
+  String get maxMultipleHelp;
 }
 
 class _AppLocalizationsDelegate

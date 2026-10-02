@@ -5,7 +5,7 @@ from rest_framework import serializers
 from members.models import Member
 from savings.models import SavingsProduct
 
-from .models import Loan, LoanGuarantor, LoanProduct, LoanRepayment, LoanRepaymentSchedule
+from .models import InterestPeriod, Loan, LoanGuarantor, LoanProduct, LoanRepayment, LoanRepaymentSchedule
 from .services import get_arrears_status
 
 
@@ -13,7 +13,7 @@ class LoanProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoanProduct
         fields = [
-            "id", "name", "code", "interest_method", "interest_rate",
+            "id", "name", "code", "interest_method", "interest_rate", "interest_period",
             "min_term_months", "max_term_months", "max_multiple_of_deposits",
             "requires_guarantors", "min_guarantors", "is_active",
         ]
@@ -67,7 +67,7 @@ class LoanSerializer(serializers.ModelSerializer):
         model = Loan
         fields = [
             "id", "member", "member_name", "member_number", "product", "product_name",
-            "amount_requested", "term_months", "purpose", "interest_method", "interest_rate",
+            "amount_requested", "term_months", "purpose", "interest_method", "interest_rate", "interest_period",
             "status", "applied_at", "appraised_at", "appraised_by_name", "appraisal_notes",
             "decided_at", "decided_by_name", "decision_notes", "is_auto_decision", "guarantors",
             "disbursed_at", "disbursement_method", "closed_at", "defaulted_at", "default_notes",
@@ -97,6 +97,15 @@ class LoanApplyInputSerializer(serializers.Serializer):
     amount_requested = serializers.DecimalField(max_digits=18, decimal_places=2, min_value=Decimal("0.01"))
     term_months = serializers.IntegerField(min_value=1)
     purpose = serializers.CharField(required=False, allow_blank=True, default="")
+
+
+class StaffLoanApplyInputSerializer(LoanApplyInputSerializer):
+    """Staff writing a loan may set the rate for this one loan - the
+    committee sometimes agrees something other than the standard."""
+
+    interest_rate = serializers.DecimalField(max_digits=6, decimal_places=4, required=False, allow_null=True,
+                                             min_value=Decimal("0"))
+    interest_period = serializers.ChoiceField(choices=InterestPeriod.choices, required=False, allow_null=True)
 
 
 class AddGuarantorInputSerializer(serializers.Serializer):

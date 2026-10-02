@@ -77,7 +77,8 @@ def get_available_deposits(member) -> Decimal:
 
 
 def apply_for_loan(
-    *, member, product, amount_requested: Decimal, term_months: int, purpose: str = "", created_by=None
+    *, member, product, amount_requested: Decimal, term_months: int, purpose: str = "", created_by=None,
+    interest_rate: Decimal | None = None, interest_period: str | None = None,
 ) -> Loan:
     if amount_requested <= 0:
         raise ValueError("Loan amount must be positive.")
@@ -110,7 +111,8 @@ def apply_for_loan(
         term_months=term_months,
         purpose=purpose,
         interest_method=product.interest_method,
-        interest_rate=product.interest_rate,
+        interest_rate=product.interest_rate if interest_rate is None else interest_rate,
+        interest_period=product.interest_period if interest_period is None else interest_period,
         status=initial_status,
         created_by=created_by,
     )
@@ -232,6 +234,13 @@ def _attempt_auto_decision(loan: Loan) -> Loan:
     return loan
 
 
+def annual_rate_from(rate: Decimal, period: str) -> Decimal:
+    """A rate quoted per month is twelve times the yearly figure the
+    schedule works in - "10% p.m." is what a chama means, and the schedule
+    needs 120% a year to match it."""
+    return rate * Decimal(12) if period == "PER_MONTH" else rate
+
+
 def generate_amortization_schedule(
     *, principal: Decimal, annual_rate: Decimal, term_months: int, interest_method: str, start_date: date
 ) -> list[dict]:
@@ -310,7 +319,7 @@ def generate_amortization_schedule(
 def _generate_and_save_schedule(loan: Loan, *, start_date: date) -> None:
     rows = generate_amortization_schedule(
         principal=loan.amount_requested,
-        annual_rate=loan.interest_rate,
+        annual_rate=annual_rate_from(loan.interest_rate, loan.interest_period),
         term_months=loan.term_months,
         interest_method=loan.interest_method,
         start_date=start_date,

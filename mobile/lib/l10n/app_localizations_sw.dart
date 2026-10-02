@@ -3236,4 +3236,92 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get exportCsv => 'CSV';
+
+  @override
+  String get newLoan => 'Mkopo mpya kwa mwanachama';
+
+  @override
+  String get newLoanHelp =>
+      'Mwanachama bado anahitaji wadhamini na idhini ya kamati kabla pesa haijatolewa.';
+
+  @override
+  String get loanCreated => 'Ombi la mkopo limeundwa';
+
+  @override
+  String get loanAmount => 'Kiasi';
+
+  @override
+  String get loanTermMonths => 'Miezi ya kulipa';
+
+  @override
+  String get loanPurpose => 'Ni kwa ajili ya nini';
+
+  @override
+  String get interestRate => 'Riba';
+
+  @override
+  String get interestPeriod => 'Kwa';
+
+  @override
+  String get interestMethodLabel => 'Jinsi riba inavyohesabiwa';
+
+  @override
+  String get perMonth => 'mwezi (p.m.)';
+
+  @override
+  String get perYear => 'mwaka (p.a.)';
+
+  @override
+  String get pmShort => 'kwa mwezi';
+
+  @override
+  String get paShort => 'kwa mwaka';
+
+  @override
+  String get interestRateHelp =>
+      'Huanza na kiwango cha kawaida; badilisha kama kamati ilikubali kingine kwa mkopo huu.';
+
+  @override
+  String get rateInvalid => 'Weka riba kama nambari, mfano 10.';
+
+  @override
+  String get chooseMemberAndAmount =>
+      'Chagua mwanachama, aina ya mkopo na kiasi.';
+
+  @override
+  String memberSavingsIs(String amount) {
+    return 'Akiba: $amount';
+  }
+
+  @override
+  String memberCanBorrowUpTo(String amount, String max) {
+    return 'Akiba $amount – anaweza kukopa hadi $max';
+  }
+
+  @override
+  String get loanRules => 'Kanuni za mikopo';
+
+  @override
+  String get loanRulesHelp =>
+      'Kiwango cha kawaida, kiasi anachoweza kukopa, muda, na kama wadhamini wanahitajika. Mwenyekiti na Afisa Mikopo wanasasisha haya.';
+
+  @override
+  String upToTimesSavings(String times) {
+    return 'hadi mara $times ya akiba';
+  }
+
+  @override
+  String monthsRange(int min, int max) {
+    return 'miezi $min–$max';
+  }
+
+  @override
+  String get guarantorsRequired => 'Wadhamini wanahitajika';
+
+  @override
+  String get maxMultipleOfSavings => 'Mara ngapi ya akiba yake';
+
+  @override
+  String get maxMultipleHelp =>
+      'mfano 3 maana yake anaweza kukopa mara tatu ya akiba yake.';
 }

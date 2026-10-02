@@ -29,6 +29,7 @@ REPORTS = {
     "loan_portfolio": (services.loan_portfolio, "as_of", "loans.view"),
     "collections": (services.collections, "period", "payments.view_transactions"),
     "distribution_register": (services.distribution_register, "period", "distributions.view"),
+    "earnings": (services.earnings, "period", "accounting.view_trial_balance"),
     "savings_register": (services.savings_register, "period", "savings.view"),
     "fines_register": (services.fines_register, "period", "fines.view"),
     "welfare_register": (services.welfare_register, "as_of", "welfare.view"),

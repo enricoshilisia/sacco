@@ -11,6 +11,7 @@ import '../../widgets/common.dart';
 import '../../widgets/forms.dart';
 import '../../widgets/labels.dart';
 import '../../widgets/inuka_app_bar.dart';
+import 'new_loan_screen.dart';
 
 enum LoanQueue { appraise, decide, disburse, active }
 
@@ -37,8 +38,24 @@ class LoanDeskScreen extends StatelessWidget {
       length: queues.length,
       initialIndex: initial < 0 ? 0 : initial,
       child: Scaffold(
+        floatingActionButton: session.can('loans.apply_on_behalf')
+            ? FloatingActionButton.extended(
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewLoanScreen())),
+                icon: const Icon(Icons.request_quote_rounded),
+                label: Text(l10n.newLoan),
+              )
+            : null,
         appBar: InukaAppBar(
           title: l10n.leaderLoanDesk,
+          actions: [
+            if (session.can('loans.manage_products'))
+              IconButton(
+                tooltip: l10n.loanRules,
+                icon: const Icon(Icons.rule_rounded),
+                onPressed: () =>
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoanRulesScreen())),
+              ),
+          ],
           bottom: TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [for (final q in queues) Tab(text: q.$2)]),
         ),
         body: TabBarView(children: [for (final q in queues) _Queue(statuses: q.$3)]),
